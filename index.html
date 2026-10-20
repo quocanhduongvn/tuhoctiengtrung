@@ -66,6 +66,12 @@
       <!-- Action Buttons & Stats -->
       <div class="flex items-center space-x-2 sm:space-x-3">
         
+        <!-- Nút Tra Nhanh 23 Thanh Mẫu -->
+        <button id="openInitialsQuickLookupBtn" class="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-bold rounded-xl bg-chineseRed-50 text-chineseRed-600 hover:bg-chineseRed-100 dark:bg-chineseRed-950/60 dark:text-chineseRed-300 dark:hover:bg-chineseRed-900/60 border border-chineseRed-200 dark:border-chineseRed-800 shadow-sm transition">
+          <i data-lucide="zap" class="w-4 h-4 text-chineseRed-600 dark:text-chineseRed-400"></i>
+          <span class="font-semibold">Tra 23 Thanh Mẫu</span>
+        </button>
+
         <!-- Tiến độ học tập tóm tắt -->
         <div class="hidden md:flex items-center space-x-3 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
           <i data-lucide="award" class="w-4 h-4 text-imperialGold-500"></i>
@@ -267,20 +273,27 @@
       <!-- TAB 2: NGỮ ÂM & PINYIN -->
       <section id="tab-phonetics" class="tab-content hidden space-y-6">
         
-        <!-- Giới thiệu hệ thống Ngữ âm tiếng Trung -->
+        <!-- Giới thiệu hệ thống Ngữ âm tiếng Trung & Banner Tra 23 Thanh Mẫu -->
         <div class="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-2xl p-4 sm:p-5">
-          <div class="flex items-start gap-3">
-            <i data-lucide="info" class="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5"></i>
-            <div>
-              <h4 class="font-bold text-amber-900 dark:text-amber-200 text-sm sm:text-base">Quy tắc vàng về cấu tạo một âm tiết tiếng Trung (Pinyin)</h4>
-              <p class="text-xs sm:text-sm text-amber-800 dark:text-amber-300 mt-1 leading-relaxed">
-                Một âm tiết tiếng Trung hoàn chỉnh gồm 3 thành phần: 
-                <span class="font-semibold bg-white dark:bg-slate-800 px-1.5 py-0.5 rounded border border-amber-300 dark:border-amber-700">Thanh mẫu (Phụ âm đầu)</span> + 
-                <span class="font-semibold bg-white dark:bg-slate-800 px-1.5 py-0.5 rounded border border-amber-300 dark:border-amber-700">Vận mẫu (Nguyên âm & Vần)</span> + 
-                <span class="font-semibold bg-white dark:bg-slate-800 px-1.5 py-0.5 rounded border border-amber-300 dark:border-amber-700">Thanh điệu (Dấu giọng)</span>.
-                <br>Ví dụ: <strong>nǐ</strong> gồm thanh mẫu <strong>n</strong> + vận mẫu <strong>i</strong> + mang thanh 3 (<strong>ǎ</strong>).
-              </p>
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex items-start gap-3">
+              <i data-lucide="info" class="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5"></i>
+              <div>
+                <h4 class="font-bold text-amber-900 dark:text-amber-200 text-sm sm:text-base">Quy tắc vàng về cấu tạo một âm tiết tiếng Trung (Pinyin)</h4>
+                <p class="text-xs sm:text-sm text-amber-800 dark:text-amber-300 mt-1 leading-relaxed">
+                  Một âm tiết tiếng Trung hoàn chỉnh gồm 3 thành phần: 
+                  <span class="font-semibold bg-white dark:bg-slate-800 px-1.5 py-0.5 rounded border border-amber-300 dark:border-amber-700">Thanh mẫu (Phụ âm đầu)</span> + 
+                  <span class="font-semibold bg-white dark:bg-slate-800 px-1.5 py-0.5 rounded border border-amber-300 dark:border-amber-700">Vận mẫu (Nguyên âm & Vần)</span> + 
+                  <span class="font-semibold bg-white dark:bg-slate-800 px-1.5 py-0.5 rounded border border-amber-300 dark:border-amber-700">Thanh điệu (Dấu giọng)</span>.
+                </p>
+              </div>
             </div>
+
+            <!-- Nút mở nhanh toàn bộ 23 Thanh mẫu -->
+            <button id="openInitialsFromPhoneticsBtn" class="shrink-0 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-chineseRed-600 hover:bg-chineseRed-700 text-white font-semibold text-xs shadow-md transition">
+              <i data-lucide="zap" class="w-4 h-4"></i>
+              <span>Tra Nhanh 23 Thanh Mẫu</span>
+            </button>
           </div>
         </div>
 
@@ -730,6 +743,66 @@
           Đặt lại toàn bộ dữ liệu về mặc định ban đầu
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- MODAL: BẢNG TRA NHANH 23 THANH MẪU TIẾNG TRUNG -->
+  <div id="initialsQuickLookupModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-sm hidden">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 max-w-4xl w-full p-4 sm:p-6 shadow-2xl space-y-4 max-h-[92vh] flex flex-col">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800 shrink-0">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-chineseRed-100 text-chineseRed-600 dark:bg-chineseRed-950 dark:text-chineseRed-400 flex items-center justify-center font-bold">
+            <i data-lucide="zap" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 dark:text-white text-base sm:text-lg flex items-center gap-2">
+              Bảng Tra Nhanh 23 Thanh Mẫu Tiếng Trung
+              <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-chineseRed-100 text-chineseRed-700 dark:bg-chineseRed-950 dark:text-chineseRed-300">Đầy đủ 23 âm</span>
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Bản âm mẹo thuộc lòng: bua, pua, mua, fo, tưa, thưa, cưa, khưa, hưa, chi, xi, trư, sư, rư, chư, xư...</p>
+          </div>
+        </div>
+        <button id="closeInitialsModalBtn" class="p-1.5 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Search & Category Filters -->
+      <div class="flex flex-col sm:flex-row items-center gap-3 shrink-0">
+        <div class="relative w-full sm:w-72">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+          <input type="text" id="initialsSearchInput" placeholder="Tìm theo chữ hoặc cách đọc (vd: bua, p, cong lưỡi)..." class="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-chineseRed-500">
+        </div>
+
+        <div class="flex items-center gap-1.5 overflow-x-auto w-full pb-1 sm:pb-0 no-scrollbar" id="initialsGroupFilters">
+          <button class="initials-group-btn active px-2.5 py-1 text-xs rounded-lg bg-chineseRed-600 text-white font-medium shrink-0" data-group="all">Tất cả (23)</button>
+          <button class="initials-group-btn px-2.5 py-1 text-xs rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0" data-group="Âm môi">Âm môi (b,p,m,f)</button>
+          <button class="initials-group-btn px-2.5 py-1 text-xs rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0" data-group="Âm đầu lưỡi">Đầu lưỡi (d,t,n,l)</button>
+          <button class="initials-group-btn px-2.5 py-1 text-xs rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0" data-group="Âm cuống lưỡi">Cuống lưỡi (g,k,h)</button>
+          <button class="initials-group-btn px-2.5 py-1 text-xs rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0" data-group="Âm mặt lưỡi">Mặt lưỡi (j,q,x)</button>
+          <button class="initials-group-btn px-2.5 py-1 text-xs rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0" data-group="Âm cong lưỡi">Cong lưỡi (zh,ch,sh,r)</button>
+          <button class="initials-group-btn px-2.5 py-1 text-xs rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0" data-group="Âm lưỡi thẳng">Lưỡi thẳng (z,c,s)</button>
+          <button class="initials-group-btn px-2.5 py-1 text-xs rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0" data-group="Đặc biệt">Đặc biệt (y,w)</button>
+        </div>
+      </div>
+
+      <!-- Quick Initials Grid View -->
+      <div class="flex-1 overflow-y-auto pr-1">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3" id="initialsModalGrid">
+          <!-- Injected via JavaScript -->
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 text-xs">
+        <span class="text-slate-400">💡 Mẹo: Bấm vào từng ô để nghe thầy bản ngữ đọc chuẩn</span>
+        <button id="closeInitialsModalBottomBtn" class="px-4 py-2 font-semibold rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 hover:opacity-90 transition">
+          Đóng
+        </button>
+      </div>
+
     </div>
   </div>
 

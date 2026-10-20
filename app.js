@@ -1118,6 +1118,108 @@ function setupEventListeners() {
       }
     });
   }
+
+  // 16. Bảng Tra Nhanh 23 Thanh Mẫu Modal
+  const openInitialsBtn = document.getElementById("openInitialsQuickLookupBtn");
+  const openInitialsPhoneticsBtn = document.getElementById("openInitialsFromPhoneticsBtn");
+  const closeInitialsBtn = document.getElementById("closeInitialsModalBtn");
+  const closeInitialsBottomBtn = document.getElementById("closeInitialsModalBottomBtn");
+  const initialsModal = document.getElementById("initialsQuickLookupModal");
+  const initialsSearchInput = document.getElementById("initialsSearchInput");
+
+  let currentInitialsGroup = "all";
+
+  const openInitialsModal = () => {
+    if (initialsModal) {
+      initialsModal.classList.remove("hidden");
+      render23InitialsGrid(currentInitialsGroup, initialsSearchInput ? initialsSearchInput.value : "");
+      lucide.createIcons();
+    }
+  };
+
+  if (openInitialsBtn) openInitialsBtn.addEventListener("click", openInitialsModal);
+  if (openInitialsPhoneticsBtn) openInitialsPhoneticsBtn.addEventListener("click", openInitialsModal);
+  if (closeInitialsBtn) closeInitialsBtn.addEventListener("click", () => initialsModal && initialsModal.classList.add("hidden"));
+  if (closeInitialsBottomBtn) closeInitialsBottomBtn.addEventListener("click", () => initialsModal && initialsModal.classList.add("hidden"));
+
+  // Lọc theo từ khóa tìm kiếm
+  if (initialsSearchInput) {
+    initialsSearchInput.addEventListener("input", (e) => {
+      render23InitialsGrid(currentInitialsGroup, e.target.value.trim());
+      lucide.createIcons();
+    });
+  }
+
+  // Lọc theo nhóm
+  document.querySelectorAll(".initials-group-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".initials-group-btn").forEach(b => {
+        b.className = "initials-group-btn px-2.5 py-1 text-xs rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0";
+      });
+      btn.className = "initials-group-btn active px-2.5 py-1 text-xs rounded-lg bg-chineseRed-600 text-white font-medium shrink-0";
+      currentInitialsGroup = btn.getAttribute("data-group");
+      render23InitialsGrid(currentInitialsGroup, initialsSearchInput ? initialsSearchInput.value.trim() : "");
+      lucide.createIcons();
+    });
+  });
+}
+
+// Render danh sách 23 Thanh Mẫu trong Modal
+function render23InitialsGrid(filterGroup = "all", searchText = "") {
+  const container = document.getElementById("initialsModalGrid");
+  if (!container || !HSK1_DATA.all23Initials) return;
+
+  const q = searchText.toLowerCase();
+  const filtered = HSK1_DATA.all23Initials.filter(item => {
+    const matchGroup = filterGroup === "all" || item.group === filterGroup;
+    const matchSearch = !searchText || 
+      item.char.toLowerCase().includes(q) || 
+      item.read.toLowerCase().includes(q) || 
+      item.note.toLowerCase().includes(q) ||
+      item.group.toLowerCase().includes(q);
+    return matchGroup && matchSearch;
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div class="col-span-full py-10 text-center text-xs text-slate-400">
+        Không tìm thấy thanh mẫu nào phù hợp với từ khóa "${searchText}".
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = filtered.map(item => `
+    <div onclick="playChineseAudio('${item.audioText || item.char}', this)" class="cursor-pointer p-3.5 rounded-2xl bg-slate-50 hover:bg-chineseRed-50/50 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 hover:border-chineseRed-400 dark:hover:border-chineseRed-500 shadow-sm hover:shadow transition flex flex-col justify-between group">
+      <div>
+        <div class="flex items-center justify-between gap-1 mb-2">
+          <span class="w-5 h-5 rounded-md bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-[10px] font-bold flex items-center justify-center font-mono">${item.num}</span>
+          <span class="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 dark:bg-slate-700/60 dark:text-slate-300">${item.group}</span>
+          <button class="p-1 rounded-md text-slate-400 group-hover:text-chineseRed-600 dark:group-hover:text-chineseRed-400 transition" title="Nghe phát âm">
+            <i data-lucide="volume-2" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <!-- Chữ cái & Cách đọc nhanh -->
+        <div class="flex items-baseline gap-2 mb-1">
+          <span class="text-2xl sm:text-3xl font-bold font-mono text-chineseRed-600 dark:text-chineseRed-400">${item.char}</span>
+          <span class="text-xs text-slate-400">➔ đọc</span>
+          <span class="text-sm sm:text-base font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-900 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-700">${item.read}</span>
+        </div>
+
+        <!-- Lưu ý khẩu hình / vị trí lưỡi -->
+        <p class="text-xs text-slate-600 dark:text-slate-300 font-medium leading-relaxed mt-1.5">
+          ${item.note}
+        </p>
+      </div>
+
+      <!-- Ví dụ -->
+      <div class="mt-3 pt-2 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between text-[11px] text-slate-400">
+        <span>Ví dụ: <strong class="text-slate-700 dark:text-slate-200 font-mono">${item.example}</strong></span>
+        <span class="text-[10px] text-chineseRed-500 font-medium opacity-0 group-hover:opacity-100 transition">Bấm nghe</span>
+      </div>
+    </div>
+  `).join("");
 }
 
 function updateThemeIcon(isDark) {

@@ -3,6 +3,34 @@ const HSK1_DATA = {
   courseTitle: "Giáo trình chuẩn HSK 1 - Tự học tiếng Trung",
   instructor: "Thầy Thành Luân",
   playlistUrl: "https://www.youtube.com/playlist?list=PLkDxGl-gi2racE5ND8L9HP_xsAl9qLxSG",
+  
+  // BẢNG 23 THANH MẪU TRA NHANH TOÀN DIỆN
+  all23Initials: [
+    { num: 1, char: "b", read: "bua", note: "Không bật hơi", group: "Âm môi", audioText: "bo", example: "ba (bố)" },
+    { num: 2, char: "p", read: "pua", note: "Bặm môi, bật hơi mạnh", group: "Âm môi", audioText: "po", example: "pa (sợ)" },
+    { num: 3, char: "m", read: "mua", note: "Âm mũi hai môi", group: "Âm môi", audioText: "mo", example: "ma (mẹ)" },
+    { num: 4, char: "f", read: "fo", note: "Răng trên chạm môi dưới", group: "Âm môi", audioText: "fo", example: "fa (phát)" },
+    { num: 5, char: "d", read: "tưa", note: "Không bật hơi (giống t tiếng Việt)", group: "Âm đầu lưỡi", audioText: "de", example: "da (lớn)" },
+    { num: 6, char: "t", read: "thưa", note: "Bật hơi mạnh (giống th tiếng Việt)", group: "Âm đầu lưỡi", audioText: "te", example: "ta (anh ấy)" },
+    { num: 7, char: "n", read: "nưa", note: "Âm mũi đầu lưỡi", group: "Âm đầu lưỡi", audioText: "ne", example: "na (đó)" },
+    { num: 8, char: "l", read: "lưa", note: "Âm biên đầu lưỡi", group: "Âm đầu lưỡi", audioText: "le", example: "la (kéo)" },
+    { num: 9, char: "g", read: "cưa", note: "Không bật hơi (giống c/k tiếng Việt)", group: "Âm cuống lưỡi", audioText: "ge", example: "ge (anh trai)" },
+    { num: 10, char: "k", read: "khưa", note: "Bật hơi mạnh từ cuống họng", group: "Âm cuống lưỡi", audioText: "ke", example: "ke (khát)" },
+    { num: 11, char: "h", read: "hưa", note: "Đọc nhẹ lai giữa h và kh", group: "Âm cuống lưỡi", audioText: "he", example: "ha (uống)" },
+    { num: 12, char: "j", read: "chi", note: "Đọc nhẹ, không bật hơi", group: "Âm mặt lưỡi", audioText: "ji", example: "ji (con gà)" },
+    { num: 13, char: "q", read: "chi", note: "Bật hơi mạnh, luồng hơi dứt khoát", group: "Âm mặt lưỡi", audioText: "qi", example: "qi (số 7)" },
+    { num: 14, char: "x", read: "xi", note: "Mặt lưỡi nâng nhẹ, hơi thoát qua khe", group: "Âm mặt lưỡi", audioText: "xi", example: "xi (rửa/tây)" },
+    { num: 15, char: "zh", read: "trư", note: "Cong lưỡi, đọc nhẹ, không bật hơi", group: "Âm cong lưỡi", audioText: "zhi", example: "zhe (này)" },
+    { num: 16, char: "ch", read: "trư", note: "Cong lưỡi, bật mạnh luồng hơi", group: "Âm cong lưỡi", audioText: "chi", example: "chi (ăn)" },
+    { num: 17, char: "sh", read: "sư", note: "Cong lưỡi, phát âm xát", group: "Âm cong lưỡi", audioText: "shi", example: "shi (là/thì)" },
+    { num: 18, char: "r", read: "rư", note: "Cong lưỡi, thanh đới rung nhẹ", group: "Âm cong lưỡi", audioText: "ri", example: "ri (mặt trời)" },
+    { num: 19, char: "z", read: "chư", note: "Lưỡi thẳng, đọc nhẹ, không bật hơi", group: "Âm lưỡi thẳng", audioText: "zi", example: "zi (chữ)" },
+    { num: 20, char: "c", read: "chư", note: "Lưỡi thẳng, bật hơi thật mạnh", group: "Âm lưỡi thẳng", audioText: "ci", example: "ci (lần)" },
+    { num: 21, char: "s", read: "xư", note: "Lưỡi thẳng, hơi ma sát mặt răng", group: "Âm lưỡi thẳng", audioText: "si", example: "si (số 4)" },
+    { num: 22, char: "y", read: "i", note: "Thanh mẫu đặc biệt (bán nguyên âm)", group: "Đặc biệt", audioText: "yi", example: "yi (số 1)" },
+    { num: 23, char: "w", read: "u", note: "Thanh mẫu đặc biệt (bán nguyên âm)", group: "Đặc biệt", audioText: "wu", example: "wu (số 5)" }
+  ],
+
   lessons: [
     {
       id: 1,
