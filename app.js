@@ -1278,15 +1278,22 @@ function setupEventListeners() {
 
   let currentInitialsGroup = "all";
 
+  const drawerInitialsBtn = document.getElementById("drawerInitialsBtn");
+
   const openInitialsModal = () => {
     if (initialsModal) {
       initialsModal.classList.remove("hidden");
       render23InitialsGrid(currentInitialsGroup, initialsSearchInput ? initialsSearchInput.value : "");
       refreshIcons();
     }
+    if (sidebar && backdrop) {
+      sidebar.classList.add("-translate-x-full");
+      backdrop.classList.add("hidden");
+    }
   };
 
   if (openInitialsBtn) openInitialsBtn.addEventListener("click", openInitialsModal);
+  if (drawerInitialsBtn) drawerInitialsBtn.addEventListener("click", openInitialsModal);
   if (openInitialsPhoneticsBtn) openInitialsPhoneticsBtn.addEventListener("click", openInitialsModal);
   if (closeInitialsBtn) closeInitialsBtn.addEventListener("click", () => initialsModal && initialsModal.classList.add("hidden"));
   if (closeInitialsBottomBtn) closeInitialsBottomBtn.addEventListener("click", () => initialsModal && initialsModal.classList.add("hidden"));
@@ -1314,16 +1321,22 @@ function setupEventListeners() {
 
   // 17. Modal Cài Đặt App Cho Điện Thoại (PWA)
   const openInstallBtn = document.getElementById("openInstallModalBtn");
+  const drawerInstallBtn = document.getElementById("drawerInstallBtn");
   const closeInstallBtn = document.getElementById("closeInstallModalBtn");
   const closeInstallBottomBtn = document.getElementById("closeInstallModalBottomBtn");
   const pwaModal = document.getElementById("pwaInstallModal");
   const pwaTriggerBtn = document.getElementById("pwaInstallTriggerBtn");
 
-  if (openInstallBtn && pwaModal) {
-    openInstallBtn.addEventListener("click", () => {
-      pwaModal.classList.remove("hidden");
-    });
-  }
+  const showInstallModal = () => {
+    if (pwaModal) pwaModal.classList.remove("hidden");
+    if (sidebar && backdrop) {
+      sidebar.classList.add("-translate-x-full");
+      backdrop.classList.add("hidden");
+    }
+  };
+
+  if (openInstallBtn) openInstallBtn.addEventListener("click", showInstallModal);
+  if (drawerInstallBtn) drawerInstallBtn.addEventListener("click", showInstallModal);
   if (closeInstallBtn && pwaModal) {
     closeInstallBtn.addEventListener("click", () => pwaModal.classList.add("hidden"));
   }
@@ -1545,6 +1558,53 @@ function initApp() {
       console.warn("SW registration:", e);
     });
   }
+
+  // Tự động dọn dẹp và triệt tiêu huy hiệu 'Powered by Netlify' che giao diện
+  purgeNetlifyBadge();
+}
+
+// Hàm gỡ bỏ triệt để nút Netlify chèn vào góc dưới
+function purgeNetlifyBadge() {
+  try {
+    document.querySelectorAll('*').forEach(el => {
+      if (el.tagName === 'HEADER' || el.closest('#netlifyGuideModal') || el.closest('#drawerNetlifyBtn')) return;
+      
+      const txt = (el.textContent || '').trim();
+      const cls = (typeof el.className === 'string' ? el.className : '');
+      const id = el.id || '';
+      
+      const isNetlifyInjected = (
+        txt === 'Powered by Netlify' ||
+        txt.includes('Powered by Netlify') ||
+        cls.includes('netlify') ||
+        id.includes('netlify-badge') ||
+        id.includes('netlify-drawer') ||
+        el.tagName.toLowerCase() === 'netlify-drawer' ||
+        el.tagName.toLowerCase() === 'netlify-badge'
+      );
+
+      if (isNetlifyInjected) {
+        el.style.setProperty('display', 'none', 'important');
+        el.style.setProperty('visibility', 'hidden', 'important');
+        el.style.setProperty('opacity', '0', 'important');
+        el.style.setProperty('pointer-events', 'none', 'important');
+        el.remove();
+      }
+    });
+  } catch (e) {}
+}
+
+// Theo dõi định kỳ và bắt sự kiện DOM chèn badge Netlify
+if (typeof window !== 'undefined') {
+  window.addEventListener('load', purgeNetlifyBadge);
+  setTimeout(purgeNetlifyBadge, 500);
+  setTimeout(purgeNetlifyBadge, 1500);
+  setTimeout(purgeNetlifyBadge, 3500);
+
+  try {
+    const observer = new MutationObserver(purgeNetlifyBadge);
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+  } catch (e) {}
 }
 
 if (document.readyState === "loading") {
