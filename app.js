@@ -150,6 +150,14 @@ function selectLesson(id) {
   }
 }
 
+// Helper tạo URL nhúng YouTube chuẩn Referrer và tránh Lỗi 153
+function getYouTubeEmbedUrl(videoId, startSeconds = 0) {
+  const isHttp = window.location.protocol.startsWith("http");
+  const originParam = isHttp ? `&origin=${encodeURIComponent(window.location.origin)}` : '';
+  const startParam = startSeconds > 0 ? `&start=${startSeconds}&autoplay=1` : '';
+  return `https://www.youtube.com/embed/${videoId}?rel=0&enablejsapi=1${originParam}${startParam}`;
+}
+
 // ==================== RENDER NỘI DUNG BÀI HỌC HIỆN TẠI ====================
 function renderCurrentLesson() {
   const lesson = HSK1_DATA.lessons.find(l => l.id === appState.currentLessonId) || HSK1_DATA.lessons[0];
@@ -176,11 +184,25 @@ function renderCurrentLesson() {
   // Cập nhật Iframe Video YouTube & External Link
   const ytPlayer = document.getElementById("youtubePlayer");
   if (ytPlayer && lesson.videoId) {
-    ytPlayer.src = `https://www.youtube.com/embed/${lesson.videoId}?enablejsapi=1`;
+    ytPlayer.src = getYouTubeEmbedUrl(lesson.videoId);
   }
   const extLink = document.getElementById("externalYoutubeLink");
   if (extLink && lesson.videoId) {
     extLink.href = `https://www.youtube.com/watch?v=${lesson.videoId}`;
+  }
+  const fileNoticeLink = document.getElementById("fileProtocolWatchDirectBtn");
+  if (fileNoticeLink && lesson.videoId) {
+    fileNoticeLink.href = `https://www.youtube.com/watch?v=${lesson.videoId}`;
+  }
+
+  // Kiểm tra nếu đang mở trực tiếp file:// thì bật thông báo hướng dẫn
+  const fileNotice = document.getElementById("fileProtocolNotice");
+  if (fileNotice) {
+    if (window.location.protocol === "file:") {
+      fileNotice.classList.remove("hidden");
+    } else {
+      fileNotice.classList.add("hidden");
+    }
   }
 
   // Cập nhật Timecodes
@@ -241,7 +263,15 @@ function parseTimeToSeconds(timeStr) {
 function seekVideo(videoId, seconds) {
   const ytPlayer = document.getElementById("youtubePlayer");
   if (ytPlayer) {
-    ytPlayer.src = `https://www.youtube.com/embed/${videoId}?start=${seconds}&autoplay=1`;
+    ytPlayer.src = getYouTubeEmbedUrl(videoId, seconds);
+  }
+  const extLink = document.getElementById("externalYoutubeLink");
+  if (extLink) {
+    extLink.href = `https://www.youtube.com/watch?v=${videoId}&t=${seconds}s`;
+  }
+  const fileNoticeLink = document.getElementById("fileProtocolWatchDirectBtn");
+  if (fileNoticeLink) {
+    fileNoticeLink.href = `https://www.youtube.com/watch?v=${videoId}&t=${seconds}s`;
   }
 }
 

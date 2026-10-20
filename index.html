@@ -6,6 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="theme-color" content="#dc2626">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Tự Học Tiếng Trung HSK 1 - Sổ Tay & Ôn Tập Trực Tuyến</title>
   
   <!-- Tailwind CSS CDN -->
@@ -241,8 +242,32 @@
           
           <!-- Video Player Iframe -->
           <div class="lg:col-span-2 space-y-4">
+            
+            <!-- Thông báo tự động phát hiện mở file trực tiếp file:// gây lỗi 153 -->
+            <div id="fileProtocolNotice" class="hidden p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 text-xs text-amber-900 dark:text-amber-200 space-y-2">
+              <div class="flex items-start gap-2.5">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5"></i>
+                <div class="flex-1">
+                  <p class="font-bold text-amber-950 dark:text-amber-100">Khắc phục Lỗi 153 của YouTube (Do mở file trực tiếp `file:///`)</p>
+                  <p class="mt-0.5 text-amber-800 dark:text-amber-300 leading-relaxed">
+                    Chính sách mới của YouTube chặn phát video nhúng khi bạn nhấp đúp mở file `file:///` từ ổ cứng. Khi đưa web lên <strong>Netlify</strong> (có tên miền https) hoặc chạy qua server cục bộ, video sẽ phát hoàn toàn bình thường!
+                  </p>
+                </div>
+              </div>
+              <div class="flex flex-wrap items-center gap-2 pt-1">
+                <a id="fileProtocolWatchDirectBtn" href="https://www.youtube.com/watch?v=EpSs4cdSML0" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg bg-chineseRed-600 hover:bg-chineseRed-700 text-white font-semibold flex items-center gap-1.5 transition">
+                  <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                  <span>Xem trực tiếp trên YouTube</span>
+                </a>
+                <button onclick="document.getElementById('openNetlifyGuideBtn').click()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold flex items-center gap-1.5 transition">
+                  <i data-lucide="cloud-upload" class="w-3.5 h-3.5"></i>
+                  <span>Đưa lên Netlify để phát mượt</span>
+                </button>
+              </div>
+            </div>
+
             <div class="aspect-video w-full rounded-2xl overflow-hidden bg-black shadow-lg border border-slate-200 dark:border-slate-800 relative">
-              <iframe id="youtubePlayer" class="w-full h-full" src="https://www.youtube.com/embed/EpSs4cdSML0?enablejsapi=1" title="Bài giảng Thầy Thành Luân" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              <iframe id="youtubePlayer" class="w-full h-full" src="https://www.youtube.com/embed/EpSs4cdSML0?rel=0&enablejsapi=1" title="Bài giảng Thầy Thành Luân" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
 
             <div class="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
