@@ -132,7 +132,7 @@ function renderLessonList(filterText = "") {
     `;
   }).join("");
 
-  lucide.createIcons();
+  refreshIcons();
 }
 
 function selectLesson(id) {
@@ -225,7 +225,7 @@ function renderCurrentLesson() {
     noteArea.value = appState.notes[lesson.id] || "";
   }
 
-  lucide.createIcons();
+  refreshIcons();
 }
 
 // Render Timecodes
@@ -777,7 +777,7 @@ function renderUpcomingPlaceholder(lesson) {
         <p class="text-xs text-chineseRed-600 dark:text-chineseRed-400 font-medium">Bạn có thể xem trước video bài giảng của Thầy Thành Luân ở Tab "Bài giảng Video" ngay bây giờ!</p>
       </div>
     `;
-    lucide.createIcons();
+    refreshIcons();
   }
 }
 
@@ -822,6 +822,10 @@ function switchTab(targetId) {
 
 function setupEventListeners() {
   
+  // Element Sidebar & Backdrop chung
+  const sidebar = document.getElementById("sidebar");
+  const backdrop = document.getElementById("sidebarBackdrop");
+
   // 1. Chuyển đổi Tabs trên thanh trên
   const tabButtons = document.querySelectorAll(".tab-btn");
   tabButtons.forEach(btn => {
@@ -848,15 +852,13 @@ function setupEventListeners() {
       if (initialsModal) {
         initialsModal.classList.remove("hidden");
         render23InitialsGrid("all", "");
-        lucide.createIcons();
+        refreshIcons();
       }
     });
   }
 
   // Nút mở menu danh sách 15 bài trên mobile bottom nav
   const mobileMenuBtn = document.getElementById("mobileMenuBtn");
-  const sidebar = document.getElementById("sidebar");
-  const backdrop = document.getElementById("sidebarBackdrop");
   if (mobileMenuBtn && sidebar && backdrop) {
     mobileMenuBtn.addEventListener("click", () => {
       sidebar.classList.remove("-translate-x-full");
@@ -889,7 +891,6 @@ function setupEventListeners() {
 
   // 3. Lật Flashcard 3D & Vuốt chạm trên điện thoại (Touch Swipe Gestures)
   const activeCard = document.getElementById("activeFlashcard");
-  const lesson = HSK1_DATA.lessons.find(l => l.id === appState.currentLessonId);
 
   if (activeCard) {
     let touchStartX = 0;
@@ -911,7 +912,8 @@ function setupEventListeners() {
       // Nếu vuốt ngang rõ rệt (> 45px và ngang nhiều hơn dọc)
       if (Math.abs(deltaX) > 45 && Math.abs(deltaX) > Math.abs(deltaY) * 1.3) {
         isSwiping = true;
-        const total = lesson.vocab ? lesson.vocab.length : 15;
+        const curLesson = HSK1_DATA.lessons.find(l => l.id === appState.currentLessonId);
+        const total = curLesson && curLesson.vocab ? curLesson.vocab.length : 15;
         if (deltaX < 0) {
           // Vuốt sang trái ➔ Thẻ tiếp theo
           appState.activeFlashcardIndex = (appState.activeFlashcardIndex + 1) % total;
@@ -937,12 +939,12 @@ function setupEventListeners() {
   // Next / Prev Flashcard
   const prevCardBtn = document.getElementById("prevCardBtn");
   const nextCardBtn = document.getElementById("nextCardBtn");
-  const lesson = HSK1_DATA.lessons.find(l => l.id === appState.currentLessonId);
 
   if (prevCardBtn) {
     prevCardBtn.addEventListener("click", (e) => {
       e.stopPropagation();
-      const total = lesson.vocab ? lesson.vocab.length : 15;
+      const curLesson = HSK1_DATA.lessons.find(l => l.id === appState.currentLessonId);
+      const total = curLesson && curLesson.vocab ? curLesson.vocab.length : 15;
       appState.activeFlashcardIndex = (appState.activeFlashcardIndex - 1 + total) % total;
       updateFlashcardUI();
     });
@@ -951,7 +953,8 @@ function setupEventListeners() {
   if (nextCardBtn) {
     nextCardBtn.addEventListener("click", (e) => {
       e.stopPropagation();
-      const total = lesson.vocab ? lesson.vocab.length : 15;
+      const curLesson = HSK1_DATA.lessons.find(l => l.id === appState.currentLessonId);
+      const total = curLesson && curLesson.vocab ? curLesson.vocab.length : 15;
       appState.activeFlashcardIndex = (appState.activeFlashcardIndex + 1) % total;
       updateFlashcardUI();
     });
@@ -962,10 +965,13 @@ function setupEventListeners() {
   if (fcMasteredBtn) {
     fcMasteredBtn.addEventListener("click", (e) => {
       e.stopPropagation();
-      const current = lesson.vocab[appState.activeFlashcardIndex];
-      if (current) {
-        toggleVocabMastered(current.id);
-        updateFlashcardUI();
+      const curLesson = HSK1_DATA.lessons.find(l => l.id === appState.currentLessonId);
+      if (curLesson && curLesson.vocab) {
+        const current = curLesson.vocab[appState.activeFlashcardIndex];
+        if (current) {
+          toggleVocabMastered(current.id);
+          updateFlashcardUI();
+        }
       }
     });
   }
@@ -978,7 +984,8 @@ function setupEventListeners() {
       });
       btn.className = "vocab-filter-btn active px-2.5 py-1 text-xs rounded-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold";
       appState.activeVocabFilter = btn.getAttribute("data-filter");
-      renderVocabTab(lesson);
+      const curLesson = HSK1_DATA.lessons.find(l => l.id === appState.currentLessonId);
+      if (curLesson) renderVocabTab(curLesson);
     });
   });
 
@@ -1079,7 +1086,7 @@ function setupEventListeners() {
             <i data-lucide="cloud" class="w-3.5 h-3.5 text-emerald-600"></i>
             <span class="text-emerald-600 dark:text-emerald-400">Đã lưu tự động</span>
           `;
-          lucide.createIcons();
+          refreshIcons();
         }
       }, 600);
     });
@@ -1147,8 +1154,6 @@ function setupEventListeners() {
   // 13. Mobile Sidebar Toggle
   const sidebarToggleBtn = document.getElementById("sidebarToggleBtn");
   const closeSidebarBtn = document.getElementById("closeSidebarBtn");
-  const sidebar = document.getElementById("sidebar");
-  const backdrop = document.getElementById("sidebarBackdrop");
 
   if (sidebarToggleBtn && sidebar && backdrop) {
     sidebarToggleBtn.addEventListener("click", () => {
@@ -1261,7 +1266,7 @@ function setupEventListeners() {
     if (initialsModal) {
       initialsModal.classList.remove("hidden");
       render23InitialsGrid(currentInitialsGroup, initialsSearchInput ? initialsSearchInput.value : "");
-      lucide.createIcons();
+      refreshIcons();
     }
   };
 
@@ -1274,7 +1279,7 @@ function setupEventListeners() {
   if (initialsSearchInput) {
     initialsSearchInput.addEventListener("input", (e) => {
       render23InitialsGrid(currentInitialsGroup, e.target.value.trim());
-      lucide.createIcons();
+      refreshIcons();
     });
   }
 
@@ -1287,7 +1292,7 @@ function setupEventListeners() {
       btn.className = "initials-group-btn active px-2.5 py-1 text-xs rounded-lg bg-chineseRed-600 text-white font-medium shrink-0";
       currentInitialsGroup = btn.getAttribute("data-group");
       render23InitialsGrid(currentInitialsGroup, initialsSearchInput ? initialsSearchInput.value.trim() : "");
-      lucide.createIcons();
+      refreshIcons();
     });
   });
 }
@@ -1350,15 +1355,25 @@ function render23InitialsGrid(filterGroup = "all", searchText = "") {
   `).join("");
 }
 
+function refreshIcons() {
+  if (window.lucide && typeof lucide.createIcons === "function") {
+    try {
+      refreshIcons();
+    } catch(e) {
+      console.warn("Lucide icons error:", e);
+    }
+  }
+}
+
 function updateThemeIcon(isDark) {
   const themeIcon = document.getElementById("themeIcon");
   if (!themeIcon) return;
   themeIcon.setAttribute("data-lucide", isDark ? "sun" : "moon");
-  lucide.createIcons();
+  refreshIcons();
 }
 
 // ==================== KHỞI CHẠY ỨNG DỤNG ====================
-document.addEventListener("DOMContentLoaded", () => {
+function initApp() {
   loadSavedState();
 
   // Khôi phục giao diện Dark Mode
@@ -1374,5 +1389,11 @@ document.addEventListener("DOMContentLoaded", () => {
   renderCurrentLesson();
   setupEventListeners();
   updateProgressUI();
-  lucide.createIcons();
-});
+  refreshIcons();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initApp);
+} else {
+  initApp();
+}
