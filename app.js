@@ -1440,6 +1440,11 @@ function renderExpressPhrasesGrid(filterCategory = "all", searchText = "") {
   const container = document.getElementById("expressPhrasesGrid");
   if (!container || !HSK1_DATA.expressPhrases) return;
 
+  const totalCountEl = document.getElementById("totalExpressCount");
+  if (totalCountEl) {
+    totalCountEl.textContent = `${HSK1_DATA.expressPhrases.length} Câu`;
+  }
+
   const q = searchText.toLowerCase();
   const filtered = HSK1_DATA.expressPhrases.filter(item => {
     const matchCat = filterCategory === "all" || item.category === filterCategory;

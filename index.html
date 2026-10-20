@@ -729,7 +729,7 @@
             
             <div class="text-left sm:text-right shrink-0 bg-white/10 p-3 rounded-2xl backdrop-blur-sm border border-white/10">
               <span class="text-[11px] text-amber-200 block">Tổng số mẫu câu</span>
-              <span class="text-2xl font-bold text-white">48 Câu</span>
+              <span class="text-2xl font-bold text-white" id="totalExpressCount">88 Câu</span>
             </div>
           </div>
         </div>
@@ -738,16 +738,19 @@
         <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm flex flex-col gap-3">
           <div class="relative w-full">
             <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
-            <input type="text" id="expressSearchInput" placeholder="Tìm kiếm câu bất kỳ (vd: bao nhiêu tiền, đắt quá, tính tiền, toilet, wechat)..." class="w-full pl-9 pr-3 py-2 text-xs sm:text-sm rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-chineseRed-500">
+            <input type="text" id="expressSearchInput" placeholder="Tìm kiếm câu bất kỳ (vd: tăng ca, máy hỏng, gia đình, con cái, vé tàu, toilet)..." class="w-full pl-9 pr-3 py-2 text-xs sm:text-sm rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-chineseRed-500">
           </div>
 
           <!-- Category Filter Pills -->
           <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar" id="expressCategoryFilters">
-            <button class="express-filter-btn active px-3 py-1.5 text-xs rounded-xl bg-chineseRed-600 text-white font-semibold shrink-0" data-cat="all">Tất cả (48)</button>
-            <button class="express-filter-btn px-3 py-1.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0" data-cat="Chào hỏi & Xã giao">Chào hỏi</button>
+            <button class="express-filter-btn active px-3 py-1.5 text-xs rounded-xl bg-chineseRed-600 text-white font-semibold shrink-0" data-cat="all">Tất cả (88)</button>
+            <button class="express-filter-btn px-3 py-1.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0" data-cat="Nhà xưởng & Sản xuất">🏭 Nhà xưởng & Sản xuất (14)</button>
+            <button class="express-filter-btn px-3 py-1.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0" data-cat="Gia đình & Người thân">👨‍👩‍👧 Gia đình & Người thân (12)</button>
+            <button class="express-filter-btn px-3 py-1.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0" data-cat="Du lịch & Tham quan">✈️ Du lịch & Tham quan (14)</button>
+            <button class="express-filter-btn px-3 py-1.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0" data-cat="Chào hỏi & Xã giao">Chào hỏi & Xã giao</button>
             <button class="express-filter-btn px-3 py-1.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0" data-cat="Mua sắm & Mặc cả">Mua sắm & Trả giá</button>
             <button class="express-filter-btn px-3 py-1.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0" data-cat="Ăn uống & Gọi món">Ăn uống & Quán ăn</button>
-            <button class="express-filter-btn px-3 py-1.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0" data-cat="Đi lại & Hỏi đường">Taxi & Hỏi đường</button>
+            <button class="express-filter-btn px-3 py-1.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0" data-cat="Đi lại & Hỏi đường">Đi lại & Taxi</button>
             <button class="express-filter-btn px-3 py-1.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0" data-cat="Khách sạn & Phòng ở">Khách sạn</button>
             <button class="express-filter-btn px-3 py-1.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0" data-cat="Nhờ vả & Khẩn cấp">Cần giúp đỡ</button>
             <button class="express-filter-btn px-3 py-1.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0" data-cat="Khẩu ngữ đời sống">Khẩu ngữ tự nhiên</button>
