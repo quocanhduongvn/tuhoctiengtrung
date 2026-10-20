@@ -2,7 +2,10 @@
 <html lang="vi" class="light">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="theme-color" content="#dc2626">
   <title>Tự Học Tiếng Trung HSK 1 - Sổ Tay & Ôn Tập Trực Tuyến</title>
   
   <!-- Tailwind CSS CDN -->
@@ -655,6 +658,45 @@
     </main>
 
   </div>
+
+  <!-- THANH ĐIỀU HƯỚNG DƯỚI ĐÁY DÀNH CHO ĐIỆN THOẠI (MOBILE BOTTOM NAVIGATION) -->
+  <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 mobile-bottom-nav px-2 py-1 shadow-lg">
+    <div class="grid grid-cols-5 gap-1 items-center max-w-md mx-auto">
+      
+      <!-- Tab Video -->
+      <button class="mobile-tab-btn flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-chineseRed-600 dark:text-chineseRed-400 font-bold active transition" data-target="tab-video">
+        <i data-lucide="tv" class="w-5 h-5 mb-0.5"></i>
+        <span class="text-[10px] leading-none">Video</span>
+      </button>
+
+      <!-- Tab Ngữ Âm -->
+      <button class="mobile-tab-btn flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition" data-target="tab-phonetics">
+        <i data-lucide="mic" class="w-5 h-5 mb-0.5"></i>
+        <span class="text-[10px] leading-none">Ngữ Âm</span>
+      </button>
+
+      <!-- Tab Từ Vựng -->
+      <button class="mobile-tab-btn flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition" data-target="tab-vocab">
+        <i data-lucide="layers" class="w-5 h-5 mb-0.5"></i>
+        <span class="text-[10px] leading-none">Từ Vựng</span>
+      </button>
+
+      <!-- Tra Nhanh 23 Thanh Mẫu (Nổi bật) -->
+      <button id="mobileInitialsBtn" class="flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-chineseRed-600 dark:text-chineseRed-400 transition" title="Tra 23 Thanh Mẫu">
+        <div class="w-7 h-7 rounded-full bg-chineseRed-100 dark:bg-chineseRed-950 flex items-center justify-center mb-0.5 border border-chineseRed-200 dark:border-chineseRed-800">
+          <i data-lucide="zap" class="w-4 h-4 text-chineseRed-600 dark:text-chineseRed-400"></i>
+        </div>
+        <span class="text-[10px] font-bold leading-none">23 Mẫu</span>
+      </button>
+
+      <!-- Mở Danh Sách Bài & Menu -->
+      <button id="mobileMenuBtn" class="flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition" title="Danh Sách 15 Bài">
+        <i data-lucide="book-open" class="w-5 h-5 mb-0.5"></i>
+        <span class="text-[10px] leading-none">15 Bài</span>
+      </button>
+
+    </div>
+  </nav>
 
   <!-- MODAL: HƯỚNG DẪN ĐƯA LÊN NETLIFY (app.netlify.com) -->
   <div id="netlifyGuideModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden">

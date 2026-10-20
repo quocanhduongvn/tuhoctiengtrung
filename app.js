@@ -608,12 +608,16 @@ function drawGridGuidelines(canvas, ctx) {
 function startStroke(e, canvas) {
   isDrawing = true;
   const rect = canvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+  const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+  const x = (clientX - rect.left) * scaleX;
+  const y = (clientY - rect.top) * scaleY;
 
   canvasCtx.beginPath();
   canvasCtx.moveTo(x, y);
-  canvasCtx.strokeStyle = "#0f172a";
+  canvasCtx.strokeStyle = document.documentElement.classList.contains("dark") ? "#f8fafc" : "#0f172a";
   canvasCtx.lineWidth = 10;
   canvasCtx.lineCap = "round";
   canvasCtx.lineJoin = "round";
@@ -622,8 +626,12 @@ function startStroke(e, canvas) {
 function moveStroke(e, canvas) {
   if (!isDrawing) return;
   const rect = canvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+  const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+  const x = (clientX - rect.left) * scaleX;
+  const y = (clientY - rect.top) * scaleY;
 
   canvasCtx.lineTo(x, y);
   canvasCtx.stroke();
@@ -744,31 +752,87 @@ function renderUpcomingPlaceholder(lesson) {
 }
 
 // ==================== SỰ KIỆN GIAO DIỆN & TƯƠNG TÁC ====================
+function switchTab(targetId) {
+  // Cập nhật tab buttons trên desktop / tablet
+  const tabButtons = document.querySelectorAll(".tab-btn");
+  tabButtons.forEach(b => {
+    if (b.getAttribute("data-tab") === targetId) {
+      b.classList.add("active", "border-chineseRed-600", "text-chineseRed-600", "dark:text-chineseRed-400");
+      b.classList.remove("border-transparent", "text-slate-500");
+      b.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    } else {
+      b.classList.remove("active", "border-chineseRed-600", "text-chineseRed-600", "dark:text-chineseRed-400");
+      b.classList.add("border-transparent", "text-slate-500");
+    }
+  });
+
+  // Cập nhật tab buttons dưới thanh điều hướng di động (Mobile Bottom Nav)
+  const mobileButtons = document.querySelectorAll(".mobile-tab-btn");
+  mobileButtons.forEach(mb => {
+    if (mb.getAttribute("data-target") === targetId) {
+      mb.classList.add("text-chineseRed-600", "dark:text-chineseRed-400", "font-bold");
+      mb.classList.remove("text-slate-500", "dark:text-slate-400");
+    } else {
+      mb.classList.remove("text-chineseRed-600", "dark:text-chineseRed-400", "font-bold");
+      mb.classList.add("text-slate-500", "dark:text-slate-400");
+    }
+  });
+
+  // Hiển thị panel tương ứng
+  document.querySelectorAll(".tab-content").forEach(panel => {
+    if (panel.id === targetId) {
+      panel.classList.remove("hidden");
+      panel.classList.add("block");
+    } else {
+      panel.classList.remove("block");
+      panel.classList.add("hidden");
+    }
+  });
+}
+
 function setupEventListeners() {
   
-  // 1. Chuyển đổi Tabs
+  // 1. Chuyển đổi Tabs trên thanh trên
   const tabButtons = document.querySelectorAll(".tab-btn");
   tabButtons.forEach(btn => {
     btn.addEventListener("click", () => {
-      tabButtons.forEach(b => {
-        b.classList.remove("active", "border-chineseRed-600", "text-chineseRed-600", "dark:text-chineseRed-400");
-        b.classList.add("border-transparent", "text-slate-500");
-      });
-      btn.classList.add("active", "border-chineseRed-600", "text-chineseRed-600", "dark:text-chineseRed-400");
-      btn.classList.remove("border-transparent", "text-slate-500");
-
       const targetId = btn.getAttribute("data-tab");
-      document.querySelectorAll(".tab-content").forEach(panel => {
-        if (panel.id === targetId) {
-          panel.classList.remove("hidden");
-          panel.classList.add("block");
-        } else {
-          panel.classList.remove("block");
-          panel.classList.add("hidden");
-        }
-      });
+      switchTab(targetId);
     });
   });
+
+  // Chuyển đổi Tabs trên thanh điều hướng dưới đáy điện thoại (Mobile Bottom Nav)
+  const mobileButtons = document.querySelectorAll(".mobile-tab-btn");
+  mobileButtons.forEach(mBtn => {
+    mBtn.addEventListener("click", () => {
+      const targetId = mBtn.getAttribute("data-target");
+      if (targetId) switchTab(targetId);
+    });
+  });
+
+  // Nút mở 23 Thanh mẫu trên mobile bottom nav
+  const mobileInitialsBtn = document.getElementById("mobileInitialsBtn");
+  if (mobileInitialsBtn) {
+    mobileInitialsBtn.addEventListener("click", () => {
+      const initialsModal = document.getElementById("initialsQuickLookupModal");
+      if (initialsModal) {
+        initialsModal.classList.remove("hidden");
+        render23InitialsGrid("all", "");
+        lucide.createIcons();
+      }
+    });
+  }
+
+  // Nút mở menu danh sách 15 bài trên mobile bottom nav
+  const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+  const sidebar = document.getElementById("sidebar");
+  const backdrop = document.getElementById("sidebarBackdrop");
+  if (mobileMenuBtn && sidebar && backdrop) {
+    mobileMenuBtn.addEventListener("click", () => {
+      sidebar.classList.remove("-translate-x-full");
+      backdrop.classList.remove("hidden");
+    });
+  }
 
   // 2. Chuyển đổi Danh sách / Flashcard trong Từ Vựng
   const listModeBtn = document.getElementById("viewListModeBtn");
@@ -793,10 +857,44 @@ function setupEventListeners() {
     });
   }
 
-  // 3. Lật Flashcard 3D
+  // 3. Lật Flashcard 3D & Vuốt chạm trên điện thoại (Touch Swipe Gestures)
   const activeCard = document.getElementById("activeFlashcard");
+  const lesson = HSK1_DATA.lessons.find(l => l.id === appState.currentLessonId);
+
   if (activeCard) {
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let isSwiping = false;
+
+    activeCard.addEventListener("touchstart", (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+      touchStartY = e.changedTouches[0].screenY;
+      isSwiping = false;
+    }, { passive: true });
+
+    activeCard.addEventListener("touchend", (e) => {
+      const touchEndX = e.changedTouches[0].screenX;
+      const touchEndY = e.changedTouches[0].screenY;
+      const deltaX = touchEndX - touchStartX;
+      const deltaY = touchEndY - touchStartY;
+
+      // Nếu vuốt ngang rõ rệt (> 45px và ngang nhiều hơn dọc)
+      if (Math.abs(deltaX) > 45 && Math.abs(deltaX) > Math.abs(deltaY) * 1.3) {
+        isSwiping = true;
+        const total = lesson.vocab ? lesson.vocab.length : 15;
+        if (deltaX < 0) {
+          // Vuốt sang trái ➔ Thẻ tiếp theo
+          appState.activeFlashcardIndex = (appState.activeFlashcardIndex + 1) % total;
+        } else {
+          // Vuốt sang phải ➔ Thẻ trước đó
+          appState.activeFlashcardIndex = (appState.activeFlashcardIndex - 1 + total) % total;
+        }
+        updateFlashcardUI();
+      }
+    }, { passive: true });
+
     activeCard.addEventListener("click", () => {
+      if (isSwiping) return; // Nếu vừa vuốt chuyển thẻ thì không lật
       appState.isCardFlipped = !appState.isCardFlipped;
       if (appState.isCardFlipped) {
         activeCard.classList.add("is-flipped");
