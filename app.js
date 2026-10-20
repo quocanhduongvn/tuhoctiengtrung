@@ -1178,13 +1178,21 @@ function setupEventListeners() {
 
   // 14. Netlify Guide Modal
   const openNetlifyBtn = document.getElementById("openNetlifyGuideBtn");
+  const drawerNetlifyBtn = document.getElementById("drawerNetlifyBtn");
   const closeNetlifyBtn = document.getElementById("closeNetlifyModalBtn");
   const closeNetlifyBottomBtn = document.getElementById("closeNetlifyModalBottomBtn");
   const netlifyModal = document.getElementById("netlifyGuideModal");
 
-  if (openNetlifyBtn && netlifyModal) {
-    openNetlifyBtn.addEventListener("click", () => netlifyModal.classList.remove("hidden"));
-  }
+  const showNetlifyModal = () => {
+    if (netlifyModal) netlifyModal.classList.remove("hidden");
+    if (sidebar && backdrop) {
+      sidebar.classList.add("-translate-x-full");
+      backdrop.classList.add("hidden");
+    }
+  };
+
+  if (openNetlifyBtn) openNetlifyBtn.addEventListener("click", showNetlifyModal);
+  if (drawerNetlifyBtn) drawerNetlifyBtn.addEventListener("click", showNetlifyModal);
   if (closeNetlifyBtn && netlifyModal) {
     closeNetlifyBtn.addEventListener("click", () => netlifyModal.classList.add("hidden"));
   }
@@ -1194,15 +1202,23 @@ function setupEventListeners() {
 
   // 15. Backup & Restore Modal
   const openBackupBtn = document.getElementById("openBackupModalBtn");
+  const drawerBackupBtn = document.getElementById("drawerBackupBtn");
   const closeBackupBtn = document.getElementById("closeBackupModalBtn");
   const backupModal = document.getElementById("backupModal");
   const exportBtn = document.getElementById("exportDataBtn");
   const importInput = document.getElementById("importDataInput");
   const resetBtn = document.getElementById("resetAllDataBtn");
 
-  if (openBackupBtn && backupModal) {
-    openBackupBtn.addEventListener("click", () => backupModal.classList.remove("hidden"));
-  }
+  const showBackupModal = () => {
+    if (backupModal) backupModal.classList.remove("hidden");
+    if (sidebar && backdrop) {
+      sidebar.classList.add("-translate-x-full");
+      backdrop.classList.add("hidden");
+    }
+  };
+
+  if (openBackupBtn) openBackupBtn.addEventListener("click", showBackupModal);
+  if (drawerBackupBtn) drawerBackupBtn.addEventListener("click", showBackupModal);
   if (closeBackupBtn && backupModal) {
     closeBackupBtn.addEventListener("click", () => backupModal.classList.add("hidden"));
   }

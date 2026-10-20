@@ -53,42 +53,44 @@
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
 
   <!-- TOP NAVBAR -->
-  <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+  <header class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-2">
       
       <!-- Logo & Brand -->
-      <div class="flex items-center space-x-3">
-        <button id="sidebarToggleBtn" class="lg:hidden p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none">
-          <i data-lucide="menu" class="w-6 h-6"></i>
+      <div class="flex items-center space-x-2 sm:space-x-3 shrink-0">
+        <button id="sidebarToggleBtn" class="lg:hidden p-1.5 sm:p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none" title="Mở danh sách bài">
+          <i data-lucide="menu" class="w-5 h-5 sm:w-6 sm:h-6"></i>
         </button>
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-chineseRed-700 to-chineseRed-500 flex items-center justify-center text-white font-bold text-xl shadow-md font-hanzi">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-chineseRed-700 to-chineseRed-500 flex items-center justify-center text-white font-bold text-base sm:text-xl shadow-md font-hanzi shrink-0">
           学
         </div>
         <div>
-          <div class="flex items-center space-x-2">
-            <h1 class="text-lg font-bold tracking-tight text-slate-900 dark:text-white">TỰ HỌC TIẾNG TRUNG</h1>
-            <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-chineseRed-100 text-chineseRed-700 dark:bg-chineseRed-950/60 dark:text-chineseRed-400 border border-chineseRed-200 dark:border-chineseRed-800">HSK 1</span>
+          <div class="flex items-center space-x-1.5 sm:space-x-2">
+            <h1 class="text-sm sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white truncate">TỰ HỌC TIẾNG TRUNG</h1>
+            <span class="px-1.5 py-0.5 text-[10px] sm:text-xs font-semibold rounded-full bg-chineseRed-100 text-chineseRed-700 dark:bg-chineseRed-950/60 dark:text-chineseRed-400 border border-chineseRed-200 dark:border-chineseRed-800">HSK 1</span>
           </div>
-          <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">Theo bài giảng Thầy Thành Luân • Tự học & Ôn tập khi quên</p>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 hidden md:block">Theo bài giảng Thầy Thành Luân • Tự học & Ôn tập khi quên</p>
         </div>
       </div>
 
       <!-- Action Buttons & Stats -->
-      <div class="flex items-center space-x-2 sm:space-x-3">
+      <div class="flex items-center space-x-1.5 sm:space-x-3 shrink-0">
         
         <!-- Nút Cài đặt App cho điện thoại -->
-        <button id="openInstallModalBtn" class="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-bold rounded-xl bg-gradient-to-r from-chineseRed-600 to-amber-600 hover:from-chineseRed-700 hover:to-amber-700 text-white shadow-sm transition">
-          <i data-lucide="smartphone" class="w-4 h-4"></i>
-          <span>Cài App</span>
+        <button id="openInstallModalBtn" class="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-bold rounded-xl bg-gradient-to-r from-chineseRed-600 to-amber-600 hover:from-chineseRed-700 hover:to-amber-700 text-white shadow-sm transition shrink-0" title="Cài app vào màn hình chính điện thoại">
+          <i data-lucide="smartphone" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+          <span class="hidden xs:inline">Cài App</span>
+          <span class="xs:hidden">Cài</span>
         </button>
 
         <!-- Nút Tra Nhanh 23 Thanh Mẫu -->
-        <button id="openInitialsQuickLookupBtn" class="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-bold rounded-xl bg-chineseRed-50 text-chineseRed-600 hover:bg-chineseRed-100 dark:bg-chineseRed-950/60 dark:text-chineseRed-300 dark:hover:bg-chineseRed-900/60 border border-chineseRed-200 dark:border-chineseRed-800 shadow-sm transition">
-          <i data-lucide="zap" class="w-4 h-4 text-chineseRed-600 dark:text-chineseRed-400"></i>
-          <span class="font-semibold">Tra 23 Thanh Mẫu</span>
+        <button id="openInitialsQuickLookupBtn" class="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-bold rounded-xl bg-chineseRed-50 text-chineseRed-600 hover:bg-chineseRed-100 dark:bg-chineseRed-950/60 dark:text-chineseRed-300 dark:hover:bg-chineseRed-900/60 border border-chineseRed-200 dark:border-chineseRed-800 shadow-sm transition shrink-0" title="Tra nhanh 23 thanh mẫu">
+          <i data-lucide="zap" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-chineseRed-600 dark:text-chineseRed-400"></i>
+          <span class="hidden sm:inline font-semibold">Tra 23 Thanh Mẫu</span>
+          <span class="sm:hidden font-semibold">23 Âm</span>
         </button>
 
-        <!-- Tiến độ học tập tóm tắt -->
+        <!-- Tiến độ học tập tóm tắt (Desktop) -->
         <div class="hidden md:flex items-center space-x-3 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
           <i data-lucide="award" class="w-4 h-4 text-imperialGold-500"></i>
           <div class="text-xs">
@@ -100,20 +102,20 @@
           </div>
         </div>
 
-        <!-- Hướng dẫn Netlify -->
-        <button id="openNetlifyGuideBtn" class="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-300 dark:hover:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-800 transition">
+        <!-- Hướng dẫn Netlify (Ẩn trên mobile để tiết kiệm diện tích, có trong menu drawer) -->
+        <button id="openNetlifyGuideBtn" class="hidden md:flex items-center space-x-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-300 dark:hover:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-800 transition">
           <i data-lucide="cloud-upload" class="w-4 h-4"></i>
-          <span class="hidden sm:inline">Đưa lên Netlify</span>
+          <span>Đưa lên Netlify</span>
         </button>
 
-        <!-- Sao lưu & Khôi phục -->
-        <button id="openBackupModalBtn" class="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 title='Sao lưu / Khôi phục dữ liệu'" title="Sao lưu / Khôi phục">
+        <!-- Sao lưu & Khôi phục (Desktop) -->
+        <button id="openBackupModalBtn" class="hidden md:flex p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" title="Sao lưu / Khôi phục">
           <i data-lucide="hard-drive-download" class="w-5 h-5"></i>
         </button>
 
         <!-- Toggle Dark/Light Mode -->
-        <button id="themeToggleBtn" class="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" title="Chuyển chế độ Sáng / Tối">
-          <i id="themeIcon" data-lucide="moon" class="w-5 h-5"></i>
+        <button id="themeToggleBtn" class="p-1.5 sm:p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition shrink-0" title="Chuyển chế độ Sáng / Tối">
+          <i id="themeIcon" data-lucide="moon" class="w-4 h-4 sm:w-5 sm:h-5"></i>
         </button>
       </div>
 
@@ -134,6 +136,18 @@
         </h2>
         <button id="closeSidebarBtn" class="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">
           <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Quick Action Buttons on Mobile Drawer -->
+      <div class="grid grid-cols-2 gap-2 my-3 lg:hidden">
+        <button id="drawerBackupBtn" class="flex items-center gap-1.5 p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold hover:bg-slate-200 transition">
+          <i data-lucide="hard-drive-download" class="w-3.5 h-3.5 text-chineseRed-600"></i>
+          <span>Sao lưu dữ liệu</span>
+        </button>
+        <button id="drawerNetlifyBtn" class="flex items-center gap-1.5 p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-xs font-semibold hover:bg-emerald-100 transition">
+          <i data-lucide="cloud-upload" class="w-3.5 h-3.5 text-emerald-600"></i>
+          <span>Đưa lên Netlify</span>
         </button>
       </div>
 
@@ -924,7 +938,7 @@
 
       <!-- Quick Initials Grid View -->
       <div class="flex-1 overflow-y-auto pr-1">
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3" id="initialsModalGrid">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3" id="initialsModalGrid">
           <!-- Injected via JavaScript -->
         </div>
       </div>

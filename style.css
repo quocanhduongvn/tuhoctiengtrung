@@ -217,8 +217,38 @@ body {
   opacity: 0.2;
 }
 
-/* Touch targets optimization */
+/* Touch targets & Mobile UX optimization */
 button, select, input, .cursor-pointer {
   touch-action: manipulation;
+}
+
+@media (max-width: 640px) {
+  /* Ngăn chặn iOS tự phóng to màn hình khi focus vào ô tìm kiếm */
+  input[type="text"], textarea {
+    font-size: 16px !important;
+  }
+  
+  /* Giảm kích thước flashcard vừa vặn màn hình điện thoại nhỏ */
+  .flashcard-inner {
+    min-height: 280px;
+  }
+  
+  /* Căn lề thẻ bài học gọn gàng */
+  .tab-content {
+    animation: fadeIn 0.2s ease-in-out;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Hiệu ứng chạm phản hồi nhẹ trên mobile */
+.mobile-tab-btn:active,
+.tab-btn:active,
+button:active {
+  transform: scale(0.97);
+  transition: transform 0.1s ease;
 }
 
