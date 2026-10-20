@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="vi" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tự Học Tiếng Trung HSK 1 - Sổ Tay & Ôn Tập Trực Tuyến</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            chineseRed: {
+              50: '#fef2f2',
+              100: '#fee2e2',
+              200: '#fecaca',
+              500: '#ef4444',
+              600: '#dc2626',
+              700: '#b91c1c',
+              800: '#991b1b',
+              900: '#7f1d1d',
+            },
+            imperialGold: {
+              400: '#fbbf24',
+              500: '#f59e0b',
+              600: '#d97706',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+  <!-- TOP NAVBAR -->
+  <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Logo & Brand -->
+      <div class="flex items-center space-x-3">
+        <button id="sidebarToggleBtn" class="lg:hidden p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-chineseRed-700 to-chineseRed-500 flex items-center justify-center text-white font-bold text-xl shadow-md font-hanzi">
+          学
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-lg font-bold tracking-tight text-slate-900 dark:text-white">TỰ HỌC TIẾNG TRUNG</h1>
+            <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-chineseRed-100 text-chineseRed-700 dark:bg-chineseRed-950/60 dark:text-chineseRed-400 border border-chineseRed-200 dark:border-chineseRed-800">HSK 1</span>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">Theo bài giảng Thầy Thành Luân • Tự học & Ôn tập khi quên</p>
+        </div>
+      </div>
+
+      <!-- Action Buttons & Stats -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        
+        <!-- Tiến độ học tập tóm tắt -->
+        <div class="hidden md:flex items-center space-x-3 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
+          <i data-lucide="award" class="w-4 h-4 text-imperialGold-500"></i>
+          <div class="text-xs">
+            <span class="text-slate-500 dark:text-slate-400">Từ vựng đã thuộc: </span>
+            <span id="navVocabMasteredCount" class="font-bold text-chineseRed-600 dark:text-chineseRed-400">0/15</span>
+          </div>
+          <div class="w-16 bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+            <div id="navProgressBar" class="bg-chineseRed-600 h-full w-0 transition-all duration-300"></div>
+          </div>
+        </div>
+
+        <!-- Hướng dẫn Netlify -->
+        <button id="openNetlifyGuideBtn" class="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-300 dark:hover:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-800 transition">
+          <i data-lucide="cloud-upload" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">Đưa lên Netlify</span>
+        </button>
+
+        <!-- Sao lưu & Khôi phục -->
+        <button id="openBackupModalBtn" class="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 title='Sao lưu / Khôi phục dữ liệu'" title="Sao lưu / Khôi phục">
+          <i data-lucide="hard-drive-download" class="w-5 h-5"></i>
+        </button>
+
+        <!-- Toggle Dark/Light Mode -->
+        <button id="themeToggleBtn" class="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" title="Chuyển chế độ Sáng / Tối">
+          <i id="themeIcon" data-lucide="moon" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN APP CONTAINER -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1 flex flex-col lg:flex-row gap-6">
+
+    <!-- SIDEBAR / DANH SÁCH BÀI HỌC -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-80 bg-white dark:bg-slate-900 p-5 shadow-2xl lg:shadow-none lg:static lg:w-80 lg:p-0 lg:bg-transparent lg:dark:bg-transparent flex flex-col transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+      
+      <!-- Sidebar Header (Mobile) -->
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800 lg:hidden">
+        <h2 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <i data-lucide="book-open" class="w-5 h-5 text-chineseRed-600"></i>
+          Danh sách 15 Bài HSK 1
+        </h2>
+        <button id="closeSidebarBtn" class="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Quick Stats Card in Sidebar (Desktop) -->
+      <div class="hidden lg:block bg-gradient-to-br from-chineseRed-600 to-chineseRed-800 text-white rounded-2xl p-4 shadow-md mb-4">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs uppercase tracking-wider text-chineseRed-100 font-semibold">Lộ trình HSK 1</span>
+          <span class="px-2 py-0.5 text-xs bg-white/20 rounded-full font-medium" id="sideCompletedBadge">1/15 Đang học</span>
+        </div>
+        <p class="text-sm text-chineseRed-50 mb-3">Tự học chuẩn phát âm & nhớ chữ Hán qua bài giảng Thầy Thành Luân</p>
+        <div class="w-full bg-chineseRed-950/40 rounded-full h-2 mb-1 overflow-hidden">
+          <div id="sideProgressBar" class="bg-imperialGold-400 h-2 rounded-full w-1/15 transition-all duration-300"></div>
+        </div>
+      </div>
+
+      <!-- Search / Filter Lesson -->
+      <div class="relative my-3 lg:my-0 lg:mb-3">
+        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+        <input type="text" id="lessonSearchInput" placeholder="Tìm kiếm bài học..." class="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-chineseRed-500">
+      </div>
+
+      <!-- Scrollable Lesson List -->
+      <div class="flex-1 overflow-y-auto space-y-2 pr-1" id="lessonListContainer">
+        <!-- Injected via JavaScript -->
+      </div>
+
+      <!-- Playlist Link -->
+      <div class="pt-4 mt-auto border-t border-slate-200 dark:border-slate-800">
+        <a href="https://www.youtube.com/playlist?list=PLkDxGl-gi2racE5ND8L9HP_xsAl9qLxSG" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700/80 transition text-xs text-slate-700 dark:text-slate-300">
+          <div class="flex items-center gap-2">
+            <i data-lucide="youtube" class="w-4 h-4 text-red-600"></i>
+            <span class="font-medium">Mở toàn bộ Playlist YouTube</span>
+          </div>
+          <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400"></i>
+        </a>
+      </div>
+
+    </aside>
+
+    <!-- BACKDROP CHO MOBILE SIDEBAR -->
+    <div id="sidebarBackdrop" class="fixed inset-0 bg-slate-900/50 z-40 hidden lg:hidden backdrop-blur-sm"></div>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-1 min-w-0">
+
+      <!-- CURRENT LESSON HEADER CARD -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm mb-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-chineseRed-100 text-chineseRed-700 dark:bg-chineseRed-950 dark:text-chineseRed-300 border border-chineseRed-200 dark:border-chineseRed-800" id="currentLessonBadge">
+                Bài 1
+              </span>
+              <span class="text-xs text-slate-500 dark:text-slate-400 font-medium" id="currentLessonStatusText">
+                Đang học
+              </span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2" id="currentLessonTitle">
+              Bài 1: 你好 - Xin chào!
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1" id="currentLessonDesc">
+              Làm quen với Ngữ âm tiếng Trung (Pinyin), 11 Thanh mẫu, 15 Vận mẫu, 4 Thanh điệu, Quy tắc biến điệu thanh 3 và 15 từ vựng chào hỏi cơ bản.
+            </p>
+          </div>
+
+          <!-- Mark Complete Toggle Button -->
+          <div class="flex items-center gap-2 self-start sm:self-auto shrink-0">
+            <button id="toggleLessonCompleteBtn" class="flex items-center gap-1.5 px-4 py-2 text-xs font-medium rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+              <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
+              <span id="lessonCompleteBtnText">Đánh dấu đã hoàn thành</span>
+            </button>
+            <button id="quickReviewBtn" class="flex items-center gap-1.5 px-4 py-2 text-xs font-medium rounded-xl bg-chineseRed-600 hover:bg-chineseRed-700 text-white shadow-sm transition">
+              <i data-lucide="zap" class="w-4 h-4"></i>
+              <span>Ôn tập nhanh</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- TABS NAVIGATION -->
+        <div class="mt-6 border-b border-slate-200 dark:border-slate-800 flex overflow-x-auto gap-2 no-scrollbar" id="tabNavButtons">
+          <button class="tab-btn active px-4 py-2.5 text-xs sm:text-sm font-medium border-b-2 border-chineseRed-600 text-chineseRed-600 dark:text-chineseRed-400 flex items-center gap-2 shrink-0 transition" data-tab="tab-video">
+            <i data-lucide="tv" class="w-4 h-4"></i>
+            <span>Bài giảng Video</span>
+          </button>
+          <button class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 flex items-center gap-2 shrink-0 transition" data-tab="tab-phonetics">
+            <i data-lucide="mic" class="w-4 h-4"></i>
+            <span>Ngữ âm Pinyin</span>
+          </button>
+          <button class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 flex items-center gap-2 shrink-0 transition" data-tab="tab-vocab">
+            <i data-lucide="layers" class="w-4 h-4"></i>
+            <span>Từ vựng & Flashcards</span>
+          </button>
+          <button class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 flex items-center gap-2 shrink-0 transition" data-tab="tab-dialogues">
+            <i data-lucide="messages-square" class="w-4 h-4"></i>
+            <span>Hội thoại mẫu</span>
+          </button>
+          <button class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 flex items-center gap-2 shrink-0 transition" data-tab="tab-writing">
+            <i data-lucide="pen-tool" class="w-4 h-4"></i>
+            <span>Nét bút & Tập viết</span>
+          </button>
+          <button class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 flex items-center gap-2 shrink-0 transition" data-tab="tab-quiz">
+            <i data-lucide="help-circle" class="w-4 h-4"></i>
+            <span>Trắc nghiệm kiểm tra</span>
+          </button>
+          <button class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 flex items-center gap-2 shrink-0 transition" data-tab="tab-notes">
+            <i data-lucide="edit-3" class="w-4 h-4"></i>
+            <span>Ghi chú của tôi</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- TAB CONTENT PANELS -->
+
+      <!-- TAB 1: BÀI GIẢNG VIDEO -->
+      <section id="tab-video" class="tab-content block">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Video Player Iframe -->
+          <div class="lg:col-span-2 space-y-4">
+            <div class="aspect-video w-full rounded-2xl overflow-hidden bg-black shadow-lg border border-slate-200 dark:border-slate-800 relative">
+              <iframe id="youtubePlayer" class="w-full h-full" src="https://www.youtube.com/embed/EpSs4cdSML0?enablejsapi=1" title="Bài giảng Thầy Thành Luân" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+
+            <div class="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+              <div>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Giảng viên giảng dạy</p>
+                <p class="text-sm font-bold text-slate-800 dark:text-slate-200">Thầy Thành Luân - Giáo Trình Chuẩn HSK 1</p>
+              </div>
+              <a id="externalYoutubeLink" href="https://www.youtube.com/watch?v=EpSs4cdSML0" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 text-xs font-medium dark:bg-red-950/40 dark:text-red-400 border border-red-200 dark:border-red-800 transition">
+                <i data-lucide="youtube" class="w-4 h-4"></i>
+                <span>Xem trên YouTube</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Mốc thời gian (Timestamps) -->
+          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm flex flex-col">
+            <h3 class="font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-3 text-sm">
+              <i data-lucide="clock" class="w-4 h-4 text-chineseRed-600"></i>
+              Mốc thời gian nội dung bài học
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">Nhấp vào từng mốc để tua nhanh đến phần thầy giảng trong video:</p>
+            
+            <div class="space-y-2 overflow-y-auto max-h-[360px] pr-1" id="timecodesContainer">
+              <!-- Injected via JavaScript -->
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- TAB 2: NGỮ ÂM & PINYIN -->
+      <section id="tab-phonetics" class="tab-content hidden space-y-6">
+        
+        <!-- Giới thiệu hệ thống Ngữ âm tiếng Trung -->
+        <div class="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-2xl p-4 sm:p-5">
+          <div class="flex items-start gap-3">
+            <i data-lucide="info" class="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5"></i>
+            <div>
+              <h4 class="font-bold text-amber-900 dark:text-amber-200 text-sm sm:text-base">Quy tắc vàng về cấu tạo một âm tiết tiếng Trung (Pinyin)</h4>
+              <p class="text-xs sm:text-sm text-amber-800 dark:text-amber-300 mt-1 leading-relaxed">
+                Một âm tiết tiếng Trung hoàn chỉnh gồm 3 thành phần: 
+                <span class="font-semibold bg-white dark:bg-slate-800 px-1.5 py-0.5 rounded border border-amber-300 dark:border-amber-700">Thanh mẫu (Phụ âm đầu)</span> + 
+                <span class="font-semibold bg-white dark:bg-slate-800 px-1.5 py-0.5 rounded border border-amber-300 dark:border-amber-700">Vận mẫu (Nguyên âm & Vần)</span> + 
+                <span class="font-semibold bg-white dark:bg-slate-800 px-1.5 py-0.5 rounded border border-amber-300 dark:border-amber-700">Thanh điệu (Dấu giọng)</span>.
+                <br>Ví dụ: <strong>nǐ</strong> gồm thanh mẫu <strong>n</strong> + vận mẫu <strong>i</strong> + mang thanh 3 (<strong>ǎ</strong>).
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 11 Thanh Mẫu Trong Bài 1 -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-chineseRed-600"></span>
+                11 Thanh mẫu cơ bản của Bài 1 (声母)
+              </h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Bấm vào từng âm để nghe giọng đọc bản ngữ và xem mẹo phát âm</p>
+            </div>
+            <span class="text-xs font-semibold px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">11 Âm</span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3" id="initialsContainer">
+            <!-- Injected via JavaScript -->
+          </div>
+        </div>
+
+        <!-- 15 Vận Mẫu Trong Bài 1 -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-imperialGold-500"></span>
+                15 Vận mẫu cơ bản của Bài 1 (韵母)
+              </h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Vận mẫu đơn và vận mẫu kép có đuôi nguyên âm, âm mũi</p>
+            </div>
+            <span class="text-xs font-semibold px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">15 Âm</span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3" id="finalsContainer">
+            <!-- Injected via JavaScript -->
+          </div>
+        </div>
+
+        <!-- 4 Thanh Điệu & Biểu đồ cao độ -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                4 Thanh điệu cơ bản (声调) & Khinh thanh
+              </h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Tiếng Trung là ngôn ngữ thanh điệu, sai thanh điệu sẽ đổi hoàn toàn ý nghĩa!</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="tonesContainer">
+            <!-- Injected via JavaScript -->
+          </div>
+        </div>
+
+        <!-- Quy tắc biến điệu quan trọng -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+          <h3 class="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2 mb-4">
+            <i data-lucide="alert-triangle" class="w-5 h-5 text-chineseRed-600"></i>
+            Quy tắc biến điệu bắt buộc phải thuộc lòng
+          </h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="toneRulesContainer">
+            <!-- Injected via JavaScript -->
+          </div>
+        </div>
+
+      </section>
+
+      <!-- TAB 3: TỪ VỰNG & FLASHCARDS -->
+      <section id="tab-vocab" class="tab-content hidden space-y-6">
+        
+        <!-- Controls Bar -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <button id="viewListModeBtn" class="flex-1 sm:flex-initial px-3 py-1.5 text-xs font-medium rounded-lg bg-chineseRed-600 text-white flex items-center justify-center gap-1.5 transition">
+              <i data-lucide="list" class="w-4 h-4"></i>
+              <span>Danh sách</span>
+            </button>
+            <button id="viewFlashcardModeBtn" class="flex-1 sm:flex-initial px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center gap-1.5 transition">
+              <i data-lucide="copy" class="w-4 h-4"></i>
+              <span>Lật thẻ Flashcard (3D)</span>
+            </button>
+          </div>
+
+          <!-- Filter buttons -->
+          <div class="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
+            <span class="text-xs text-slate-400 hidden md:inline">Lọc:</span>
+            <button class="vocab-filter-btn active px-2.5 py-1 text-xs rounded-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200" data-filter="all">Tất cả (<span id="countAllVocab">15</span>)</button>
+            <button class="vocab-filter-btn px-2.5 py-1 text-xs rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200" data-filter="mastered">Đã thuộc (<span id="countMasteredVocab">0</span>)</button>
+            <button class="vocab-filter-btn px-2.5 py-1 text-xs rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200" data-filter="learning">Cần ôn lại (<span id="countLearningVocab">15</span>)</button>
+          </div>
+        </div>
+
+        <!-- VIEW MODE 1: LIST TABLE / CARDS -->
+        <div id="vocabListModeView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Injected via JavaScript -->
+        </div>
+
+        <!-- VIEW MODE 2: INTERACTIVE 3D FLASHCARDS -->
+        <div id="vocabFlashcardModeView" class="hidden flex flex-col items-center py-6">
+          <div class="text-center mb-4">
+            <span class="text-xs text-slate-500 dark:text-slate-400">Thẻ từ vựng <span id="currentCardIndex">1</span> / <span id="totalCardCount">15</span></span>
+            <p class="text-xs text-chineseRed-600 dark:text-chineseRed-400 font-medium">Bấm vào thẻ để lật xem nghĩa & giải thích cách nhớ</p>
+          </div>
+
+          <!-- Flashcard 3D Container -->
+          <div class="w-full max-w-md h-80 perspective-1000">
+            <div id="activeFlashcard" class="flashcard-inner shadow-xl rounded-2xl">
+              <!-- Front -->
+              <div class="flashcard-front bg-white dark:bg-slate-900 border-2 border-chineseRed-200 dark:border-chineseRed-900/50 p-6 flex flex-col items-center justify-center">
+                <span class="text-xs uppercase tracking-wider text-chineseRed-600 dark:text-chineseRed-400 font-semibold mb-2" id="fcPartType">Đại từ</span>
+                <div class="font-hanzi text-6xl font-bold text-slate-900 dark:text-white mb-2" id="fcHanzi">你</div>
+                <div class="text-xl font-semibold text-chineseRed-600 dark:text-chineseRed-400 mb-3" id="fcPinyin">nǐ</div>
+                <button id="fcPlayAudioBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-chineseRed-50 text-chineseRed-600 dark:bg-chineseRed-950/60 dark:text-chineseRed-300 text-xs font-medium hover:bg-chineseRed-100 transition">
+                  <i data-lucide="volume-2" class="w-4 h-4"></i>
+                  <span>Nghe phát âm</span>
+                </button>
+              </div>
+
+              <!-- Back -->
+              <div class="flashcard-back bg-gradient-to-br from-slate-900 to-slate-800 text-white p-6 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between border-b border-slate-700 pb-2 mb-3">
+                    <span class="text-xs text-imperialGold-400 font-medium" id="fcSinoViet">Âm Hán Việt: Nhĩ</span>
+                    <span class="text-xs bg-slate-700 px-2 py-0.5 rounded text-slate-300" id="fcRadicals">Bộ: 亻</span>
+                  </div>
+                  <h4 class="text-xl font-bold text-emerald-400 mb-2" id="fcMeaning">Bạn, anh, chị, em</h4>
+                  <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/60 text-xs text-slate-300 mb-3 text-left">
+                    <span class="text-imperialGold-400 font-semibold">Mẹo ghi nhớ:</span> <span id="fcMemoryTip">Người đứng (亻) trước mặt chính là bạn.</span>
+                  </div>
+                </div>
+                <div class="text-xs text-left bg-slate-950/40 p-2.5 rounded-xl border border-slate-700/40">
+                  <span class="text-slate-400">Ví dụ: </span>
+                  <span class="font-medium text-white" id="fcExample">你好！(Nǐ hǎo!)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Flashcard Controls -->
+          <div class="flex items-center gap-3 mt-6">
+            <button id="prevCardBtn" class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+              <i data-lucide="chevron-left" class="w-5 h-5"></i>
+            </button>
+            <button id="fcToggleMasteredBtn" class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium shadow-sm transition">
+              <i data-lucide="check" class="w-4 h-4"></i>
+              <span id="fcMasteredBtnText">Đánh dấu đã thuộc</span>
+            </button>
+            <button id="nextCardBtn" class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+              <i data-lucide="chevron-right" class="w-5 h-5"></i>
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- TAB 4: HỘI THOẠI MẪU (BÀI KHÓA) -->
+      <section id="tab-dialogues" class="tab-content hidden space-y-6">
+        
+        <!-- Controls: Ẩn/Hiện Pinyin & Dịch Nghĩa để tự luyện dịch -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <i data-lucide="sparkles" class="w-4 h-4 text-imperialGold-500"></i>
+            <span class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200">Chế độ tự luyện dịch & đọc chữ Hán:</span>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <label class="flex items-center gap-2 text-xs font-medium cursor-pointer">
+              <input type="checkbox" id="togglePinyinCheckbox" checked class="rounded text-chineseRed-600 focus:ring-chineseRed-500 w-4 h-4">
+              <span>Hiện Pinyin</span>
+            </label>
+            <label class="flex items-center gap-2 text-xs font-medium cursor-pointer">
+              <input type="checkbox" id="toggleVietCheckbox" checked class="rounded text-chineseRed-600 focus:ring-chineseRed-500 w-4 h-4">
+              <span>Hiện Dịch Tiếng Việt</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="space-y-4" id="dialoguesContainer">
+          <!-- Injected via JavaScript -->
+        </div>
+
+      </section>
+
+      <!-- TAB 5: NÉT BÚT & TẬP VIẾT CHỮ HÁN -->
+      <section id="tab-writing" class="tab-content hidden space-y-6">
+        
+        <!-- Quy tắc bút thuận cơ bản -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+          <h3 class="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2 mb-3">
+            <i data-lucide="book-mark" class="w-5 h-5 text-chineseRed-600"></i>
+            7 Quy tắc Bút Thuận kinh điển (Quy tắc viết nét trước - sau)
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Nắm chắc 7 quy tắc này giúp bạn viết chữ Hán vừa nhanh, vừa cân đối và chuẩn mực:</p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" id="strokeRulesContainer">
+            <!-- Injected via JavaScript -->
+          </div>
+        </div>
+
+        <!-- 5 Nét cơ bản của Bài 1 -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+          <h3 class="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-chineseRed-600"></span>
+            5 Nét chữ Hán cơ bản đầu tiên xuất hiện trong Bài 1
+          </h3>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3" id="strokesContainer">
+            <!-- Injected via JavaScript -->
+          </div>
+        </div>
+
+        <!-- BẢNG TẬP VIẾT CHỮ HÁN TRỰC TIẾP TRÊN MÀN HÌNH (CANVAS) -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
+            <div>
+              <h3 class="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
+                <i data-lucide="palette" class="w-5 h-5 text-chineseRed-600"></i>
+                Bảng tập viết tay (Ô chữ Điền 田字格)
+              </h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Dùng chuột hoặc ngón tay (trên điện thoại/máy tính bảng) để tự tay viết chữ Hán</p>
+            </div>
+
+            <!-- Chọn chữ mẫu để luyện viết -->
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-slate-500 dark:text-slate-400">Chọn chữ mẫu:</span>
+              <select id="sampleHanziSelect" class="text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 px-3 py-1.5 focus:outline-none">
+                <option value="你">你 (Nǐ - Bạn)</option>
+                <option value="好">好 (Hǎo - Tốt)</option>
+                <option value="您">您 (Nín - Ngài)</option>
+                <option value="一">一 (Yī - Số 1)</option>
+                <option value="二">二 (Èr - Số 2)</option>
+                <option value="三">三 (Sān - Số 3)</option>
+                <option value="十">十 (Shí - Số 10)</option>
+                <option value="八">八 (Bā - Số 8)</option>
+                <option value="大">大 (Dà - Lớn)</option>
+                <option value="不">不 (Bù - Không)</option>
+                <option value="女">女 (Nǚ - Nữ)</option>
+                <option value="口">口 (Kǒu - Miệng)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex flex-col lg:flex-row items-center justify-center gap-8 py-4">
+            
+            <!-- Chữ mẫu lớn trong ô chữ Điền -->
+            <div class="flex flex-col items-center">
+              <span class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">Chữ mẫu chuẩn</span>
+              <div class="tianzige-box">
+                <div class="tianzige-diagonal-1"></div>
+                <div class="tianzige-diagonal-2"></div>
+                <span id="sampleDisplayHanzi" class="font-hanzi text-7xl font-bold text-slate-900 dark:text-white z-10">你</span>
+              </div>
+              <div class="flex items-center gap-2 mt-2">
+                <button id="playSampleAudioBtn" class="flex items-center gap-1 text-xs text-chineseRed-600 hover:text-chineseRed-700 font-medium">
+                  <i data-lucide="volume-2" class="w-3.5 h-3.5"></i>
+                  <span>Nghe đọc</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Canvas viết tay -->
+            <div class="flex flex-col items-center">
+              <span class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">Bạn tập viết vào đây</span>
+              <div class="relative rounded-xl overflow-hidden border-2 border-chineseRed-500 shadow-md">
+                <canvas id="drawingCanvas" width="280" height="280" class="block"></canvas>
+                <!-- Nét mờ chữ mẫu để tô theo (Ghost watermark) -->
+                <div id="ghostWatermark" class="absolute inset-0 flex items-center justify-center font-hanzi text-[140px] font-bold text-slate-200 dark:text-slate-700/50 pointer-events-none select-none">
+                  你
+                </div>
+              </div>
+
+              <!-- Controls Canvas -->
+              <div class="flex items-center gap-3 mt-3">
+                <button id="toggleGhostBtn" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition flex items-center gap-1">
+                  <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                  <span>Ẩn/Hiện nét mờ</span>
+                </button>
+                <button id="clearCanvasBtn" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-chineseRed-50 text-chineseRed-600 dark:bg-chineseRed-950/40 dark:text-chineseRed-300 hover:bg-chineseRed-100 transition flex items-center gap-1">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                  <span>Xóa viết lại</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </section>
+
+      <!-- TAB 6: TRẮC NGHIỆM ÔN TẬP (QUIZ) -->
+      <section id="tab-quiz" class="tab-content hidden space-y-6">
+        
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+          
+          <!-- Quiz Header -->
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
+            <div>
+              <h3 class="font-bold text-slate-900 dark:text-white text-lg flex items-center gap-2">
+                <i data-lucide="check-square" class="w-5 h-5 text-chineseRed-600"></i>
+                Trắc Nghiệm Ôn Tập Bài 1 (Kiểm tra khi quên)
+              </h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Gồm 8 câu hỏi cốt lõi về phát âm, biến điệu, nghĩa từ vựng và ngữ cảnh giao tiếp</p>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <div class="text-right">
+                <span class="text-xs text-slate-400">Điểm số hiện tại</span>
+                <p class="text-base font-bold text-chineseRed-600 dark:text-chineseRed-400" id="quizScoreText">0 / 8 câu</p>
+              </div>
+              <button id="restartQuizBtn" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition" title="Làm lại từ đầu">
+                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Question List -->
+          <div class="space-y-6 mt-6" id="quizQuestionsContainer">
+            <!-- Injected via JavaScript -->
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- TAB 7: GHI CHÚ CỦA TÔI -->
+      <section id="tab-notes" class="tab-content hidden space-y-6">
+        
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
+                <i data-lucide="file-text" class="w-5 h-5 text-chineseRed-600"></i>
+                Sổ tay ghi chú cá nhân (Bài 1)
+              </h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Tự ghi lại các mẹo nhớ của riêng bạn hoặc các từ bạn hay quên. Hệ thống tự động lưu!</p>
+            </div>
+            <span id="notesSavedStatus" class="text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+              <i data-lucide="cloud" class="w-3.5 h-3.5"></i>
+              <span>Đã lưu tự động</span>
+            </span>
+          </div>
+
+          <textarea id="personalNoteTextarea" rows="12" placeholder="Ví dụ:
+- Chú ý âm 'p' phải bật hơi rất mạnh, để tờ giấy trước miệng bay mới đúng.
+- nǐ + hǎo = ní hǎo (biến điệu 2 thanh 3).
+- Chữ 您 có thêm bộ Tâm (心) ở dưới..." class="w-full p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-chineseRed-500 leading-relaxed font-mono"></textarea>
+
+          <div class="flex items-center justify-between mt-3 text-xs text-slate-400">
+            <span>Dữ liệu được lưu an toàn trong trình duyệt của bạn (LocalStorage)</span>
+            <button id="clearNoteBtn" class="text-red-500 hover:text-red-600 transition">Xóa nội dung ghi chú</button>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- MODAL: HƯỚNG DẪN ĐƯA LÊN NETLIFY (app.netlify.com) -->
+  <div id="netlifyGuideModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 max-w-xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold">
+            <i data-lucide="cloud-lightning" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-bold text-slate-900 dark:text-white text-base">Đưa ứng dụng lên Netlify miễn phí (30 giây)</h3>
+        </div>
+        <button id="closeNetlifyModalBtn" class="p-1 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+        <p>Ứng dụng này được thiết kế theo dạng <strong>Zero-Build Static Web App</strong>, nghĩa là bạn không cần cài đặt Node.js hay chạy lệnh build phức tạp. Bạn có thể deploy lên Netlify theo 1 trong 2 cách sau:</p>
+
+        <!-- Cách 1: Netlify Drop (Siêu nhanh không cần tài khoản GitHub) -->
+        <div class="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 space-y-2">
+          <p class="font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
+            <i data-lucide="zap" class="w-4 h-4"></i>
+            Cách 1: Kéo thả trực tiếp qua Netlify Drop (Khuyên dùng)
+          </p>
+          <ol class="list-decimal list-inside space-y-1.5 text-xs text-emerald-900 dark:text-emerald-200">
+            <li>Truy cập trang web: <a href="https://app.netlify.com/drop" target="_blank" class="underline font-semibold text-emerald-600 dark:text-emerald-400">app.netlify.com/drop</a> (Đăng nhập miễn phí).</li>
+            <li>Mở thư mục dự án trên máy tính: <code>E:\TOI-TU-HOC</code>.</li>
+            <li>Kéo toàn bộ thư mục này và thả vào ô vuông trên trang Netlify Drop.</li>
+            <li>Netlify sẽ cấp ngay một tên miền miễn phí dạng: <code>tu-hoc-tieng-trung.netlify.app</code> để bạn lưu vào Bookmark điện thoại hoặc máy tính ôn tập mọi lúc mọi nơi!</li>
+          </ol>
+        </div>
+
+        <!-- Cách 2: Kết nối GitHub -->
+        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-2">
+          <p class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+            <i data-lucide="git-branch" class="w-4 h-4 text-chineseRed-500"></i>
+            Cách 2: Đẩy lên GitHub rồi kết nối Netlify (Tự động cập nhật)
+          </p>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Tạo repository trên GitHub, push mã nguồn từ <code>E:\TOI-TU-HOC</code> lên. Sau đó trên Netlify chọn <strong>"Add new site" ➔ "Import an existing project" ➔ Chọn GitHub</strong>. Mỗi lần bạn học xong bài mới và commit, Netlify sẽ tự động cập nhật!
+          </p>
+        </div>
+      </div>
+
+      <div class="pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-end">
+        <button id="closeNetlifyModalBottomBtn" class="px-4 py-2 text-xs font-semibold rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 hover:opacity-90 transition">
+          Đã hiểu & Đóng
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: SAO LƯU & KHÔI PHỤC DỮ LIỆU -->
+  <div id="backupModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+        <h3 class="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
+          <i data-lucide="database" class="w-5 h-5 text-chineseRed-600"></i>
+          Sao lưu & Khôi phục tiến độ
+        </h3>
+        <button id="closeBackupModalBtn" class="p-1 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4 text-xs sm:text-sm">
+        <p class="text-slate-600 dark:text-slate-300">
+          Tiến độ học tập, các từ đã thuộc và ghi chú cá nhân của bạn được lưu trong trình duyệt. Bạn có thể xuất file sao lưu để chuyển sang thiết bị khác mà không lo mất bài!
+        </p>
+
+        <div class="grid grid-cols-2 gap-3">
+          <button id="exportDataBtn" class="flex flex-col items-center justify-center p-4 rounded-2xl bg-chineseRed-50 text-chineseRed-700 dark:bg-chineseRed-950/40 dark:text-chineseRed-300 border border-chineseRed-200 dark:border-chineseRed-800 hover:bg-chineseRed-100 transition gap-2">
+            <i data-lucide="download" class="w-6 h-6"></i>
+            <span class="font-bold text-xs">Tải file Backup (.json)</span>
+          </button>
+
+          <label class="flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:bg-slate-200 transition gap-2 cursor-pointer">
+            <i data-lucide="upload" class="w-6 h-6"></i>
+            <span class="font-bold text-xs">Khôi phục từ file</span>
+            <input type="file" id="importDataInput" accept=".json" class="hidden">
+          </label>
+        </div>
+
+        <button id="resetAllDataBtn" class="w-full text-center text-xs text-red-500 hover:underline pt-2">
+          Đặt lại toàn bộ dữ liệu về mặc định ban đầu
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT FILES -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>
