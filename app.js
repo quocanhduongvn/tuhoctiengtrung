@@ -1283,7 +1283,7 @@ function setupEventListeners() {
     });
   }
 
-  // Lọc theo nhóm
+  // Lọc theo nhóm 23 Thanh Mẫu
   document.querySelectorAll(".initials-group-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".initials-group-btn").forEach(b => {
@@ -1292,6 +1292,68 @@ function setupEventListeners() {
       btn.className = "initials-group-btn active px-2.5 py-1 text-xs rounded-lg bg-chineseRed-600 text-white font-medium shrink-0";
       currentInitialsGroup = btn.getAttribute("data-group");
       render23InitialsGrid(currentInitialsGroup, initialsSearchInput ? initialsSearchInput.value.trim() : "");
+      refreshIcons();
+    });
+  });
+
+  // 17. Modal Cài Đặt App Cho Điện Thoại (PWA)
+  const openInstallBtn = document.getElementById("openInstallModalBtn");
+  const closeInstallBtn = document.getElementById("closeInstallModalBtn");
+  const closeInstallBottomBtn = document.getElementById("closeInstallModalBottomBtn");
+  const pwaModal = document.getElementById("pwaInstallModal");
+  const pwaTriggerBtn = document.getElementById("pwaInstallTriggerBtn");
+
+  if (openInstallBtn && pwaModal) {
+    openInstallBtn.addEventListener("click", () => {
+      pwaModal.classList.remove("hidden");
+    });
+  }
+  if (closeInstallBtn && pwaModal) {
+    closeInstallBtn.addEventListener("click", () => pwaModal.classList.add("hidden"));
+  }
+  if (closeInstallBottomBtn && pwaModal) {
+    closeInstallBottomBtn.addEventListener("click", () => pwaModal.classList.add("hidden"));
+  }
+
+  // Sự kiện kích hoạt cài đặt PWA bản địa (Android/Chrome/Edge)
+  let deferredPrompt = null;
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+  });
+
+  if (pwaTriggerBtn) {
+    pwaTriggerBtn.addEventListener("click", async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === "accepted") {
+          if (pwaModal) pwaModal.classList.add("hidden");
+        }
+        deferredPrompt = null;
+      } else {
+        alert("Để cài đặt trên thiết bị của bạn:\n- Trên Chrome/Edge Android: Nhấn vào menu 3 chấm ở góc trên rồi chọn 'Cài đặt ứng dụng' hoặc 'Thêm vào màn hình chính'.\n- Trên iPhone (Safari): Nhấn nút Chia sẻ (hình vuông có mũi tên) rồi chọn 'Thêm vào MH chính'.");
+      }
+    });
+  }
+
+  // 18. Lọc & Tìm kiếm Mẫu Câu Giao Tiếp Cấp Tốc
+  const expressSearchInput = document.getElementById("expressSearchInput");
+  if (expressSearchInput) {
+    expressSearchInput.addEventListener("input", (e) => {
+      renderExpressPhrasesGrid(currentExpressCategory, e.target.value.trim());
+      refreshIcons();
+    });
+  }
+
+  document.querySelectorAll(".express-filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".express-filter-btn").forEach(b => {
+        b.className = "express-filter-btn px-3 py-1.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0";
+      });
+      btn.className = "express-filter-btn active px-3 py-1.5 text-xs rounded-xl bg-chineseRed-600 text-white font-semibold shrink-0";
+      currentExpressCategory = btn.getAttribute("data-cat");
+      renderExpressPhrasesGrid(currentExpressCategory, expressSearchInput ? expressSearchInput.value.trim() : "");
       refreshIcons();
     });
   });
@@ -1355,10 +1417,74 @@ function render23InitialsGrid(filterGroup = "all", searchText = "") {
   `).join("");
 }
 
+// ==================== BỘ MẪU CÂU GIAO TIẾP HỌC CẤP TỐC ====================
+let currentExpressCategory = "all";
+
+function renderExpressPhrasesGrid(filterCategory = "all", searchText = "") {
+  const container = document.getElementById("expressPhrasesGrid");
+  if (!container || !HSK1_DATA.expressPhrases) return;
+
+  const q = searchText.toLowerCase();
+  const filtered = HSK1_DATA.expressPhrases.filter(item => {
+    const matchCat = filterCategory === "all" || item.category === filterCategory;
+    const matchSearch = !searchText ||
+      item.hanzi.toLowerCase().includes(q) ||
+      item.pinyin.toLowerCase().includes(q) ||
+      item.phoneticVi.toLowerCase().includes(q) ||
+      item.viet.toLowerCase().includes(q) ||
+      item.category.toLowerCase().includes(q) ||
+      (item.context && item.context.toLowerCase().includes(q));
+    return matchCat && matchSearch;
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div class="col-span-full py-12 text-center text-xs text-slate-400">
+        Không tìm thấy mẫu câu nào phù hợp với từ khóa "${searchText}".
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = filtered.map(item => `
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm hover:shadow-md transition flex flex-col justify-between group">
+      <div>
+        <div class="flex items-center justify-between gap-1 mb-2">
+          <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-900/40">${item.category}</span>
+          <button onclick="playChineseAudio('${item.hanzi}', this)" class="p-1.5 rounded-lg bg-chineseRed-50 text-chineseRed-600 dark:bg-chineseRed-950/60 dark:text-chineseRed-400 hover:bg-chineseRed-100 transition shrink-0" title="Nghe phát âm bản xứ">
+            <i data-lucide="volume-2" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <!-- Chữ Hán to rõ -->
+        <h4 class="font-hanzi text-xl sm:text-2xl font-bold text-slate-900 dark:text-white cursor-pointer hover:text-chineseRed-600 transition mb-1" onclick="playChineseAudio('${item.hanzi}', this)">
+          ${item.hanzi}
+        </h4>
+
+        <!-- Pinyin & Phiên âm bồi tiếng Việt -->
+        <div class="space-y-0.5 mb-2">
+          <div class="text-xs font-mono font-semibold text-chineseRed-600 dark:text-chineseRed-400">${item.pinyin}</div>
+          <div class="text-[11px] text-amber-600 dark:text-amber-400 font-medium">Đọc bồi: <strong class="bg-amber-50 dark:bg-amber-950/60 px-1 py-0.5 rounded">${item.phoneticVi}</strong></div>
+        </div>
+
+        <!-- Dịch nghĩa tiếng Việt -->
+        <p class="text-xs font-bold text-slate-800 dark:text-slate-100 leading-snug mb-2">
+          👉 ${item.viet}
+        </p>
+      </div>
+
+      <!-- Tình huống áp dụng thực tế -->
+      <div class="mt-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400">
+        <span class="text-slate-400">Tình huống: </span>${item.context}
+      </div>
+    </div>
+  `).join("");
+}
+
 function refreshIcons() {
   if (window.lucide && typeof lucide.createIcons === "function") {
     try {
-      refreshIcons();
+      lucide.createIcons();
     } catch(e) {
       console.warn("Lucide icons error:", e);
     }
@@ -1387,9 +1513,17 @@ function initApp() {
 
   renderLessonList();
   renderCurrentLesson();
+  renderExpressPhrasesGrid();
   setupEventListeners();
   updateProgressUI();
   refreshIcons();
+
+  // Đăng ký Service Worker cho PWA
+  if ("serviceWorker" in navigator && (window.location.protocol.startsWith("http") || window.location.protocol.startsWith("https"))) {
+    navigator.serviceWorker.register("./sw.js").catch(e => {
+      console.warn("SW registration:", e);
+    });
+  }
 }
 
 if (document.readyState === "loading") {

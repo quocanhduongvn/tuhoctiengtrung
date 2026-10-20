@@ -5,10 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#dc2626">
   <meta name="referrer" content="strict-origin-when-cross-origin">
+  
+  <!-- PWA Manifest & App Icons -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23dc2626'/><text x='50%' y='55%' dominant-baseline='central' text-anchor='middle' fill='white' font-size='56' font-family='sans-serif' font-weight='bold'>学</text></svg>">
-  <title>Tự Học Tiếng Trung HSK 1 - Sổ Tay & Ôn Tập Trực Tuyến</title>
+  <title>Tự Học Tiếng Trung HSK 1 & Giao Tiếp Cấp Tốc</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -71,6 +76,12 @@
       <!-- Action Buttons & Stats -->
       <div class="flex items-center space-x-2 sm:space-x-3">
         
+        <!-- Nút Cài đặt App cho điện thoại -->
+        <button id="openInstallModalBtn" class="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-bold rounded-xl bg-gradient-to-r from-chineseRed-600 to-amber-600 hover:from-chineseRed-700 hover:to-amber-700 text-white shadow-sm transition">
+          <i data-lucide="smartphone" class="w-4 h-4"></i>
+          <span>Cài App</span>
+        </button>
+
         <!-- Nút Tra Nhanh 23 Thanh Mẫu -->
         <button id="openInitialsQuickLookupBtn" class="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-bold rounded-xl bg-chineseRed-50 text-chineseRed-600 hover:bg-chineseRed-100 dark:bg-chineseRed-950/60 dark:text-chineseRed-300 dark:hover:bg-chineseRed-900/60 border border-chineseRed-200 dark:border-chineseRed-800 shadow-sm transition">
           <i data-lucide="zap" class="w-4 h-4 text-chineseRed-600 dark:text-chineseRed-400"></i>
@@ -230,6 +241,10 @@
           <button class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 flex items-center gap-2 shrink-0 transition" data-tab="tab-notes">
             <i data-lucide="edit-3" class="w-4 h-4"></i>
             <span>Ghi chú của tôi</span>
+          </button>
+          <button class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 border-transparent text-amber-600 dark:text-amber-400 hover:text-amber-700 flex items-center gap-1.5 shrink-0 transition" data-tab="tab-express">
+            <i data-lucide="zap" class="w-4 h-4 text-amber-500"></i>
+            <span>⚡ Giao Tiếp Cấp Tốc</span>
           </button>
         </div>
 
@@ -681,6 +696,57 @@
 
       </section>
 
+      <!-- TAB 8: MẪU CÂU GIAO TIẾP HỌC CẤP TỐC (THỰC TẾ NHẤT) -->
+      <section id="tab-express" class="tab-content hidden space-y-6">
+        
+        <!-- Header Banner Giao tiếp cấp tốc -->
+        <div class="bg-gradient-to-r from-amber-500 to-chineseRed-600 text-white rounded-3xl p-5 sm:p-6 shadow-md">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 text-xs font-semibold backdrop-blur-sm mb-2">
+                <i data-lucide="zap" class="w-3.5 h-3.5 text-imperialGold-300"></i>
+                <span>Tài liệu thực chiến đời sống</span>
+              </div>
+              <h3 class="text-xl sm:text-2xl font-bold tracking-tight">Mẫu Câu Giao Tiếp Học Cấp Tốc</h3>
+              <p class="text-xs sm:text-sm text-amber-100 mt-1 max-w-xl">
+                Tuyển chọn các câu khẩu ngữ ngắn gọn, thực tế nhất người Trung Quốc dùng hàng ngày khi đi du lịch, mua sắm, trả giá, ăn uống và hỏi đường kèm phiên âm bồi tiếng Việt đọc được ngay!
+              </p>
+            </div>
+            
+            <div class="text-left sm:text-right shrink-0 bg-white/10 p-3 rounded-2xl backdrop-blur-sm border border-white/10">
+              <span class="text-[11px] text-amber-200 block">Tổng số mẫu câu</span>
+              <span class="text-2xl font-bold text-white">48 Câu</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm flex flex-col gap-3">
+          <div class="relative w-full">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+            <input type="text" id="expressSearchInput" placeholder="Tìm kiếm câu bất kỳ (vd: bao nhiêu tiền, đắt quá, tính tiền, toilet, wechat)..." class="w-full pl-9 pr-3 py-2 text-xs sm:text-sm rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-chineseRed-500">
+          </div>
+
+          <!-- Category Filter Pills -->
+          <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar" id="expressCategoryFilters">
+            <button class="express-filter-btn active px-3 py-1.5 text-xs rounded-xl bg-chineseRed-600 text-white font-semibold shrink-0" data-cat="all">Tất cả (48)</button>
+            <button class="express-filter-btn px-3 py-1.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0" data-cat="Chào hỏi & Xã giao">Chào hỏi</button>
+            <button class="express-filter-btn px-3 py-1.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0" data-cat="Mua sắm & Mặc cả">Mua sắm & Trả giá</button>
+            <button class="express-filter-btn px-3 py-1.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0" data-cat="Ăn uống & Gọi món">Ăn uống & Quán ăn</button>
+            <button class="express-filter-btn px-3 py-1.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0" data-cat="Đi lại & Hỏi đường">Taxi & Hỏi đường</button>
+            <button class="express-filter-btn px-3 py-1.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0" data-cat="Khách sạn & Phòng ở">Khách sạn</button>
+            <button class="express-filter-btn px-3 py-1.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0" data-cat="Nhờ vả & Khẩn cấp">Cần giúp đỡ</button>
+            <button class="express-filter-btn px-3 py-1.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0" data-cat="Khẩu ngữ đời sống">Khẩu ngữ tự nhiên</button>
+          </div>
+        </div>
+
+        <!-- Express Phrases Grid Container -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="expressPhrasesGrid">
+          <!-- Injected via JavaScript -->
+        </div>
+
+      </section>
+
     </main>
 
   </div>
@@ -707,12 +773,12 @@
         <span class="text-[10px] leading-none">Từ Vựng</span>
       </button>
 
-      <!-- Tra Nhanh 23 Thanh Mẫu (Nổi bật) -->
-      <button id="mobileInitialsBtn" class="flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-chineseRed-600 dark:text-chineseRed-400 transition" title="Tra 23 Thanh Mẫu">
-        <div class="w-7 h-7 rounded-full bg-chineseRed-100 dark:bg-chineseRed-950 flex items-center justify-center mb-0.5 border border-chineseRed-200 dark:border-chineseRed-800">
-          <i data-lucide="zap" class="w-4 h-4 text-chineseRed-600 dark:text-chineseRed-400"></i>
+      <!-- Giao Tiếp Cấp Tốc (Nổi bật) -->
+      <button class="mobile-tab-btn flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-amber-600 dark:text-amber-400 transition" data-target="tab-express" title="Mẫu câu cấp tốc">
+        <div class="w-7 h-7 rounded-full bg-amber-100 dark:bg-amber-950 flex items-center justify-center mb-0.5 border border-amber-300 dark:border-amber-800">
+          <i data-lucide="zap" class="w-4 h-4 text-amber-600 dark:text-amber-400"></i>
         </div>
-        <span class="text-[10px] font-bold leading-none">23 Mẫu</span>
+        <span class="text-[10px] font-bold leading-none">Cấp Tốc</span>
       </button>
 
       <!-- Mở Danh Sách Bài & Menu -->
@@ -867,6 +933,61 @@
       <div class="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 text-xs">
         <span class="text-slate-400">💡 Mẹo: Bấm vào từng ô để nghe thầy bản ngữ đọc chuẩn</span>
         <button id="closeInitialsModalBottomBtn" class="px-4 py-2 font-semibold rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 hover:opacity-90 transition">
+          Đóng
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: HƯỚNG DẪN CÀI ĐẶT APP VÀO ĐIỆN THOẠI (PWA) -->
+  <div id="pwaInstallModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+        <div class="flex items-center gap-3">
+          <img src="icon-192.png" alt="App Icon" class="w-10 h-10 rounded-xl shadow-md">
+          <div>
+            <h3 class="font-bold text-slate-900 dark:text-white text-base">Cài Đặt App Cho Điện Thoại</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Dùng như ứng dụng độc lập trên màn hình chính</p>
+          </div>
+        </div>
+        <button id="closeInstallModalBtn" class="p-1 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+        
+        <!-- Nút cài đặt tự động cho Android / Chrome / Edge -->
+        <div id="pwaNativePromptBlock" class="p-4 rounded-2xl bg-gradient-to-br from-chineseRed-50 to-amber-50 dark:from-chineseRed-950/40 dark:to-amber-950/30 border border-chineseRed-200 dark:border-chineseRed-800 text-center space-y-2">
+          <p class="font-bold text-slate-900 dark:text-white text-sm">Dành cho Android & Trình duyệt Chrome / Edge:</p>
+          <p class="text-xs text-slate-600 dark:text-slate-300">Nhấn nút bên dưới để tải và ghim app vào màn hình chính điện thoại:</p>
+          <button id="pwaInstallTriggerBtn" class="w-full py-2.5 px-4 rounded-xl bg-chineseRed-600 hover:bg-chineseRed-700 text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2">
+            <i data-lucide="download" class="w-4 h-4"></i>
+            <span>Cài Đặt Ứng Dụng Ngay</span>
+          </button>
+        </div>
+
+        <!-- Hướng dẫn cho iPhone / iPad (Safari) -->
+        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-2">
+          <p class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5 text-xs sm:text-sm">
+            <i data-lucide="apple" class="w-4 h-4 text-slate-800 dark:text-slate-200"></i>
+            Dành cho iPhone & iPad (Trình duyệt Safari):
+          </p>
+          <ol class="list-decimal list-inside space-y-1.5 text-xs text-slate-600 dark:text-slate-300">
+            <li>Nhấn vào biểu tượng <strong>Chia sẻ</strong> (<i data-lucide="share" class="w-3.5 h-3.5 inline text-blue-500"></i> hình vuông có mũi tên lên) ở thanh dưới cùng Safari.</li>
+            <li>Cuộn xuống danh sách và chọn <strong>"Thêm vào MH chính" (Add to Home Screen)</strong>.</li>
+            <li>Nhấn <strong>"Thêm" (Add)</strong> ở góc trên bên phải.</li>
+          </ol>
+        </div>
+
+        <p class="text-[11px] text-slate-400 italic text-center">Sau khi thêm, bạn có thể mở app trực tiếp từ màn hình chính để học tập toàn màn hình mà không cần gõ địa chỉ web!</p>
+
+      </div>
+
+      <div class="pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-end">
+        <button id="closeInstallModalBottomBtn" class="px-4 py-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition">
           Đóng
         </button>
       </div>

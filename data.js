@@ -587,5 +587,70 @@ const HSK1_DATA = {
       description: "Cấu trúc nhấn mạnh thời gian, địa điểm, phương thức 是...的.",
       status: "upcoming"
     }
+  ],
+
+  // BỘ MẪU CÂU GIAO TIẾP HỌC CẤP TỐC (THỰC TẾ NHẤT TRONG ĐỜI SỐNG)
+  expressPhrases: [
+    // 1. Chào hỏi & Xã giao
+    { id: "ep1", category: "Chào hỏi & Xã giao", hanzi: "你好！", pinyin: "Nǐ hǎo!", phoneticVi: "Ní hǎo!", viet: "Xin chào!", context: "Chào hỏi phổ biến mọi lúc mọi nơi." },
+    { id: "ep2", category: "Chào hỏi & Xã giao", hanzi: "早上好！", pinyin: "Zǎoshang hǎo!", phoneticVi: "Chào sang hǎo!", viet: "Chào buổi sáng!", context: "Chào đầu ngày khi gặp đồng nghiệp, bạn bè." },
+    { id: "ep3", category: "Chào hỏi & Xã giao", hanzi: "很高兴认识你！", pinyin: "Hěn gāoxìng rènshi nǐ!", phoneticVi: "Hẩn cao xing rân sự nỉ!", viet: "Rất vui được làm quen với bạn!", context: "Xã giao khi lần đầu gặp mặt." },
+    { id: "ep4", category: "Chào hỏi & Xã giao", hanzi: "你吃了吗？", pinyin: "Nǐ chī le ma?", phoneticVi: "Nỉ chư lơ ma?", viet: "Bạn ăn cơm chưa?", context: "Câu chào hỏi cửa miệng cực kỳ phổ biến của người Trung Quốc thay cho 'Dạo này thế nào?'." },
+    { id: "ep5", category: "Chào hỏi & Xã giao", hanzi: "谢谢你！", pinyin: "Xièxie nǐ!", phoneticVi: "Xiê xie nỉ!", viet: "Cảm ơn bạn!", context: "Bày tỏ lòng biết ơn." },
+    { id: "ep6", category: "Chào hỏi & Xã giao", hanzi: "不客气！", pinyin: "Bú kèqi!", phoneticVi: "Bú khơ chi!", viet: "Đừng khách sáo / Không có chi!", context: "Đáp lại khi người khác cảm ơn." },
+    { id: "ep7", category: "Chào hỏi & Xã giao", hanzi: "对不起！", pinyin: "Duìbuqǐ!", phoneticVi: "Tuây bu chỉ!", viet: "Xin lỗi!", context: "Khi làm phiền hoặc làm sai điều gì." },
+    { id: "ep8", category: "Chào hỏi & Xã giao", hanzi: "没关系！", pinyin: "Méi guānxi!", phoneticVi: "Mấy quan xi!", viet: "Không sao đâu / Không vấn đề gì!", context: "Đáp lại khi người khác xin lỗi." },
+    { id: "ep9", category: "Chào hỏi & Xã giao", hanzi: "再见！", pinyin: "Zàijiàn!", phoneticVi: "Chai chiên!", viet: "Tạm biệt / Hẹn gặp lại!", context: "Chào tạm biệt." },
+
+    // 2. Mua sắm & Mặc cả / Thanh toán
+    { id: "ep10", category: "Mua sắm & Mặc cả", hanzi: "这个多少钱？", pinyin: "Zhège duōshao qián?", phoneticVi: "Chưa cưa đua sao chén?", viet: "Cái này bao nhiêu tiền?", context: "Hỏi giá bất kỳ món đồ nào." },
+    { id: "ep11", category: "Mua sắm & Mặc cả", hanzi: "太贵了，便宜一点吧！", pinyin: "Tài guì le, piányi yìdiǎn ba!", phoneticVi: "Thai kuây lơ, phiền di ý tiển ba!", viet: "Đắt quá, rẻ một chút đi!", context: "Câu cửa miệng thần thánh khi đi mua sắm mặc cả tại Trung Quốc." },
+    { id: "ep12", category: "Mua sắm & Mặc cả", hanzi: "可以刷卡吗？", pinyin: "Kěyǐ shuākǎ ma?", phoneticVi: "Khửa dỉ soa khả ma?", viet: "Có quẹt thẻ được không?", context: "Hỏi phương thức thanh toán thẻ." },
+    { id: "ep13", category: "Mua sắm & Mặc cả", hanzi: "我可以扫微信吗？", pinyin: "Wǒ kěyǐ sǎo Wēixìn ma?", phoneticVi: "Ủa khửa dỉ sảo Uây-xin ma?", viet: "Tôi quét mã WeChat được không?", context: "Thanh toán không tiền mặt bằng WeChat Pay (phổ biến nhất TQ)." },
+    { id: "ep14", category: "Mua sắm & Mặc cả", hanzi: "我用支付宝付款。", pinyin: "Wǒ yòng Zhīfùbǎo fùkuǎn.", phoneticVi: "Ủa dung Chi-phu-bảo phu khoản.", viet: "Tôi dùng Alipay thanh toán.", context: "Thanh toán bằng ứng dụng Alipay." },
+    { id: "ep15", category: "Mua sắm & Mặc cả", hanzi: "有大一点的吗？", pinyin: "Yǒu dà yìdiǎn de ma?", phoneticVi: "Dẩu ta ý tiển tơ ma?", viet: "Có cái to hơn một chút không?", context: "Hỏi cỡ áo quần hoặc kích thước đồ vật." },
+    { id: "ep16", category: "Mua sắm & Mặc cả", hanzi: "我就看看。", pinyin: "Wǒ jiù kànkan.", phoneticVi: "Ủa chiêu khan khan.", viet: "Tôi chỉ xem thử thôi.", context: "Khi nhân viên bán hàng tiếp cận mà bạn chỉ muốn dạo ngắm." },
+    { id: "ep17", category: "Mua sắm & Mặc cả", hanzi: "我要这个。", pinyin: "Wǒ yào zhège.", phoneticVi: "Ủa dao chưa cưa.", viet: "Tôi lấy cái này.", context: "Chốt mua món đồ." },
+
+    // 3. Ăn uống & Gọi món
+    { id: "ep18", category: "Ăn uống & Gọi món", hanzi: "服务员，点菜！", pinyin: "Fúwùyuán, diǎncài!", phoneticVi: "Phú vu uyển, tiển chai!", viet: "Phục vụ ơi, gọi món!", context: "Gọi nhân viên khi vào quán ăn." },
+    { id: "ep19", category: "Ăn uống & Gọi món", hanzi: "请给我菜单。", pinyin: "Qǐng gěi wǒ càidān.", phoneticVi: "Chỉnh cẩy ủa chai tan.", viet: "Cho tôi xin quyển thực đơn.", context: "Yêu cầu xem menu." },
+    { id: "ep20", category: "Ăn uống & Gọi món", hanzi: "有什么推荐的吗？", pinyin: "Yǒu shénme tuījiàn de ma?", phoneticVi: "Dẩu sấn mơ thui chiên tơ ma?", viet: "Có món gì ngon gợi ý không?", context: "Nhờ quán tư vấn món đặc trưng." },
+    { id: "ep21", category: "Ăn uống & Gọi món", hanzi: "不要太辣！", pinyin: "Bú yào tài là!", phoneticVi: "Bú dao thai la!", viet: "Đừng làm cay quá nhé!", context: "Đồ ăn Trung Quốc rất cay, hãy dùng câu này nếu bạn ăn cay kém." },
+    { id: "ep22", category: "Ăn uống & Gọi món", hanzi: "不要放香菜。", pinyin: "Bú yào fàng xiāngcài.", phoneticVi: "Bú dao phang xiang chai.", viet: "Đừng cho rau mùi (ngò rí).", context: "Nhiều người không quen ăn rau mùi ở Trung Quốc." },
+    { id: "ep23", category: "Ăn uống & Gọi món", hanzi: "请给我一杯水。", pinyin: "Qǐng gěi wǒ yì bēi shuǐ.", phoneticVi: "Chỉnh cẩy ủa ý pây suẩy.", viet: "Làm ơn cho tôi một cốc nước.", context: "Xin nước uống." },
+    { id: "ep24", category: "Ăn uống & Gọi món", hanzi: "买单！/ 结账！", pinyin: "Mǎidān! / Jiézhàng!", phoneticVi: "Mải tan! / Chiế chang!", viet: "Thanh toán tiền / Tính tiền!", context: "Câu gọi tính tiền khi ăn xong." },
+    { id: "ep25", category: "Ăn uống & Gọi món", hanzi: "打包。", pinyin: "Dǎbāo.", phoneticVi: "Tả bao.", viet: "Gói mang về / Đóng hộp mang về.", context: "Yêu cầu mang thức ăn thừa hoặc mua mang đi." },
+
+    // 4. Taxi & Đi lại / Hỏi đường
+    { id: "ep26", category: "Đi lại & Hỏi đường", hanzi: "师傅，去机场多少钱？", pinyin: "Shīfu, qù jīchǎng duōshao qián?", phoneticVi: "Sư phu, chuy chi chẳng đua sao chén?", viet: "Bác tài ơi, đi sân bay bao nhiêu tiền?", context: "Hỏi giá tài xế taxi." },
+    { id: "ep27", category: "Đi lại & Hỏi đường", hanzi: "请打表。", pinyin: "Qǐng dǎbiǎo.", phoneticVi: "Chỉnh tả biẻo.", viet: "Làm ơn bật đồng hồ tính cước.", context: "Yêu cầu taxi tính theo đồng hồ cước." },
+    { id: "ep28", category: "Đi lại & Hỏi đường", hanzi: "请问，洗手间在哪儿？", pinyin: "Qǐngwèn, xǐshǒujiān zài nǎr?", phoneticVi: "Chỉnh uân, xỉ sổ chiên chai nả?", viet: "Xin hỏi nhà vệ sinh ở đâu?", context: "Câu hỏi cực kỳ quan trọng và cần thiết." },
+    { id: "ep29", category: "Đi lại & Hỏi đường", hanzi: "地铁站在哪儿？", pinyin: "Dìtiě zhàn zài nǎr?", phoneticVi: "Ti thiể chan chai nả?", viet: "Ga tàu điện ngầm ở đâu?", context: "Hỏi đường đi tàu điện ngầm." },
+    { id: "ep30", category: "Đi lại & Hỏi đường", hanzi: "往左拐，然后一直走。", pinyin: "Wǎng zuǒ guǎi, ránhòu yìzhí zǒu.", phoneticVi: "Oảng chủa quải, rán hâu ý chứ chởu.", viet: "Rẽ trái, sau đó đi thẳng.", context: "Chỉ đường hoặc nghe người ta chỉ đường." },
+    { id: "ep31", category: "Đi lại & Hỏi đường", hanzi: "我就在这儿下车。", pinyin: "Wǒ jiù zài zhèr xiàchē.", phoneticVi: "Ủa chiêu chai chưa xia xưa.", viet: "Tôi xuống xe ở đây nhé.", context: "Báo tài xế dừng xe trả khách." },
+
+    // 5. Khách sạn & Thuê phòng
+    { id: "ep32", category: "Khách sạn & Phòng ở", hanzi: "我要办理入住。", pinyin: "Wǒ yào bànlǐ rùzhù.", phoneticVi: "Ủa dao pan lỉ ru chu.", viet: "Tôi muốn làm thủ tục nhận phòng (Check-in).", context: "Tại quầy lễ tân khách sạn." },
+    { id: "ep33", category: "Khách sạn & Phòng ở", hanzi: "有无线网络吗？密码是多少？", pinyin: "Yǒu wúxiàn wǎngluò ma? Mìmǎ shì duōshao?", phoneticVi: "Dẩu ú xiên oảng luơ ma? Mi mả sự đua sao?", viet: "Có Wifi không? Mật khẩu là gì?", context: "Xin mật khẩu Wifi." },
+    { id: "ep34", category: "Khách sạn & Phòng ở", hanzi: "我要退房。", pinyin: "Wǒ yào tuìfáng.", phoneticVi: "Ủa dao thui pháng.", viet: "Tôi muốn trả phòng (Check-out).", context: "Khi rời khách sạn." },
+
+    // 6. Nhờ giúp đỡ & Khẩn cấp
+    { id: "ep35", category: "Nhờ vả & Khẩn cấp", hanzi: "不好意思，麻烦你一下。", pinyin: "Bù hǎoyìsi, máfan nǐ yíxià.", phoneticVi: "Pu hảo di sự, má phan nỉ ý xia.", viet: "Ngại quá, phiền bạn một chút.", context: "Mở đầu lịch sự khi muốn nhờ người lạ giúp đỡ." },
+    { id: "ep36", category: "Nhờ vả & Khẩn cấp", hanzi: "你会说英语吗？", pinyin: "Nǐ huì shuō Yīngyǔ ma?", phoneticVi: "Nỉ huây suo Y-ing dử ma?", viet: "Bạn có biết nói tiếng Anh không?", context: "Khi muốn chuyển sang giao tiếp tiếng Anh." },
+    { id: "ep37", category: "Nhờ vả & Khẩn cấp", hanzi: "请说慢一点。", pinyin: "Qǐng shuō màn yìdiǎn.", phoneticVi: "Chỉnh suo man ý tiển.", viet: "Xin vui lòng nói chậm lại một chút.", context: "Khi người bản xứ nói quá nhanh bạn nghe không kịp." },
+    { id: "ep38", category: "Nhờ vả & Khẩn cấp", hanzi: "我听不懂。", pinyin: "Wǒ tīng bu dǒng.", phoneticVi: "Ủa thing bu tổng.", viet: "Tôi nghe không hiểu.", context: "Nói thật để người ta đổi cách diễn đạt." },
+    { id: "ep39", category: "Nhờ vả & Khẩn cấp", hanzi: "请帮帮我！", pinyin: "Qǐng bāngbang wǒ!", phoneticVi: "Chỉnh pang pang ủa!", viet: "Xin hãy giúp tôi với!", context: "Khi gặp khó khăn cần người cứu trợ." },
+    { id: "ep40", category: "Nhờ vả & Khẩn cấp", hanzi: "救命啊！", pinyin: "Jiùmìng a!", phoneticVi: "Chiêu ming a!", viet: "Cứu mạng với! / Cứu với!", context: "Tình huống nguy cấp khẩn cấp." },
+
+    // 7. Khẩu ngữ tự nhiên của người bản xứ
+    { id: "ep41", category: "Khẩu ngữ đời sống", hanzi: "真的吗？", pinyin: "Zhēn de ma?", phoneticVi: "Chân tơ ma?", viet: "Thật không đấy? / Thật á?", context: "Bày tỏ sự ngạc nhiên, tò mò." },
+    { id: "ep42", category: "Khẩu ngữ đời sống", hanzi: "太棒了！", pinyin: "Tài bàng le!", phoneticVi: "Thai pang lơ!", viet: "Tuyệt vời quá! / Đỉnh quá!", context: "Khen ngợi, tán thưởng nồng nhiệt." },
+    { id: "ep43", category: "Khẩu ngữ đời sống", hanzi: "没问题！", pinyin: "Méi wèntí!", phoneticVi: "Mấy uân thí!", viet: "Không vấn đề gì! / Chuyện nhỏ!", context: "Đồng ý lời nhờ vả một cách sảng khoái." },
+    { id: "ep44", category: "Khẩu ngữ đời sống", hanzi: "好的 / 行！", pinyin: "Hǎo de / Xíng!", phoneticVi: "Hảo tơ / Xính!", viet: "Được rồi / OK / Được chứ!", context: "Thể hiện sự đồng thuận, chấp nhận." },
+    { id: "ep45", category: "Khẩu ngữ đời sống", hanzi: "算了吧。", pinyin: "Suàn le ba.", phoneticVi: "Soan lơ ba.", viet: "Thôi bỏ đi / Thôi dẹp đi.", context: "Khi không muốn tiếp tục làm việc gì hoặc bỏ qua tranh cãi." },
+    { id: "ep46", category: "Khẩu ngữ đời sống", hanzi: "随便你。", pinyin: "Suíbiàn nǐ.", phoneticVi: "Suấy piên nỉ.", viet: "Tùy bạn / Sao cũng được.", context: "Khi bạn để đối phương toàn quyền quyết định." },
+    { id: "ep47", category: "Khẩu ngữ đời sống", hanzi: "加油！", pinyin: "Jiāyóu!", phoneticVi: "Chia dẩu!", viet: "Cố lên! / Cố gắng lên!", context: "Cổ vũ động viên bạn bè, người thân." },
+    { id: "ep48", category: "Khẩu ngữ đời sống", hanzi: "祝你一路平安！", pinyin: "Zhù nǐ yílù píng'ān!", phoneticVi: "Chu nỉ ý lu phính an!", viet: "Chúc bạn thượng lộ bình an!", context: "Lời chúc khi tiễn bạn bè lên đường đi xa." }
   ]
 };
