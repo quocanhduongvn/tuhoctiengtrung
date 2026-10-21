@@ -20,7 +20,12 @@ let appState = {
   completedShadowingSentences: {},
   vocabScope: "all",
   vocabCategory: "all",
-  vocabSearchQuery: ""
+  vocabSearchQuery: "",
+  activeTopicId: null,
+  activeTopicLevel: "all",
+  completedTopicSentences: {},
+  topicSearchQuery: "",
+  activeTopicCategory: "all"
 };
 
 // ==================== KHỞI TẠO DỮ LIỆU & LOCAL STORAGE ====================
@@ -1040,6 +1045,10 @@ function switchTab(targetId) {
       panel.classList.add("hidden");
     }
   });
+
+  if (targetId === "tab-topics") {
+    renderTopicsTab();
+  }
 }
 
 function setupEventListeners() {
@@ -1652,6 +1661,73 @@ function setupEventListeners() {
   }
 
   // 18. Nút mở nhanh Shadowing từ Drawer điện thoại
+// 19. SỰ KIỆN CHO GIAO TIẾP THEO CHỦ ĐỀ
+  const backToCatalogBtn = document.getElementById("topicBackToCatalogBtn");
+  if (backToCatalogBtn) {
+    backToCatalogBtn.addEventListener("click", closeTopicDetail);
+  }
+
+  const topicSearchInput = document.getElementById("topicSearchInput");
+  const clearTopicSearchBtn = document.getElementById("clearTopicSearchBtn");
+
+  if (topicSearchInput) {
+    topicSearchInput.addEventListener("input", (e) => {
+      appState.topicSearchQuery = e.target.value;
+      if (clearTopicSearchBtn) {
+        if (e.target.value.trim().length > 0) {
+          clearTopicSearchBtn.classList.remove("hidden");
+        } else {
+          clearTopicSearchBtn.classList.add("hidden");
+        }
+      }
+      renderTopicCatalog();
+    });
+  }
+
+  if (clearTopicSearchBtn && topicSearchInput) {
+    clearTopicSearchBtn.addEventListener("click", () => {
+      topicSearchInput.value = "";
+      appState.topicSearchQuery = "";
+      clearTopicSearchBtn.classList.add("hidden");
+      renderTopicCatalog();
+      topicSearchInput.focus();
+    });
+  }
+
+  // Lọc chủ đề theo category
+  document.querySelectorAll(".topic-cat-pill").forEach(pill => {
+    pill.addEventListener("click", () => {
+      document.querySelectorAll(".topic-cat-pill").forEach(p => {
+        p.className = "topic-cat-pill shrink-0 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition";
+      });
+      pill.className = "topic-cat-pill active shrink-0 px-3 py-1.5 rounded-xl bg-emerald-600 text-white font-semibold transition";
+      appState.activeTopicCategory = pill.getAttribute("data-cat");
+      renderTopicCatalog();
+    });
+  });
+
+  // Chọn cấp độ bậc thang trong chi tiết chủ đề
+  document.querySelectorAll(".topic-level-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      appState.activeTopicLevel = tab.getAttribute("data-level");
+      if (appState.activeTopicId) {
+        renderTopicDetail(appState.activeTopicId);
+      }
+    });
+  });
+
+  // Nút mở nhanh chủ đề từ Drawer điện thoại
+  const drawerTopicsBtn = document.getElementById("drawerTopicsBtn");
+  if (drawerTopicsBtn) {
+    drawerTopicsBtn.addEventListener("click", () => {
+      switchTab("tab-topics");
+      const sidebar = document.getElementById("sidebar");
+      const backdrop = document.getElementById("sidebarBackdrop");
+      if (sidebar) sidebar.classList.add("-translate-x-full");
+      if (backdrop) backdrop.classList.add("hidden");
+    });
+  }
+
   const drawerShadowingBtn = document.getElementById("drawerShadowingBtn");
   if (drawerShadowingBtn) {
     drawerShadowingBtn.addEventListener("click", () => {
@@ -1833,6 +1909,743 @@ function renderExpressPhrasesGrid(filterCategory = "all", searchText = "") {
       </div>
     </div>
   `).join("");
+}
+
+// ==================== TÍNH NĂNG MỚI: HỌC GIAO TIẾP THEO CHỦ ĐỀ (BẬC THANG) ====================
+let activeTopicSpeechRecognizer = null;
+let activeTopicRecordingItemId = null;
+let topicDictationStates = {}; // { [itemId]: { assembled: [], bank: [] } }
+
+function renderTopicsTab() {
+  const topics = HSK1_DATA.topicCurriculum || [];
+  if (topics.length === 0) return;
+
+  // Tính tổng số câu và số câu đã hoàn thành trong toàn khóa học chủ đề
+  let totalAllSentences = 0;
+  let completedAllCount = 0;
+
+  topics.forEach(t => {
+    t.levels.forEach(lvl => {
+      if (lvl.items) {
+        totalAllSentences += lvl.items.length;
+        lvl.items.forEach(item => {
+          if (appState.completedTopicSentences && appState.completedTopicSentences[item.id]) {
+            completedAllCount++;
+          }
+        });
+      }
+      if (lvl.dialogue) {
+        totalAllSentences += lvl.dialogue.length;
+        lvl.dialogue.forEach((dlg, dIdx) => {
+          const dlgId = `${t.id}_dlg_${dIdx}`;
+          if (appState.completedTopicSentences && appState.completedTopicSentences[dlgId]) {
+            completedAllCount++;
+          }
+        });
+      }
+    });
+  });
+
+  const totalCountEl = document.getElementById("topicsTotalCompletedCount");
+  if (totalCountEl) totalCountEl.textContent = completedAllCount;
+
+  const overallProgressBar = document.getElementById("topicsOverallProgressBar");
+  if (overallProgressBar) {
+    const percent = totalAllSentences > 0 ? Math.round((completedAllCount / totalAllSentences) * 100) : 0;
+    overallProgressBar.style.width = `${percent}%`;
+  }
+
+  // Chuyển đổi giữa 2 chế độ xem: Thư viện chủ đề (Catalog) vs Phòng luyện bậc thang (Detail Studio)
+  const catalogView = document.getElementById("topicCatalogView");
+  const detailView = document.getElementById("topicDetailView");
+
+  if (appState.activeTopicId) {
+    catalogView?.classList.add("hidden");
+    detailView?.classList.remove("hidden");
+    renderTopicDetail(appState.activeTopicId);
+  } else {
+    detailView?.classList.add("hidden");
+    catalogView?.classList.remove("hidden");
+    renderTopicCatalog();
+  }
+
+  refreshIcons();
+}
+
+function renderTopicCatalog() {
+  const container = document.getElementById("topicCardsGrid");
+  if (!container) return;
+
+  const topics = HSK1_DATA.topicCurriculum || [];
+
+  // Lọc theo chủ đề & từ khóa tìm kiếm
+  let filtered = topics;
+  if (appState.activeTopicCategory && appState.activeTopicCategory !== "all") {
+    filtered = filtered.filter(t => t.category === appState.activeTopicCategory);
+  }
+
+  if (appState.topicSearchQuery && appState.topicSearchQuery.trim()) {
+    const q = appState.topicSearchQuery.trim().toLowerCase();
+    filtered = filtered.filter(t => {
+      const titleMatch = t.title.toLowerCase().includes(q) || t.shortTitle.toLowerCase().includes(q);
+      const descMatch = t.description.toLowerCase().includes(q);
+      const contentMatch = t.levels.some(lvl => {
+        if (lvl.items) {
+          return lvl.items.some(i => i.hanzi.includes(q) || i.pinyin.toLowerCase().includes(q) || i.viet.toLowerCase().includes(q));
+        }
+        if (lvl.dialogue) {
+          return lvl.dialogue.some(d => d.hanzi.includes(q) || d.viet.toLowerCase().includes(q));
+        }
+        return false;
+      });
+      return titleMatch || descMatch || contentMatch;
+    });
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div class="col-span-full py-12 text-center text-slate-400 bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 p-8 space-y-2">
+        <i data-lucide="search-x" class="w-8 h-8 mx-auto text-slate-300 dark:text-slate-600 mb-2"></i>
+        <p class="font-bold text-slate-700 dark:text-slate-200 text-sm">Không tìm thấy chủ đề phù hợp</p>
+        <p class="text-xs text-slate-400">Thử xóa ô tìm kiếm hoặc chọn "Tất cả (8 Chủ đề)".</p>
+      </div>
+    `;
+    refreshIcons();
+    return;
+  }
+
+  container.innerHTML = filtered.map(t => {
+    // Tính tiến độ của chủ đề này
+    let topicSentences = 0;
+    let topicCompleted = 0;
+
+    t.levels.forEach(lvl => {
+      if (lvl.items) {
+        topicSentences += lvl.items.length;
+        lvl.items.forEach(item => {
+          if (appState.completedTopicSentences && appState.completedTopicSentences[item.id]) {
+            topicCompleted++;
+          }
+        });
+      }
+      if (lvl.dialogue) {
+        topicSentences += lvl.dialogue.length;
+        lvl.dialogue.forEach((dlg, dIdx) => {
+          const dlgId = `${t.id}_dlg_${dIdx}`;
+          if (appState.completedTopicSentences && appState.completedTopicSentences[dlgId]) {
+            topicCompleted++;
+          }
+        });
+      }
+    });
+
+    const percent = topicSentences > 0 ? Math.round((topicCompleted / topicSentences) * 100) : 0;
+    const isFinished = percent === 100 && topicSentences > 0;
+
+    // Lấy 2 câu mẫu tiêu biểu để hiển thị preview
+    const sampleItems = (t.levels[0]?.items || []).slice(0, 2);
+
+    return `
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border ${isFinished ? 'border-emerald-400 dark:border-emerald-800 shadow-emerald-500/10' : 'border-slate-200 dark:border-slate-800'} p-5 shadow-sm flex flex-col justify-between hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-700/60 transition group">
+        <div>
+          <!-- Header Card: Category & Badge -->
+          <div class="flex items-center justify-between gap-2 mb-3">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+              ${t.category}
+            </span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isFinished ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300' : 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400'}">
+              ${isFinished ? '✓ Đã xong' : t.badge}
+            </span>
+          </div>
+
+          <!-- Title -->
+          <h4 class="font-bold text-base text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition mb-1.5 flex items-center gap-2">
+            <span>${t.title}</span>
+          </h4>
+
+          <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 line-clamp-2 leading-relaxed">
+            ${t.description}
+          </p>
+
+          <!-- Bậc thang 4 cấp độ trực quan -->
+          <div class="bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800 mb-4 space-y-1.5">
+            <div class="flex items-center justify-between text-[11px] font-medium text-slate-600 dark:text-slate-300">
+              <span class="flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Cốt lõi
+              </span>
+              <span class="flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-amber-500"></span> Ghép câu
+              </span>
+              <span class="flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-rose-500"></span> Bản xứ
+              </span>
+              <span class="flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-purple-500"></span> Đối thoại
+              </span>
+            </div>
+            <!-- Sample preview phrases -->
+            <div class="pt-1.5 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center gap-2 flex-wrap text-xs">
+              ${sampleItems.map(s => `
+                <span class="px-2 py-0.5 rounded-md bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-hanzi font-bold text-[11px] border border-slate-200 dark:border-slate-700">
+                  ${s.hanzi} (${s.viet})
+                </span>
+              `).join("")}
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer Card: Tiến độ & Nút Bắt Đầu Học -->
+        <div class="pt-3 border-t border-slate-100 dark:border-slate-800">
+          <div class="flex items-center justify-between text-xs mb-1.5">
+            <span class="text-slate-500 dark:text-slate-400 text-[11px]">Tiến độ học tập:</span>
+            <span class="font-bold text-slate-800 dark:text-slate-200 text-xs">${topicCompleted}/${topicSentences} câu (${percent}%)</span>
+          </div>
+
+          <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden mb-3">
+            <div class="h-full ${isFinished ? 'bg-emerald-500' : 'bg-emerald-600'} transition-all duration-300 rounded-full" style="width: ${percent}%;"></div>
+          </div>
+
+          <button onclick="openTopicDetail('${t.id}')" class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm shadow-emerald-600/20 transition cursor-pointer">
+            <span>${percent > 0 ? 'Tiếp tục luyện tập' : 'Bắt đầu học ngay'}</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  refreshIcons();
+}
+
+function openTopicDetail(topicId) {
+  appState.activeTopicId = topicId;
+  appState.activeTopicLevel = "all";
+  renderTopicsTab();
+  const el = document.getElementById("tab-topics");
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function closeTopicDetail() {
+  appState.activeTopicId = null;
+  renderTopicsTab();
+}
+
+function renderTopicDetail(topicId) {
+  const topics = HSK1_DATA.topicCurriculum || [];
+  const topic = topics.find(t => t.id === topicId);
+  if (!topic) return;
+
+  const titleEl = document.getElementById("topicDetailTitle");
+  if (titleEl) titleEl.textContent = topic.title;
+
+  const descEl = document.getElementById("topicDetailDesc");
+  if (descEl) descEl.textContent = topic.description;
+
+  const badgeEl = document.getElementById("topicDetailBadge");
+  if (badgeEl) badgeEl.textContent = topic.category + " · " + topic.badge;
+
+  // Tính số câu của chủ đề
+  let totalCount = 0;
+  let completedCount = 0;
+  topic.levels.forEach(lvl => {
+    if (lvl.items) {
+      totalCount += lvl.items.length;
+      lvl.items.forEach(i => {
+        if (appState.completedTopicSentences && appState.completedTopicSentences[i.id]) completedCount++;
+      });
+    }
+    if (lvl.dialogue) {
+      totalCount += lvl.dialogue.length;
+      lvl.dialogue.forEach((d, dIdx) => {
+        const dlgId = `${topic.id}_dlg_${dIdx}`;
+        if (appState.completedTopicSentences && appState.completedTopicSentences[dlgId]) completedCount++;
+      });
+    }
+  });
+
+  const progressTextEl = document.getElementById("topicDetailProgressText");
+  if (progressTextEl) progressTextEl.textContent = `${completedCount}/${totalCount} Câu đã thuộc`;
+
+  // Cập nhật trạng thái các tabs chọn cấp độ
+  document.querySelectorAll(".topic-level-tab").forEach(tab => {
+    const lvlAttr = tab.getAttribute("data-level");
+    if (lvlAttr === String(appState.activeTopicLevel)) {
+      tab.className = "topic-level-tab active px-3.5 py-2 font-bold rounded-t-xl border-b-2 border-emerald-600 text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/30 transition shrink-0";
+    } else {
+      tab.className = "topic-level-tab px-3.5 py-2 font-medium text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition shrink-0 flex items-center gap-1.5";
+    }
+  });
+
+  // Render danh sách câu theo cấp độ
+  const container = document.getElementById("topicSentencesContainer");
+  if (!container) return;
+
+  let html = "";
+
+  topic.levels.forEach(lvl => {
+    // Nếu đang lọc cấp độ và không khớp thì bỏ qua
+    if (appState.activeTopicLevel !== "all" && String(appState.activeTopicLevel) !== String(lvl.level)) {
+      return;
+    }
+
+    if (lvl.items && lvl.items.length > 0) {
+      html += `
+        <div class="space-y-3 pt-2">
+          <!-- Level Header -->
+          <div class="flex items-center gap-2 pb-1 border-b border-slate-200 dark:border-slate-800">
+            <span class="w-3 h-3 rounded-full ${lvl.color === 'emerald' ? 'bg-emerald-500' : (lvl.color === 'amber' ? 'bg-amber-500' : 'bg-rose-500')}"></span>
+            <h3 class="font-bold text-sm sm:text-base text-slate-900 dark:text-white">${lvl.levelName}</h3>
+            <span class="text-xs text-slate-400 hidden sm:inline">- ${lvl.levelDesc}</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            ${lvl.items.map(item => {
+              const isMastered = !!(appState.completedTopicSentences && appState.completedTopicSentences[item.id]);
+              return `
+                <div class="bg-white dark:bg-slate-900 rounded-2xl border ${isMastered ? 'border-emerald-300 dark:border-emerald-800/80 shadow-emerald-500/5' : 'border-slate-200 dark:border-slate-800'} p-4 shadow-sm flex flex-col justify-between space-y-3 hover:shadow-md transition group" id="topicCard_${item.id}">
+                  <div>
+                    <!-- Top row: Badge & Mark complete -->
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${lvl.color === 'emerald' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300' : (lvl.color === 'amber' ? 'bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300' : 'bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300')}">
+                        Cấp ${lvl.level}
+                      </span>
+                      <button onclick="toggleTopicSentenceComplete('${item.id}')" class="p-1 rounded-full ${isMastered ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/60' : 'text-slate-300 hover:text-slate-500'} transition cursor-pointer" title="${isMastered ? 'Đã thuộc (Bấm để ôn lại)' : 'Đánh dấu đã thuộc'}">
+                        <i data-lucide="${isMastered ? 'check-circle-2' : 'circle'}" class="w-5 h-5"></i>
+                      </button>
+                    </div>
+
+                    <!-- Hanzi, Pinyin & Bồi Tiếng Việt -->
+                    <div class="space-y-1 mb-2">
+                      <div class="flex items-baseline gap-2.5 flex-wrap">
+                        <span class="font-hanzi text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white cursor-pointer hover:text-emerald-600 transition" onclick="playChineseAudio('${item.hanzi}', this, 1.0)">${item.hanzi}</span>
+                        <span class="text-sm font-semibold text-emerald-600 dark:text-emerald-400 font-mono">${item.pinyin}</span>
+                      </div>
+                      <!-- Phiên âm bồi cho người mới bắt đầu -->
+                      <div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 text-xs font-semibold">
+                        <span class="text-[10px] text-amber-500 font-normal">Đọc bồi:</span>
+                        <span>${item.phoneticVi}</span>
+                      </div>
+                    </div>
+
+                    <!-- Nghĩa tiếng Việt -->
+                    <p class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 mb-2 leading-relaxed">
+                      ${item.viet}
+                    </p>
+
+                    <!-- Mẹo thực chiến -->
+                    ${item.tip ? `
+                      <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
+                        <span class="font-semibold text-amber-600 dark:text-amber-400">💡 Mẹo thực chiến:</span> ${item.tip}
+                      </div>
+                    ` : ''}
+
+                    <!-- AI Speech Feedback Alert Box (Dynamically injected) -->
+                    <div id="topicAIScoreAlert_${item.id}" class="hidden mt-2 p-2.5 rounded-xl text-xs transition"></div>
+
+                    <!-- Mini Dictation / Word Bank Zone (Dynamically toggled) -->
+                    <div id="topicDictationZone_${item.id}" class="hidden mt-2 p-3 rounded-xl bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 space-y-2.5">
+                      <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                        <span>🧩 Ghép chữ theo thứ tự:</span>
+                        <span id="topicDictationStatus_${item.id}" class="font-bold"></span>
+                      </div>
+                      <div id="topicDictationAnswer_${item.id}" class="min-h-[38px] p-2 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 flex flex-wrap gap-1.5 items-center">
+                      </div>
+                      <div id="topicDictationBank_${item.id}" class="flex flex-wrap gap-1.5 items-center pt-1">
+                      </div>
+                      <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-200/60 dark:border-slate-700/60">
+                        <button onclick="resetTopicDictation('${item.id}')" class="px-2.5 py-1 text-[11px] rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-300 cursor-pointer">
+                          Làm lại
+                        </button>
+                        <button onclick="checkTopicDictation('${item.id}', '${item.hanzi}')" class="px-3 py-1 text-[11px] rounded-lg bg-emerald-600 text-white font-bold hover:bg-emerald-700 shadow-sm cursor-pointer">
+                          Kiểm tra
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Action Bar: Audio, Speech AI, Dictation -->
+                  <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2 flex-wrap">
+                    <div class="flex items-center gap-1.5">
+                      <button onclick="playChineseAudio('${item.hanzi}', this, 1.0)" class="p-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 text-xs font-semibold flex items-center gap-1 transition cursor-pointer" title="Nghe phát âm chuẩn">
+                        <i data-lucide="volume-2" class="w-3.5 h-3.5"></i>
+                        <span class="text-[11px]">1.0x</span>
+                      </button>
+                      <button onclick="playChineseAudio('${item.hanzi}', this, 0.75)" class="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-300 text-xs font-medium flex items-center gap-1 transition cursor-pointer" title="Nghe phát âm chậm">
+                        <i data-lucide="snail" class="w-3.5 h-3.5"></i>
+                        <span class="text-[11px]">0.75x</span>
+                      </button>
+                    </div>
+
+                    <div class="flex items-center gap-1.5">
+                      <button onclick="toggleTopicDictation('${item.id}')" class="px-2.5 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 text-xs font-semibold flex items-center gap-1 transition cursor-pointer" title="Luyện ghép chữ">
+                        <i data-lucide="puzzle" class="w-3.5 h-3.5"></i>
+                        <span class="text-[11px]">Ghép chữ</span>
+                      </button>
+                      <button id="topicMicBtn_${item.id}" onclick="startTopicSpeechRecord('${item.id}', '${item.hanzi}', this)" class="px-2.5 py-1.5 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 text-xs font-bold flex items-center gap-1 transition cursor-pointer" title="Chấm điểm phát âm bằng AI">
+                        <i data-lucide="mic" class="w-3.5 h-3.5 text-purple-600 dark:text-purple-400"></i>
+                        <span class="text-[11px]">Nói thử</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    // Level 4: Dialogue
+    if (lvl.dialogue && lvl.dialogue.length > 0) {
+      html += `
+        <div class="space-y-3 pt-3">
+          <!-- Level Header -->
+          <div class="flex items-center justify-between pb-1 border-b border-slate-200 dark:border-slate-800 flex-wrap gap-2">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-purple-500"></span>
+              <h3 class="font-bold text-sm sm:text-base text-slate-900 dark:text-white">${lvl.levelName}</h3>
+              <span class="text-xs text-slate-400 hidden sm:inline">- ${lvl.levelDesc}</span>
+            </div>
+            <button onclick="playFullTopicDialogue('${topic.id}')" class="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition cursor-pointer">
+              <i data-lucide="play" class="w-3.5 h-3.5"></i>
+              <span>Nghe toàn bộ hội thoại</span>
+            </button>
+          </div>
+
+          <!-- Dialogue Box -->
+          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 sm:p-5 shadow-sm space-y-4" id="topicDialogueCard_${topic.id}">
+            <div class="space-y-3" id="topicDialogueList_${topic.id}">
+              ${lvl.dialogue.map((line, dIdx) => {
+                const lineId = `${topic.id}_dlg_${dIdx}`;
+                const isMastered = !!(appState.completedTopicSentences && appState.completedTopicSentences[lineId]);
+                const isPersonA = line.speaker.startsWith("A");
+                return `
+                  <div class="flex items-start gap-3 p-3.5 rounded-xl ${isPersonA ? 'bg-slate-50 dark:bg-slate-800/50' : 'bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-200/60 dark:border-emerald-800/40'} transition group" id="topicDlgLine_${dIdx}">
+                    <div class="w-8 h-8 rounded-full ${isPersonA ? 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300' : 'bg-emerald-600 text-white'} font-bold text-xs flex items-center justify-center shrink-0 shadow-sm">
+                      ${isPersonA ? 'A' : 'B'}
+                    </div>
+
+                    <div class="flex-1 space-y-1">
+                      <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400">${line.speaker}</span>
+                        <div class="flex items-center gap-1">
+                          <button onclick="toggleTopicSentenceComplete('${lineId}')" class="p-1 rounded-full ${isMastered ? 'text-emerald-600' : 'text-slate-300 hover:text-slate-500'} transition cursor-pointer" title="Đánh dấu đã thuộc">
+                            <i data-lucide="${isMastered ? 'check-circle-2' : 'circle'}" class="w-4 h-4"></i>
+                          </button>
+                          <button onclick="playChineseAudio('${line.hanzi}', this, 1.0)" class="p-1 rounded-lg text-slate-400 hover:text-emerald-600 transition cursor-pointer" title="Nghe câu này">
+                            <i data-lucide="volume-2" class="w-4 h-4"></i>
+                          </button>
+                        </div>
+                      </div>
+
+                      <div class="flex items-baseline gap-2 flex-wrap">
+                        <span class="font-hanzi text-lg sm:text-xl font-bold text-slate-900 dark:text-white cursor-pointer hover:text-emerald-600 transition" onclick="playChineseAudio('${line.hanzi}', this, 1.0)">${line.hanzi}</span>
+                        <span class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 font-mono">${line.pinyin}</span>
+                      </div>
+
+                      <p class="text-xs text-amber-700 dark:text-amber-400 font-medium">Đọc bồi: ${line.phoneticVi}</p>
+                      <p class="text-xs text-slate-600 dark:text-slate-300 font-medium">${line.viet}</p>
+
+                      ${line.tip ? `
+                        <p class="text-[11px] text-slate-400 italic pt-0.5">💡 ${line.tip}</p>
+                      ` : ''}
+                    </div>
+                  </div>
+                `;
+              }).join("")}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+  });
+
+  container.innerHTML = html;
+  refreshIcons();
+}
+
+function toggleTopicSentenceComplete(itemId) {
+  if (!appState.completedTopicSentences) {
+    appState.completedTopicSentences = {};
+  }
+  if (appState.completedTopicSentences[itemId]) {
+    delete appState.completedTopicSentences[itemId];
+  } else {
+    appState.completedTopicSentences[itemId] = true;
+  }
+  saveState();
+  renderTopicsTab();
+}
+
+function startTopicSpeechRecord(itemId, targetHanzi, btn) {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    alert("Trình duyệt chưa hỗ trợ Web Speech API. Bạn có thể sử dụng Google Chrome, Edge hoặc Safari để luyện nói!");
+    return;
+  }
+
+  if (activeTopicSpeechRecognizer && activeTopicRecordingItemId === itemId) {
+    try { activeTopicSpeechRecognizer.stop(); } catch (e) {}
+    activeTopicSpeechRecognizer = null;
+    activeTopicRecordingItemId = null;
+    btn.className = "px-2.5 py-1.5 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 text-xs font-bold flex items-center gap-1 transition cursor-pointer";
+    btn.innerHTML = `<i data-lucide="mic" class="w-3.5 h-3.5 text-purple-600 dark:text-purple-400"></i><span class="text-[11px]">Nói thử</span>`;
+    refreshIcons();
+    return;
+  }
+
+  try {
+    activeTopicSpeechRecognizer = new SpeechRecognition();
+    activeTopicSpeechRecognizer.lang = "zh-CN";
+    activeTopicSpeechRecognizer.continuous = false;
+    activeTopicSpeechRecognizer.interimResults = false;
+    activeTopicRecordingItemId = itemId;
+
+    btn.className = "px-2.5 py-1.5 rounded-lg bg-red-600 text-white text-xs font-bold flex items-center gap-1 transition animate-pulse cursor-pointer";
+    btn.innerHTML = `<span>⏹️ Đang nghe...</span>`;
+
+    activeTopicSpeechRecognizer.onresult = (evt) => {
+      let transcript = "";
+      for (let i = evt.resultIndex; i < evt.results.length; i++) {
+        if (evt.results[i].isFinal) {
+          transcript += evt.results[i][0].transcript;
+        }
+      }
+      evaluateTopicSpeechScore(itemId, targetHanzi, transcript);
+    };
+
+    activeTopicSpeechRecognizer.onerror = (err) => {
+      console.warn("Topic speech recognition error:", err);
+      evaluateTopicSpeechScore(itemId, targetHanzi, "");
+    };
+
+    activeTopicSpeechRecognizer.onend = () => {
+      btn.className = "px-2.5 py-1.5 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 text-xs font-bold flex items-center gap-1 transition cursor-pointer";
+      btn.innerHTML = `<i data-lucide="mic" class="w-3.5 h-3.5 text-purple-600 dark:text-purple-400"></i><span class="text-[11px]">Nói lại</span>`;
+      refreshIcons();
+      activeTopicSpeechRecognizer = null;
+      activeTopicRecordingItemId = null;
+    };
+
+    activeTopicSpeechRecognizer.start();
+  } catch (e) {
+    console.warn("Speech recognition error:", e);
+    alert("Không thể bật micro. Vui lòng cho phép quyền truy cập micro trên trình duyệt!");
+  }
+}
+
+function evaluateTopicSpeechScore(itemId, targetHanzi, transcript) {
+  const alertEl = document.getElementById(`topicAIScoreAlert_${itemId}`);
+  if (!alertEl) return;
+
+  const cleanTarget = (targetHanzi || "").replace(/[^一-龥]/g, "");
+  const cleanRecog = (transcript || "").replace(/[^一-龥]/g, "");
+
+  let score = 0;
+  if (cleanRecog.length > 0 && cleanTarget.length > 0) {
+    let matches = 0;
+    for (const ch of cleanTarget) {
+      if (cleanRecog.includes(ch)) matches++;
+    }
+    const ratio = matches / Math.max(1, cleanTarget.length);
+    if (cleanRecog === cleanTarget) score = 98;
+    else score = Math.min(96, Math.max(50, Math.round(ratio * 95)));
+  } else {
+    score = 75; // Điểm ghi nhận nỗ lực thu âm
+  }
+
+  alertEl.classList.remove("hidden");
+  if (score >= 80) {
+    alertEl.className = "mt-2 p-2.5 rounded-xl text-xs bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 font-medium flex items-center justify-between";
+    alertEl.innerHTML = `
+      <div>
+        <span class="font-bold">🎉 Điểm AI: ${score}/100</span> - Phát âm chuẩn bản xứ!
+        ${transcript ? `<p class="text-[11px] text-emerald-600 dark:text-emerald-400 mt-0.5">AI nghe được: <strong>${transcript}</strong></p>` : ''}
+      </div>
+      <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-200 dark:bg-emerald-900 font-bold">Xuất sắc</span>
+    `;
+    if (!appState.completedTopicSentences[itemId]) {
+      appState.completedTopicSentences[itemId] = true;
+      saveState();
+      renderTopicsTab();
+    }
+  } else {
+    alertEl.className = "mt-2 p-2.5 rounded-xl text-xs bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200 font-medium flex items-center justify-between";
+    alertEl.innerHTML = `
+      <div>
+        <span class="font-bold">👍 Điểm AI: ${score}/100</span> - Hãy nghe lại mẫu và nói to rõ hơn nhé!
+        ${transcript ? `<p class="text-[11px] text-amber-600 dark:text-amber-400 mt-0.5">AI nghe được: <strong>${transcript}</strong></p>` : ''}
+      </div>
+      <span class="text-xs px-2 py-0.5 rounded-full bg-amber-200 dark:bg-amber-900 font-bold">Cố gắng thêm</span>
+    `;
+  }
+}
+
+function toggleTopicDictation(itemId) {
+  const zone = document.getElementById(`topicDictationZone_${itemId}`);
+  if (!zone) return;
+
+  if (!zone.classList.contains("hidden")) {
+    zone.classList.add("hidden");
+    return;
+  }
+
+  zone.classList.remove("hidden");
+
+  let tokens = [];
+  const topics = HSK1_DATA.topicCurriculum || [];
+  for (const t of topics) {
+    for (const lvl of t.levels) {
+      if (lvl.items) {
+        const itm = lvl.items.find(i => i.id === itemId);
+        if (itm && itm.tokens) {
+          tokens = itm.tokens.map((tok, idx) => ({ ...tok, id: `${itemId}_t_${idx}` }));
+          break;
+        }
+      }
+    }
+  }
+
+  if (tokens.length === 0) {
+    const itm = findTopicItemById(itemId);
+    if (itm) {
+      tokens = itm.hanzi.replace(/[^一-龥]/g, "").split("").map((ch, idx) => ({
+        id: `${itemId}_ch_${idx}`,
+        hanzi: ch,
+        pinyin: "",
+        viet: ""
+      }));
+    }
+  }
+
+  topicDictationStates[itemId] = {
+    assembled: [],
+    bank: [...tokens].sort(() => Math.random() - 0.5)
+  };
+
+  renderTopicDictationUI(itemId);
+}
+
+function findTopicItemById(itemId) {
+  const topics = HSK1_DATA.topicCurriculum || [];
+  for (const t of topics) {
+    for (const lvl of t.levels) {
+      if (lvl.items) {
+        const itm = lvl.items.find(i => i.id === itemId);
+        if (itm) return itm;
+      }
+    }
+  }
+  return null;
+}
+
+function renderTopicDictationUI(itemId) {
+  const state = topicDictationStates[itemId];
+  if (!state) return;
+
+  const answerEl = document.getElementById(`topicDictationAnswer_${itemId}`);
+  const bankEl = document.getElementById(`topicDictationBank_${itemId}`);
+  if (!answerEl || !bankEl) return;
+
+  if (state.assembled.length === 0) {
+    answerEl.innerHTML = `<span class="text-xs text-slate-400 italic">Bấm các từ bên dưới để xếp vào đây</span>`;
+  } else {
+    answerEl.innerHTML = state.assembled.map((tok, aIdx) => `
+      <span onclick="removeTopicDictationToken('${itemId}', ${aIdx})" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-hanzi font-bold text-xs border border-emerald-300 dark:border-emerald-800 cursor-pointer hover:bg-red-100 hover:text-red-700 transition">
+        ${tok.hanzi}
+        <i data-lucide="x" class="w-3 h-3 text-emerald-600"></i>
+      </span>
+    `).join("");
+  }
+
+  if (state.bank.length === 0) {
+    bankEl.innerHTML = `<span class="text-[11px] text-slate-400 italic">Đã dùng hết các từ gợi ý!</span>`;
+  } else {
+    bankEl.innerHTML = state.bank.map((tok, bIdx) => `
+      <span onclick="addTopicDictationToken('${itemId}', ${bIdx})" class="inline-flex items-center px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-hanzi font-bold text-xs border border-slate-300 dark:border-slate-700 shadow-sm cursor-pointer hover:border-emerald-500 hover:scale-105 transition">
+        ${tok.hanzi}
+      </span>
+    `).join("");
+  }
+
+  refreshIcons();
+}
+
+function addTopicDictationToken(itemId, bankIdx) {
+  const state = topicDictationStates[itemId];
+  if (state && state.bank[bankIdx]) {
+    const [token] = state.bank.splice(bankIdx, 1);
+    state.assembled.push(token);
+    renderTopicDictationUI(itemId);
+  }
+}
+
+function removeTopicDictationToken(itemId, assembledIdx) {
+  const state = topicDictationStates[itemId];
+  if (state && state.assembled[assembledIdx]) {
+    const [token] = state.assembled.splice(assembledIdx, 1);
+    state.bank.push(token);
+    renderTopicDictationUI(itemId);
+  }
+}
+
+function resetTopicDictation(itemId) {
+  toggleTopicDictation(itemId);
+  toggleTopicDictation(itemId);
+}
+
+function checkTopicDictation(itemId, targetHanzi) {
+  const state = topicDictationStates[itemId];
+  const statusEl = document.getElementById(`topicDictationStatus_${itemId}`);
+  if (!state || !statusEl) return;
+
+  const cleanTarget = (targetHanzi || "").replace(/[^一-龥]/g, "");
+  const assembledStr = state.assembled.map(t => t.hanzi).join("").replace(/[^一-龥]/g, "");
+
+  if (assembledStr === cleanTarget) {
+    statusEl.textContent = "✓ Chính xác tuyệt đối!";
+    statusEl.className = "text-[11px] font-bold text-emerald-600 dark:text-emerald-400";
+    if (!appState.completedTopicSentences[itemId]) {
+      appState.completedTopicSentences[itemId] = true;
+      saveState();
+      renderTopicsTab();
+    }
+  } else {
+    statusEl.textContent = "✕ Chưa đúng, hãy thử sắp xếp lại!";
+    statusEl.className = "text-[11px] font-bold text-red-500";
+  }
+}
+
+function playFullTopicDialogue(topicId) {
+  const topics = HSK1_DATA.topicCurriculum || [];
+  const topic = topics.find(t => t.id === topicId);
+  if (!topic) return;
+
+  const lvl4 = topic.levels.find(l => l.level === 4);
+  if (!lvl4 || !lvl4.dialogue || lvl4.dialogue.length === 0) return;
+
+  let index = 0;
+  function playNext() {
+    if (index >= lvl4.dialogue.length) return;
+    const line = lvl4.dialogue[index];
+    const lineEl = document.getElementById(`topicDlgLine_${index}`);
+    if (lineEl) {
+      lineEl.classList.add("ring-2", "ring-purple-500");
+    }
+
+    playChineseAudio(line.hanzi, null, 1.0);
+
+    const delay = Math.max(2000, line.hanzi.length * 350 + 800);
+    setTimeout(() => {
+      if (lineEl) {
+        lineEl.classList.remove("ring-2", "ring-purple-500");
+      }
+      index++;
+      playNext();
+    }, delay);
+  }
+
+  playNext();
 }
 
 // ==================== BỘ VIDEO NGẮN LUYỆN NÓI PHẢN XẠ (SHADOWING) & CORODOMO UPGRADE ====================
@@ -2820,6 +3633,7 @@ function initApp() {
   renderLessonList();
   renderCurrentLesson();
   renderExpressPhrasesGrid();
+  renderTopicsTab();
   renderShadowingSection();
   setupEventListeners();
   updateProgressUI();
