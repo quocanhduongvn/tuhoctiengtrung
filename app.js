@@ -1344,6 +1344,19 @@ function setupEventListeners() {
     closeInstallBottomBtn.addEventListener("click", () => pwaModal.classList.add("hidden"));
   }
 
+  // 18. Nút mở nhanh Shadowing từ Drawer điện thoại
+  const drawerShadowingBtn = document.getElementById("drawerShadowingBtn");
+  if (drawerShadowingBtn) {
+    drawerShadowingBtn.addEventListener("click", () => {
+      const btn = document.querySelector('button.tab-btn[data-tab="tab-shadowing"]');
+      if (btn) btn.click();
+      const sidebar = document.getElementById("sidebar");
+      const backdrop = document.getElementById("sidebarBackdrop");
+      if (sidebar) sidebar.classList.add("-translate-x-full");
+      if (backdrop) backdrop.classList.add("hidden");
+    });
+  }
+
   // Sự kiện kích hoạt cài đặt PWA bản địa (Android/Chrome/Edge)
   let deferredPrompt = null;
   window.addEventListener("beforeinstallprompt", (e) => {
@@ -1481,7 +1494,7 @@ function renderExpressPhrasesGrid(filterCategory = "all", searchText = "") {
   }
 
   container.innerHTML = filtered.map(item => `
-    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm hover:shadow-md transition flex flex-col justify-between group">
+    <div class="express-phrase-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm hover:shadow-md transition flex flex-col justify-between group">
       <div>
         <div class="flex items-center justify-between gap-1 mb-2">
           <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-900/40">${item.category}</span>
@@ -1543,7 +1556,7 @@ function renderShadowingVideoCards() {
   container.innerHTML = HSK1_DATA.shadowingVideos.map((vid, idx) => {
     const isActive = idx === currentShadowingIndex;
     return `
-      <div onclick="selectShadowingVideo(${idx})" class="p-3 rounded-2xl border transition shrink-0 cursor-pointer w-60 sm:w-64 flex flex-col justify-between ${
+      <div onclick="selectShadowingVideo(${idx})" class="shadowing-video-card p-3 rounded-2xl border transition shrink-0 cursor-pointer w-60 sm:w-64 flex flex-col justify-between ${
         isActive 
           ? "bg-purple-50 dark:bg-purple-950/40 border-purple-500 shadow-md ring-2 ring-purple-500/30"
           : "bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 hover:border-purple-300"
@@ -1610,7 +1623,7 @@ function renderShadowingSentences(video) {
   container.innerHTML = video.sentences.map((stn, sIdx) => {
     const isDone = completedMap.includes(sIdx);
     return `
-      <div class="p-3.5 rounded-2xl border transition ${
+      <div class="shadowing-sentence-card p-3.5 rounded-2xl border transition ${
         isDone 
           ? "bg-emerald-50/60 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800"
           : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm hover:border-purple-300"
@@ -1840,48 +1853,26 @@ function initApp() {
   purgeNetlifyBadge();
 }
 
-// Hàm gỡ bỏ triệt để nút Netlify chèn vào góc dưới
+// Hàm ẩn huy hiệu Netlify nếu hệ thống tự động chèn vào góc dưới
 function purgeNetlifyBadge() {
   try {
-    document.querySelectorAll('*').forEach(el => {
-      if (el.tagName === 'HEADER' || el.closest('#netlifyGuideModal') || el.closest('#drawerNetlifyBtn')) return;
-      
-      const txt = (el.textContent || '').trim();
-      const cls = (typeof el.className === 'string' ? el.className : '');
-      const id = el.id || '';
-      
-      const isNetlifyInjected = (
-        txt === 'Powered by Netlify' ||
-        txt.includes('Powered by Netlify') ||
-        cls.includes('netlify') ||
-        id.includes('netlify-badge') ||
-        id.includes('netlify-drawer') ||
-        el.tagName.toLowerCase() === 'netlify-drawer' ||
-        el.tagName.toLowerCase() === 'netlify-badge'
-      );
-
-      if (isNetlifyInjected) {
-        el.style.setProperty('display', 'none', 'important');
-        el.style.setProperty('visibility', 'hidden', 'important');
-        el.style.setProperty('opacity', '0', 'important');
-        el.style.setProperty('pointer-events', 'none', 'important');
-        el.remove();
-      }
+    const netlifyInjected = document.querySelectorAll(
+      'netlify-drawer, netlify-badge, [id*="netlify-badge"], iframe[src*="netlify"], .netlify-badge-container'
+    );
+    netlifyInjected.forEach(el => {
+      if (el.closest('#netlifyGuideModal') || el.id === 'openNetlifyGuideBtn' || el.id === 'drawerNetlifyBtn') return;
+      el.style.setProperty('display', 'none', 'important');
+      el.style.setProperty('visibility', 'hidden', 'important');
+      el.style.setProperty('pointer-events', 'none', 'important');
     });
   } catch (e) {}
 }
 
-// Theo dõi định kỳ và bắt sự kiện DOM chèn badge Netlify
+// Theo dõi định kỳ badge Netlify
 if (typeof window !== 'undefined') {
   window.addEventListener('load', purgeNetlifyBadge);
-  setTimeout(purgeNetlifyBadge, 500);
-  setTimeout(purgeNetlifyBadge, 1500);
-  setTimeout(purgeNetlifyBadge, 3500);
-
-  try {
-    const observer = new MutationObserver(purgeNetlifyBadge);
-    observer.observe(document.documentElement, { childList: true, subtree: true });
-  } catch (e) {}
+  setTimeout(purgeNetlifyBadge, 1000);
+  setTimeout(purgeNetlifyBadge, 3000);
 }
 
 if (document.readyState === "loading") {
