@@ -1955,7 +1955,9 @@ function initApp() {
 
   // Đăng ký Service Worker cho PWA
   if ("serviceWorker" in navigator && (window.location.protocol.startsWith("http") || window.location.protocol.startsWith("https"))) {
-    navigator.serviceWorker.register("./sw.js").catch(e => {
+    navigator.serviceWorker.register("./sw.js").then(reg => {
+      reg.update().catch(() => {});
+    }).catch(e => {
       console.warn("SW registration:", e);
     });
   }

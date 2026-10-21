@@ -1,5 +1,5 @@
 // sw.js - Service Worker hỗ trợ cài đặt PWA & tải trang ngoại tuyến
-const CACHE_NAME = 'hsk1-tu-hoc-v5';
+const CACHE_NAME = 'hsk1-tu-hoc-v6';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -30,28 +30,32 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+// Network-First strategy: Luôn ưu tiên lấy phiên bản mới nhất từ mạng trước
+// Nếu mất mạng (offline) thì mới đọc từ bộ nhớ đệm Cache
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
 
   if (url.origin === location.origin) {
     event.respondWith(
-      caches.match(event.request).then((cachedResponse) => {
-        return (
-          cachedResponse ||
-          fetch(event.request).then((networkResponse) => {
-            return caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, networkResponse.clone());
-              return networkResponse;
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseClone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseClone);
             });
-          }).catch(() => {
+          }
+          return networkResponse;
+        })
+        .catch(() => {
+          return caches.match(event.request).then((cachedResponse) => {
+            if (cachedResponse) return cachedResponse;
             if (event.request.mode === 'navigate') {
               return caches.match('./offline.html');
             }
-            return cachedResponse;
-          })
-        );
-      })
+          });
+        })
     );
   }
 });
