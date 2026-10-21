@@ -40,49 +40,154 @@ function saveState() {
   }
 }
 
-// ==================== HỆ THỐNG PHÁT ÂM TIẾNG TRUNG ====================
-// Kết hợp Web Speech API và Fallback Audio
-function playChineseAudio(text, buttonElement = null, customRate = null) {
-  if (!text) return;
+// ==================== HỆ THỐNG PHÁT ÂM TIẾNG TRUNG ĐA TẦNG (HYBRID AUDIO ENGINE) ====================
+// Bảng ánh xạ phát âm chuẩn giáo trình cho 23 Thanh mẫu và 15 Vận mẫu (sử dụng âm chuẩn người bản xứ)
+const PHONETIC_AUDIO_MAP = {
+  // 23 Thanh mẫu
+  b: '波', p: '坡', m: '摸', f: '佛',
+  d: '得', t: '特', n: '讷', l: '勒',
+  g: '哥', k: '科', h: '喝',
+  j: '鸡', q: '七', x: '西',
+  zh: '知', ch: '吃', sh: '诗', r: '日',
+  z: '资', c: '疵', s: '思',
+  y: '衣', w: '乌',
+  // 15 Vận mẫu
+  a: '阿', o: '喔', e: '鹅', i: '衣', u: '乌', 'ü': '迂',
+  ai: '爱', ei: '诶', ao: '奥', ou: '欧',
+  an: '安', en: '恩', ang: '肮', eng: '鞥', ong: '轰'
+};
 
-  if (buttonElement) {
-    buttonElement.classList.add("playing-audio");
-    setTimeout(() => buttonElement.classList.remove("playing-audio"), 1200);
+let currentPlayingAudio = null;
+let cachedVoices = [];
+
+// Khởi tạo và nạp trước danh sách giọng đọc của hệ thống (nếu có)
+if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+  const populateVoices = () => {
+    try {
+      cachedVoices = window.speechSynthesis.getVoices() || [];
+    } catch(e) {}
+  };
+  populateVoices();
+  if (typeof window.speechSynthesis.onvoiceschanged !== 'undefined') {
+    window.speechSynthesis.onvoiceschanged = populateVoices;
+  }
+}
+
+// Hàm chuẩn hóa chuỗi cần phát âm (trích xuất chữ Hán nếu có dạng "mā (妈 - Mẹ)" hoặc "bàba (爸爸)")
+function extractPronounceableText(rawText) {
+  if (!rawText) return "";
+  const str = String(rawText).trim();
+
+  // 1. Nếu có chữ Hán trong ngoặc đơn (ví dụ: "mā (妈 - Mẹ)" hoặc "bàba (爸爸)")
+  const hanziMatch = str.match(/[\u4e00-\u9fa5]+/);
+  if (hanziMatch && (str.includes("(") || str.includes(" - "))) {
+    return hanziMatch[0];
   }
 
-  // Thử dùng Web Speech API nếu trình duyệt hỗ trợ
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel(); // Dừng câu trước đó nếu đang đọc
+  // 2. Nếu là thanh mẫu hoặc vận mẫu đơn lẻ (b, p, m, a, o, ü...)
+  const lower = str.toLowerCase();
+  if (PHONETIC_AUDIO_MAP[lower]) {
+    return PHONETIC_AUDIO_MAP[lower];
+  }
+
+  // 3. Nếu là chuỗi chữ Hán nguyên bản (ví dụ "你好", "我是越南人")
+  return str;
+}
+
+// Hàm phát âm chính - Đảm bảo hoạt động trên mọi thiết bị di động (kể cả iPhone gạt cần rung/không có gói tiếng Trung)
+function playChineseAudio(rawText, buttonElement = null, customRate = null) {
+  if (!rawText) return;
+
+  const textToSpeak = extractPronounceableText(rawText);
+  if (!textToSpeak) return;
+
+  // Hiệu ứng nhấp nháy phát âm trên giao diện
+  if (buttonElement) {
+    buttonElement.classList.add("playing-audio");
+    setTimeout(() => buttonElement.classList.remove("playing-audio"), 1500);
+  }
+
+  // 1. ƯU TIÊN SỐ 1: Phát âm thanh MP3 người bản xứ trực tiếp qua HTML5 Audio (Youdao Native Voice)
+  // Cách này hoạt động trên mọi điện thoại (iOS, Android, PC) mà không phụ thuộc vào gói giọng cài trên máy
+  const isShortWordOrPhrase = textToSpeak.length <= 15 && !textToSpeak.includes("，") && !textToSpeak.includes("！") && !textToSpeak.includes("？");
+  
+  if (isShortWordOrPhrase) {
+    try {
+      if (currentPlayingAudio) {
+        try {
+          currentPlayingAudio.pause();
+          currentPlayingAudio.currentTime = 0;
+        } catch(e) {}
+      }
+
+      const audioUrl = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=zh`;
+      const audio = new Audio(audioUrl);
+      currentPlayingAudio = audio;
+
+      if (customRate && customRate !== 1.0) {
+        audio.playbackRate = customRate;
+      }
+
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          if (buttonElement) {
+            audio.onended = () => buttonElement.classList.remove("playing-audio");
+          }
+        }).catch(() => {
+          // Nếu trình duyệt chặn phát MP3, chuyển sang Web Speech API
+          playViaWebSpeech(textToSpeak, customRate, buttonElement);
+        });
+        return;
+      }
+    } catch (e) {}
+  }
+
+  // 2. ƯU TIÊN SỐ 2: Web Speech API cho câu dài hoặc khi online audio không khả dụng
+  playViaWebSpeech(textToSpeak, customRate, buttonElement);
+}
+
+// Phát qua Web Speech API
+function playViaWebSpeech(text, customRate = null, buttonElement = null) {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+    fallbackOnlineAudio(text);
+    return;
+  }
+
+  try {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'zh-CN';
-    utterance.rate = customRate || 0.85; // Tốc độ điều chỉnh linh hoạt
+    utterance.rate = customRate || 0.85;
 
-    const voices = window.speechSynthesis.getVoices();
-    const zhVoice = voices.find(v => v.lang.startsWith('zh') || v.lang.includes('cmn'));
+    if (!cachedVoices || cachedVoices.length === 0) {
+      cachedVoices = window.speechSynthesis.getVoices() || [];
+    }
+    const zhVoice = cachedVoices.find(v => v.lang.startsWith('zh') || v.lang.includes('cmn'));
     if (zhVoice) {
       utterance.voice = zhVoice;
     }
 
+    utterance.onend = () => {
+      if (buttonElement) buttonElement.classList.remove("playing-audio");
+    };
+
     utterance.onerror = () => {
+      if (buttonElement) buttonElement.classList.remove("playing-audio");
       fallbackOnlineAudio(text);
     };
 
     window.speechSynthesis.speak(utterance);
-  } else {
+  } catch (e) {
     fallbackOnlineAudio(text);
   }
 }
 
 function fallbackOnlineAudio(text) {
   try {
-    const audioUrl = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(text)}&type=1`;
+    const audioUrl = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(text)}&le=zh`;
     const audio = new Audio(audioUrl);
-    audio.play().catch(err => {
-      console.warn("Không thể phát âm thanh fallback:", err);
-    });
-  } catch (e) {
-    console.error("Audio error:", e);
-  }
+    audio.play().catch(() => {});
+  } catch (e) {}
 }
 
 // ==================== RENDER DANH SÁCH BÀI HỌC (SIDEBAR) ====================
@@ -281,7 +386,7 @@ function renderPhoneticsTab(lesson) {
   const initContainer = document.getElementById("initialsContainer");
   if (initContainer && lesson.initials) {
     initContainer.innerHTML = lesson.initials.map(item => `
-      <div onclick="playChineseAudio('${item.pinyin}', this)" class="cursor-pointer p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 hover:border-chineseRed-400 hover:shadow-md transition text-center group">
+      <div onclick="playChineseAudio('${item.char}', this)" class="cursor-pointer p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 hover:border-chineseRed-400 hover:shadow-md transition text-center group">
         <div class="flex items-center justify-center gap-1 mb-1">
           <span class="text-2xl font-bold font-mono text-chineseRed-600 dark:text-chineseRed-400">${item.char}</span>
           <i data-lucide="volume-2" class="w-3.5 h-3.5 text-slate-400 group-hover:text-chineseRed-500"></i>
@@ -296,7 +401,7 @@ function renderPhoneticsTab(lesson) {
   const finalsContainer = document.getElementById("finalsContainer");
   if (finalsContainer && lesson.finals) {
     finalsContainer.innerHTML = lesson.finals.map(item => `
-      <div onclick="playChineseAudio('${item.pinyin}', this)" class="cursor-pointer p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 hover:border-amber-400 hover:shadow-md transition text-center group">
+      <div onclick="playChineseAudio('${item.char}', this)" class="cursor-pointer p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 hover:border-amber-400 hover:shadow-md transition text-center group">
         <div class="flex items-center justify-center gap-1 mb-1">
           <span class="text-xl font-bold font-mono text-imperialGold-600 dark:text-imperialGold-400">${item.char}</span>
           <i data-lucide="volume-2" class="w-3.5 h-3.5 text-slate-400 group-hover:text-amber-500"></i>
@@ -320,7 +425,7 @@ function renderPhoneticsTab(lesson) {
           <p class="text-xs font-semibold text-chineseRed-600 dark:text-chineseRed-400 mb-1">Cao độ: ${t.pitch}</p>
           <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-3">${t.desc}</p>
         </div>
-        <button onclick="playChineseAudio('${t.example.split(' ')[0]}', this)" class="w-full flex items-center justify-center gap-2 py-1.5 text-xs font-semibold rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-chineseRed-50 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition">
+        <button onclick="playChineseAudio('${t.example}', this)" class="w-full flex items-center justify-center gap-2 py-1.5 text-xs font-semibold rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-chineseRed-50 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition">
           <i data-lucide="volume-2" class="w-4 h-4 text-chineseRed-600"></i>
           <span>Nghe phát âm: ${t.example}</span>
         </button>
@@ -1427,7 +1532,7 @@ function render23InitialsGrid(filterGroup = "all", searchText = "") {
   }
 
   container.innerHTML = filtered.map(item => `
-    <div onclick="playChineseAudio('${item.audioText || item.char}', this)" class="cursor-pointer p-3.5 rounded-2xl bg-slate-50 hover:bg-chineseRed-50/50 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 hover:border-chineseRed-400 dark:hover:border-chineseRed-500 shadow-sm hover:shadow transition flex flex-col justify-between group">
+    <div onclick="playChineseAudio('${item.char}', this)" class="cursor-pointer p-3.5 rounded-2xl bg-slate-50 hover:bg-chineseRed-50/50 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 hover:border-chineseRed-400 dark:hover:border-chineseRed-500 shadow-sm hover:shadow transition flex flex-col justify-between group">
       <div>
         <div class="flex items-center justify-between gap-1 mb-2">
           <span class="w-5 h-5 rounded-md bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-[10px] font-bold flex items-center justify-center font-mono">${item.num}</span>
