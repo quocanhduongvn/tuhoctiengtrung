@@ -1706,12 +1706,16 @@ function renderActiveShadowingVideo(index) {
   const catEl = document.getElementById("currentShadowingCategory");
   const durEl = document.getElementById("currentShadowingDuration");
   const player = document.getElementById("shadowingPlayer");
+  const extLink = document.getElementById("externalShadowingYoutubeLink");
 
   if (titleEl) titleEl.textContent = vid.title;
   if (catEl) catEl.textContent = vid.category;
   if (durEl) durEl.textContent = vid.duration;
+  if (extLink && vid.youtubeId) {
+    extLink.href = `https://www.youtube.com/watch?v=${vid.youtubeId}`;
+  }
   if (player && vid.youtubeId) {
-    player.src = `https://www.youtube.com/embed/${vid.youtubeId}?rel=0&enablejsapi=1`;
+    player.src = getYouTubeEmbedUrl(vid.youtubeId);
   }
 
   renderShadowingSentences(vid);

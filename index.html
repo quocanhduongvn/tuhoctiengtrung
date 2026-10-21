@@ -59,7 +59,7 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="style.css?v=6">
+  <link rel="stylesheet" href="style.css?v=7">
 </head>
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
 
@@ -860,7 +860,13 @@
                   <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300" id="currentShadowingCategory">Chào hỏi</span>
                   <h4 class="font-bold text-base text-slate-900 dark:text-white mt-1" id="currentShadowingTitle">Lần Đầu Gặp Gỡ & Chào Hỏi Tự Nhiên</h4>
                 </div>
-                <span class="text-xs text-slate-400 font-mono" id="currentShadowingDuration">15:20</span>
+                <div class="flex items-center gap-2">
+                  <a id="externalShadowingYoutubeLink" href="https://www.youtube.com/watch?v=EpSs4cdSML0" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-950/40 dark:text-red-400 text-xs font-semibold border border-red-200 dark:border-red-900 transition" title="Mở trực tiếp trên ứng dụng YouTube">
+                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                    <span class="hidden sm:inline">Mở</span> YouTube
+                  </a>
+                  <span class="text-xs text-slate-400 font-mono" id="currentShadowingDuration">15:20</span>
+                </div>
               </div>
 
               <!-- Video Embed -->
@@ -1215,9 +1221,9 @@
     </div>
   </div>
 
-  <!-- SCRIPT FILES (Cache Busting v6) -->
-  <script src="data.js?v=6"></script>
-  <script src="app.js?v=6"></script>
+  <!-- SCRIPT FILES (Cache Busting v7) -->
+  <script src="data.js?v=7"></script>
+  <script src="app.js?v=7"></script>
 
 </body>
 </html>
