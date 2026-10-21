@@ -42,7 +42,7 @@ function saveState() {
 
 // ==================== HỆ THỐNG PHÁT ÂM TIẾNG TRUNG ====================
 // Kết hợp Web Speech API và Fallback Audio
-function playChineseAudio(text, buttonElement = null) {
+function playChineseAudio(text, buttonElement = null, customRate = null) {
   if (!text) return;
 
   if (buttonElement) {
@@ -55,7 +55,7 @@ function playChineseAudio(text, buttonElement = null) {
     window.speechSynthesis.cancel(); // Dừng câu trước đó nếu đang đọc
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'zh-CN';
-    utterance.rate = 0.85; // Tốc độ hơi chậm cho người mới bắt đầu dễ nghe
+    utterance.rate = customRate || 0.85; // Tốc độ điều chỉnh linh hoạt
 
     const voices = window.speechSynthesis.getVoices();
     const zhVoice = voices.find(v => v.lang.startsWith('zh') || v.lang.includes('cmn'));
@@ -1515,6 +1515,282 @@ function renderExpressPhrasesGrid(filterCategory = "all", searchText = "") {
   `).join("");
 }
 
+// ==================== BỘ VIDEO NGẮN LUYỆN NÓI PHẢN XẠ (SHADOWING) ====================
+let currentShadowingIndex = 0;
+let currentShadowingSpeed = 1.0;
+let shadowingHidePinyin = false;
+let shadowingHideMeaning = false;
+let mediaRecorder = null;
+let audioChunks = [];
+let isRecording = false;
+
+function renderShadowingSection() {
+  const container = document.getElementById("shadowingVideoCardsContainer");
+  if (!container || !HSK1_DATA.shadowingVideos) return;
+
+  const totalCountEl = document.getElementById("totalShadowingCount");
+  if (totalCountEl) totalCountEl.textContent = `${HSK1_DATA.shadowingVideos.length} Video`;
+
+  renderShadowingVideoCards();
+  renderActiveShadowingVideo(currentShadowingIndex);
+  setupShadowingControls();
+}
+
+function renderShadowingVideoCards() {
+  const container = document.getElementById("shadowingVideoCardsContainer");
+  if (!container || !HSK1_DATA.shadowingVideos) return;
+
+  container.innerHTML = HSK1_DATA.shadowingVideos.map((vid, idx) => {
+    const isActive = idx === currentShadowingIndex;
+    return `
+      <div onclick="selectShadowingVideo(${idx})" class="p-3 rounded-2xl border transition shrink-0 cursor-pointer w-60 sm:w-64 flex flex-col justify-between ${
+        isActive 
+          ? "bg-purple-50 dark:bg-purple-950/40 border-purple-500 shadow-md ring-2 ring-purple-500/30"
+          : "bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 hover:border-purple-300"
+      }">
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${
+              isActive ? "bg-purple-600 text-white" : "bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300"
+            }">${vid.category}</span>
+            <span class="text-[11px] text-slate-400 font-mono">${vid.duration}</span>
+          </div>
+          <h5 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white line-clamp-1 mb-1">${vid.title}</h5>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2">${vid.description}</p>
+        </div>
+        <div class="mt-2 pt-2 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between text-[10px]">
+          <span class="text-purple-600 dark:text-purple-400 font-semibold">${vid.sentences.length} câu thoại</span>
+          <span class="text-emerald-600 dark:text-emerald-400 font-medium">${vid.difficulty}</span>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function selectShadowingVideo(index) {
+  currentShadowingIndex = index;
+  renderShadowingVideoCards();
+  renderActiveShadowingVideo(index);
+  refreshIcons();
+}
+
+function renderActiveShadowingVideo(index) {
+  const vid = HSK1_DATA.shadowingVideos[index];
+  if (!vid) return;
+
+  const titleEl = document.getElementById("currentShadowingTitle");
+  const catEl = document.getElementById("currentShadowingCategory");
+  const durEl = document.getElementById("currentShadowingDuration");
+  const player = document.getElementById("shadowingPlayer");
+
+  if (titleEl) titleEl.textContent = vid.title;
+  if (catEl) catEl.textContent = vid.category;
+  if (durEl) durEl.textContent = vid.duration;
+  if (player && vid.youtubeId) {
+    player.src = `https://www.youtube.com/embed/${vid.youtubeId}?rel=0&enablejsapi=1`;
+  }
+
+  renderShadowingSentences(vid);
+}
+
+function renderShadowingSentences(video) {
+  const container = document.getElementById("shadowingSentencesContainer");
+  const countEl = document.getElementById("shadowingCompletedCount");
+  if (!container || !video.sentences) return;
+
+  if (!appState.completedShadowingSentences) {
+    appState.completedShadowingSentences = {};
+  }
+
+  const completedMap = appState.completedShadowingSentences[video.id] || [];
+  if (countEl) {
+    countEl.textContent = `${completedMap.length}/${video.sentences.length} Đã luyện`;
+  }
+
+  container.innerHTML = video.sentences.map((stn, sIdx) => {
+    const isDone = completedMap.includes(sIdx);
+    return `
+      <div class="p-3.5 rounded-2xl border transition ${
+        isDone 
+          ? "bg-emerald-50/60 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800"
+          : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm hover:border-purple-300"
+      }">
+        <div class="flex items-center justify-between mb-2">
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+            ${stn.speaker}
+          </span>
+          <div class="flex items-center gap-1.5">
+            <button onclick="playShadowingSentence('${stn.hanzi.replace(/'/g, "\\'")}', this)" class="px-2.5 py-1 rounded-xl bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 text-xs font-semibold hover:bg-purple-100 transition flex items-center gap-1" title="Nghe người bản xứ phát âm">
+              <i data-lucide="volume-2" class="w-3.5 h-3.5"></i>
+              <span>Nghe mẫu</span>
+            </button>
+            <button onclick="toggleSentenceComplete('${video.id}', ${sIdx})" class="p-1 rounded-xl transition ${
+              isDone ? "text-emerald-600 bg-emerald-100 dark:bg-emerald-900/50" : "text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+            }" title="${isDone ? "Đã hoàn thành nhại giọng" : "Đánh dấu đã nhại xong"}">
+              <i data-lucide="check-circle" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Chữ Hán to rõ -->
+        <h5 class="font-hanzi text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-1.5 cursor-pointer hover:text-purple-600 transition" onclick="playShadowingSentence('${stn.hanzi.replace(/'/g, "\\'")}', this)">
+          ${stn.hanzi}
+        </h5>
+
+        <!-- Pinyin & Đọc bồi -->
+        <div class="space-y-0.5 mb-2 ${shadowingHidePinyin ? "hidden" : ""}">
+          <div class="text-xs font-mono font-bold text-purple-600 dark:text-purple-400">${stn.pinyin}</div>
+          <div class="text-[11px] text-amber-600 dark:text-amber-400">Đọc bồi: <strong class="bg-amber-50 dark:bg-amber-950/60 px-1 py-0.5 rounded">${stn.phoneticVi}</strong></div>
+        </div>
+
+        <!-- Dịch Tiếng Việt -->
+        <p class="text-xs font-semibold text-slate-800 dark:text-slate-200 mb-2 ${shadowingHideMeaning ? "hidden" : ""}">
+          👉 ${stn.viet}
+        </p>
+
+        <!-- Mẹo ngữ điệu Shadowing -->
+        <div class="text-[11px] text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/60 p-2 rounded-xl border border-slate-100 dark:border-slate-800 flex items-start gap-1.5">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-purple-500 shrink-0 mt-0.5"></i>
+          <span><strong class="text-purple-600 dark:text-purple-400">Mẹo nhại giọng:</strong> ${stn.tip}</span>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  refreshIcons();
+}
+
+function playShadowingSentence(text, btnEl) {
+  playChineseAudio(text, btnEl, currentShadowingSpeed);
+}
+
+function toggleSentenceComplete(videoId, sentenceIndex) {
+  if (!appState.completedShadowingSentences) {
+    appState.completedShadowingSentences = {};
+  }
+  if (!appState.completedShadowingSentences[videoId]) {
+    appState.completedShadowingSentences[videoId] = [];
+  }
+
+  const list = appState.completedShadowingSentences[videoId];
+  const idx = list.indexOf(sentenceIndex);
+  if (idx > -1) {
+    list.splice(idx, 1);
+  } else {
+    list.push(sentenceIndex);
+  }
+
+  saveState();
+  const vid = HSK1_DATA.shadowingVideos[currentShadowingIndex];
+  if (vid) renderShadowingSentences(vid);
+}
+
+function setupShadowingControls() {
+  // Speed buttons
+  document.querySelectorAll(".shadowing-speed-btn").forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll(".shadowing-speed-btn").forEach(b => {
+        b.className = "shadowing-speed-btn px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold hover:bg-slate-200";
+      });
+      btn.className = "shadowing-speed-btn active px-2.5 py-1 rounded-lg bg-purple-600 text-white text-xs font-bold";
+      currentShadowingSpeed = parseFloat(btn.getAttribute("data-speed")) || 1.0;
+    };
+  });
+
+  // Toggle Pinyin
+  const togglePinyinBtn = document.getElementById("toggleShadowingPinyinBtn");
+  if (togglePinyinBtn) {
+    togglePinyinBtn.onclick = () => {
+      shadowingHidePinyin = !shadowingHidePinyin;
+      togglePinyinBtn.textContent = shadowingHidePinyin ? "Hiện Pinyin" : "Ẩn Pinyin";
+      const vid = HSK1_DATA.shadowingVideos[currentShadowingIndex];
+      if (vid) renderShadowingSentences(vid);
+    };
+  }
+
+  // Toggle Meaning
+  const toggleMeaningBtn = document.getElementById("toggleShadowingMeaningBtn");
+  if (toggleMeaningBtn) {
+    toggleMeaningBtn.onclick = () => {
+      shadowingHideMeaning = !shadowingHideMeaning;
+      toggleMeaningBtn.textContent = shadowingHideMeaning ? "Hiện Dịch" : "Ẩn Dịch";
+      const vid = HSK1_DATA.shadowingVideos[currentShadowingIndex];
+      if (vid) renderShadowingSentences(vid);
+    };
+  }
+
+  // Voice recording
+  setupVoiceRecorder();
+}
+
+function setupVoiceRecorder() {
+  const recordBtn = document.getElementById("toggleRecordBtn");
+  const recordIcon = document.getElementById("recordBtnIcon");
+  const recordText = document.getElementById("recordBtnText");
+  const statusBadge = document.getElementById("recordingStatusBadge");
+  const playerWrapper = document.getElementById("userAudioPlayerWrapper");
+  const audioPlayback = document.getElementById("userAudioPlayback");
+  const deleteBtn = document.getElementById("deleteRecordingBtn");
+
+  if (!recordBtn) return;
+
+  if (deleteBtn) {
+    deleteBtn.onclick = () => {
+      if (audioPlayback) {
+        audioPlayback.pause();
+        audioPlayback.src = "";
+      }
+      playerWrapper?.classList.add("hidden");
+    };
+  }
+
+  recordBtn.onclick = async () => {
+    if (!isRecording) {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert("Trình duyệt của bạn chưa hỗ trợ thu âm trực tiếp qua MediaRecorder. Hãy dùng Chrome hoặc Safari mới nhất nhé!");
+        return;
+      }
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) audioChunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = () => {
+          const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+          const audioUrl = URL.createObjectURL(audioBlob);
+          if (audioPlayback) {
+            audioPlayback.src = audioUrl;
+            playerWrapper?.classList.remove("hidden");
+          }
+          stream.getTracks().forEach(t => t.stop());
+        };
+
+        mediaRecorder.start();
+        isRecording = true;
+
+        recordBtn.className = "flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm shadow-xl transition active:scale-95 animate-pulse";
+        if (recordText) recordText.textContent = "⏹️ Dừng Thu Âm & So Sánh";
+        statusBadge?.classList.remove("hidden");
+      } catch (err) {
+        alert("Không thể truy cập microphone. Vui lòng cho phép quyền truy cập micro trên trình duyệt của bạn!");
+        console.warn("Mic error:", err);
+      }
+    } else {
+      if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        mediaRecorder.stop();
+      }
+      isRecording = false;
+      recordBtn.className = "flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 text-white font-bold text-sm shadow-xl transition active:scale-95";
+      if (recordText) recordText.textContent = "🎙️ Thu Âm Nhại Lại Lần Nữa";
+      statusBadge?.classList.add("hidden");
+    }
+  };
+}
+
 function refreshIcons() {
   if (window.lucide && typeof lucide.createIcons === "function") {
     try {
@@ -1548,6 +1824,7 @@ function initApp() {
   renderLessonList();
   renderCurrentLesson();
   renderExpressPhrasesGrid();
+  renderShadowingSection();
   setupEventListeners();
   updateProgressUI();
   refreshIcons();

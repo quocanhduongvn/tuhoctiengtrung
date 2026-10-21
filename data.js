@@ -698,5 +698,267 @@ const HSK1_DATA = {
     { id: "ep86", category: "Du lịch & Tham quan", hanzi: "我想买当地的电话卡 / SIM卡。", pinyin: "Wǒ xiǎng mǎi dāngdì de diànhuà kǎ / SIM kǎ.", phoneticVi: "Ủa xẻng mải tang ti tơ ti-ên hoa khả / sim khả.", viet: "Tôi muốn mua thẻ SIM điện thoại / SIM 4G địa phương.", context: "Mua sim du lịch để vào mạng internet." },
     { id: "ep87", category: "Du lịch & Tham quan", hanzi: "洗手间 / 厕所在哪里？", pinyin: "Xǐshǒujiān / Cèsuǒ zài nǎlǐ?", phoneticVi: "Xỉ sẩu chiên / Chưa suổ chai nả lỉ?", viet: "Nhà vệ sinh / Toilet ở chỗ nào?", context: "Câu hỏi thần thánh cứu cánh khi đi bất cứ đâu." },
     { id: "ep88", category: "Du lịch & Tham quan", hanzi: "祝你旅途愉快！", pinyin: "Zhù nǐ lǚtú yúkuài!", phoneticVi: "Chu nỉ lủy thu dý khoai!", viet: "Chúc bạn có một chuyến du lịch vui vẻ!", context: "Lời chúc tốt lành gửi tới bạn bè đi du lịch." }
+  ],
+
+  // BỘ VIDEO NGẮN LUYỆN NÓI PHẢN XẠ (SHADOWING)
+  shadowingVideos: [
+    {
+      id: "sh1",
+      title: "Lần Đầu Gặp Gỡ & Chào Hỏi Tự Nhiên",
+      category: "Chào hỏi",
+      duration: "0:45",
+      difficulty: "Cơ bản HSK 1",
+      youtubeId: "yqYwJk7F7uI",
+      description: "Học cách chào hỏi, giới thiệu tên tuổi và quốc tịch với ngữ điệu tự nhiên, vui vẻ.",
+      sentences: [
+        {
+          speaker: "Nhân vật A",
+          hanzi: "你好！很高兴认识你！",
+          pinyin: "Nǐ hǎo! Hěn gāoxìng rènshi nǐ!",
+          phoneticVi: "Nỉ hảo! Hẩn cao xing rấn sư nỉ!",
+          viet: "Xin chào! Rất vui được làm quen với bạn!",
+          tip: "Nhấn mạnh vào từ 'hěn' (rất) và hạ giọng nhẹ ở cuối câu."
+        },
+        {
+          speaker: "Nhân vật B",
+          hanzi: "你好！我也很高兴认识你。你叫什么名字？",
+          pinyin: "Nǐ hǎo! Wǒ yě hěn gāoxìng rènshi nǐ. Nǐ jiào shénme míngzi?",
+          phoneticVi: "Nỉ hảo! Ủa dẻ hẩn cao xing rấn sư nỉ. Nỉ teo sấn mơ mính chự?",
+          viet: "Xin chào! Tôi cũng rất vui được quen bạn. Bạn tên là gì?",
+          tip: "'wǒ yě' biến điệu thanh 3 nhẹ nhàng, 'míngzi' đọc nhẹ chữ zi."
+        },
+        {
+          speaker: "Nhân vật A",
+          hanzi: "我叫王明，你是哪国人？",
+          pinyin: "Wǒ jiào Wáng Míng, nǐ shì nǎ guó rén?",
+          phoneticVi: "Ủa teo Oáng Mính, nỉ sư nả cuố rấn?",
+          viet: "Tôi tên là Vương Minh, bạn là người nước nào?",
+          tip: "Lên giọng nhẹ ở 'nǎ guó rén' để tạo âm điệu tò mò, thân thiện."
+        },
+        {
+          speaker: "Nhân vật B",
+          hanzi: "我是越南人。我是来中国学中文的。",
+          pinyin: "Wǒ shì Yuènán rén. Wǒ shì lái Zhōngguó xué Zhōngwén de.",
+          phoneticVi: "Ủa sư Dzuê nán rấn. Ủa sư lái Chung cuố xuế Chung uấn tơ.",
+          viet: "Tôi là người Việt Nam. Tôi đến Trung Quốc để học tiếng Trung.",
+          tip: "Thanh 4 ở 'Yuènán' dứt khoát, 'de' ở cuối câu đọc nhẹ lướt."
+        }
+      ]
+    },
+    {
+      id: "sh2",
+      title: "Mặc Cả & Trả Giá Siêu Thực Chiến",
+      category: "Mua sắm",
+      duration: "0:50",
+      difficulty: "Thực chiến đời sống",
+      youtubeId: "q76hM7vW4K8",
+      description: "Tình huống hỏi giá, chê đắt và thương lượng giảm giá cực kỳ hữu dụng tại chợ Trung Quốc.",
+      sentences: [
+        {
+          speaker: "Khách mua",
+          hanzi: "老板，这件衣服多少钱？",
+          pinyin: "Lǎobǎn, zhè jiàn yīfu duōshao qián?",
+          phoneticVi: "Lão bản, chơ chiên y phu tua sao chán?",
+          viet: "Ông chủ ơi, chiếc áo này bao nhiêu tiền vậy?",
+          tip: "Gọi 'Lǎobǎn' thân mật, chữ 'fu' trong yīfu đọc thanh nhẹ."
+        },
+        {
+          speaker: "Chủ quán",
+          hanzi: "一件一百二十块，质量非常好的！",
+          pinyin: "Yí jiàn yībǎi èrshí kuài, zhìliàng fēicháng hǎo de!",
+          phoneticVi: "Ý chiên y pải ơ sứ khoai, chư leang phây cháng hảo tơ!",
+          viet: "Một chiếc 120 tệ, chất lượng cực kỳ tốt đó!",
+          tip: "Ngữ điệu tự tin, nhấn mạnh vào 'fēicháng hǎo'."
+        },
+        {
+          speaker: "Khách mua",
+          hanzi: "哎呀，太贵了！便宜一点吧，八十块卖不卖？",
+          pinyin: "Āiyā, tài guì le! Piányi yìdiǎn ba, bāshí kuài mài bu mài?",
+          phoneticVi: "Ai da, thai kuây lơ! Phiến di ý tiển pa, pa sứ khoai mại bu mại?",
+          viet: "Ôi dào, đắt quá! Rẻ chút đi, 80 tệ bán không anh?",
+          tip: "Thêm cảm thán 'Āiyā' ở đầu câu để tạo cảm xúc tự nhiên của người bản xứ."
+        },
+        {
+          speaker: "Chủ quán",
+          hanzi: "行吧行吧，看你诚心买，拿去吧！",
+          pinyin: "Xíng ba xíng ba, kàn nǐ chéngxīn mǎi, ná qù ba!",
+          phoneticVi: "Xính pa xính pa, khan nỉ chống xin mải, ná chuy pa!",
+          viet: "Được rồi được rồi, thấy bạn thật lòng muốn mua, lấy đi!",
+          tip: "'Xíng ba xíng ba' đọc nhanh, ngữ điệu nhượng bộ sảng khoái."
+        }
+      ]
+    },
+    {
+      id: "sh3",
+      title: "Gọi Món & Ăn Uống Tại Quán Bản Xứ",
+      category: "Ăn uống",
+      duration: "0:40",
+      difficulty: "Cơ bản HSK 1",
+      youtubeId: "u_O7C22p39o",
+      description: "Thao tác gọi phục vụ, gọi món mỳ bò không cay và thanh toán quét mã QR.",
+      sentences: [
+        {
+          speaker: "Thực khách",
+          hanzi: "服务员，点单！请给我菜单。",
+          pinyin: "Fúwùyuán, diǎndān! Qǐng gěi wǒ càidān.",
+          phoneticVi: "Phú u dzoan, tiển tan! Chỉnh cẩy ủa thai tan.",
+          viet: "Phục vụ ơi, gọi món! Cho tôi xin thực đơn với.",
+          tip: "Hô to, rõ ràng hai từ 'Fúwùyuán, diǎndān!'."
+        },
+        {
+          speaker: "Phục vụ",
+          hanzi: "您好，您想吃点什么特色菜？",
+          pinyin: "Nín hǎo, nín xiǎng chī diǎn tèsè cài?",
+          phoneticVi: "Nín hảo, nín xẻng chu tiển thơ sơ thai?",
+          viet: "Chào quý khách, bạn muốn ăn món đặc sản gì ạ?",
+          tip: "Dùng kính ngữ 'Nín' với ngữ điệu niềm nở."
+        },
+        {
+          speaker: "Thực khách",
+          hanzi: "来一碗兰州牛肉面，微辣，少放香菜！",
+          pinyin: "Lái yì wǎn Lánzhōu niúròumiàn, wēilà, shǎo fàng xiāngcài!",
+          phoneticVi: "Lái ý oản Lan châu niêu dâu miên, uây la, sảo phang xiang thai!",
+          viet: "Cho một bát mỳ bò Lan Châu, cay ít, cho ít rau mùi nhé!",
+          tip: "Từ 'Lái' được dùng thay cho 'cho tôi / làm cho tôi' rất tự nhiên."
+        },
+        {
+          speaker: "Thực khách",
+          hanzi: "吃饱了，服务员，买单！可以扫码吗？",
+          pinyin: "Chī bǎo le, fúwùyuán, mǎidān! Kěyǐ sǎomǎ ma?",
+          phoneticVi: "Chu bảo lơ, phú u dzoan, mải tan! Khửa dỉ sảo mả ma?",
+          viet: "Ăn no rồi, phục vụ tính tiền! Quét mã được không?",
+          tip: "'sǎomǎ' (quét mã QR) là câu cửa miệng mọi nơi tại Trung Quốc."
+        }
+      ]
+    },
+    {
+      id: "sh4",
+      title: "Hỏi Giờ Tăng Ca & An Toàn Trong Xưởng",
+      category: "Nhà xưởng",
+      duration: "0:55",
+      difficulty: "Nhà xưởng thực tế",
+      youtubeId: "W2x3Y1z_98A",
+      description: "Đối thoại giữa công nhân và tổ trưởng về lịch tăng ca, máy móc và quy tắc an toàn.",
+      sentences: [
+        {
+          speaker: "Công nhân",
+          hanzi: "班长，今天晚上我们要加班吗？",
+          pinyin: "Bānzhǎng, jīntiān wǎnshang wǒmen yào jiābān ma?",
+          phoneticVi: "Pan tráng, chin thiên oản sang ủa mơn dao chia pan ma?",
+          viet: "Tổ trưởng, tối nay chúng ta có phải tăng ca không ạ?",
+          tip: "'Bānzhǎng' nhấn giọng lịch sự, 'jiābān' thanh 1 ngân ngang."
+        },
+        {
+          speaker: "Tổ trưởng",
+          hanzi: "要加班两个小时，赶完这批货。",
+          pinyin: "Yào jiābān liǎng gè xiǎoshí, gǎn wán zhè pī huò.",
+          phoneticVi: "Dao chia pan leang cơ xẻo sứ, cản oán chơ phi huo.",
+          viet: "Cần tăng ca hai tiếng, để làm cho xong lô hàng này.",
+          tip: "'liǎng gè xiǎoshí' nói liền mạch không ngắt quãng."
+        },
+        {
+          speaker: "Công nhân",
+          hanzi: "这台机器有点卡，速度有点慢。",
+          pinyin: "Zhè tái jīqì yǒudiǎn kǎ, sùdù yǒudiǎn màn.",
+          phoneticVi: "Chơ thai chi chi dẩu tiển khả, su tu dẩu tiển man.",
+          viet: "Cái máy này hơi bị kẹt, tốc độ chạy hơi chậm.",
+          tip: "'yǒudiǎn kǎ' thể hiện sự phàn nàn nhẹ nhàng về kỹ thuật."
+        },
+        {
+          speaker: "Tổ trưởng",
+          hanzi: "等一下叫机修来看看。大家一定注意安全！",
+          pinyin: "Děng yíxià jiào jīxiū lái kànkan. Dàjiā yídìng zhùyì ānquán!",
+          phoneticVi: "Tẩng ý xia teo chi xiu lái khan khan. Ta chia ý tinh chu ý an choán!",
+          viet: "Lát nữa gọi thợ sửa máy qua xem. Mọi người nhất định phải chú ý an toàn!",
+          tip: "'zhùyì ānquán' nói to, dứt khoát để nhắc nhở an toàn lao động."
+        }
+      ]
+    },
+    {
+      id: "sh5",
+      title: "Đi Taxi & Bác Tài Ơi Đi Nhanh Giúp Tôi",
+      category: "Đi lại",
+      duration: "0:45",
+      difficulty: "Sơ cấp phản xạ",
+      youtubeId: "M4v7Qx6d88Y",
+      description: "Bắt taxi đi ga tàu cao tốc, yêu cầu tài xế chạy nhanh vì đang vội kịp chuyến tàu.",
+      sentences: [
+        {
+          speaker: "Hành khách",
+          hanzi: "师傅，去高铁站，大概要多久？",
+          pinyin: "Shīfu, qù gāotiě zhàn, dàgài yào duōjiǔ?",
+          phoneticVi: "Sư phu, chuy cao thỉu chan, ta cai dao tua chiểu?",
+          viet: "Bác tài ơi, đi ga tàu cao tốc mất khoảng bao lâu?",
+          tip: "'Shīfu' là danh xưng tôn trọng dành cho tài xế/thợ tay nghề."
+        },
+        {
+          speaker: "Tài xế",
+          hanzi: "大概二十多分钟，前面路口有点堵。",
+          pinyin: "Dàgài èrshí duō fēnzhōng, qiánmiàn lùkǒu yǒudiǎn dǔ.",
+          phoneticVi: "Ta cai ơ sứ tua phơn chung, chiền miên lu khẩu dẩu tiển tủ.",
+          viet: "Khoảng hơn hai mươi phút, đoạn ngã tư phía trước hơi tắc đường.",
+          tip: "'èrshí duō' là hơn hai mươi, đọc liền mạch."
+        },
+        {
+          speaker: "Hành khách",
+          hanzi: "师傅，麻烦您开快一点，我赶火车！",
+          pinyin: "Shīfu, máfan nín kāi kuài yìdiǎn, wǒ gǎn huǒchē!",
+          phoneticVi: "Sư phu, má phan nín khai khoai ý tiển, ủa cản hủa chơ!",
+          viet: "Bác tài ơi, phiền bác lái nhanh một chút, tôi đang vội bắt chuyến tàu!",
+          tip: "Dùng 'máfan nín' (làm phiền bác) để lời nhờ vả vừa khẩn cấp vừa lịch sự."
+        },
+        {
+          speaker: "Tài xế",
+          hanzi: "放心吧，走高架桥，肯定来得及！",
+          pinyin: "Fàngxīn ba, zǒu gāojiàqiáo, kěndìng láidejí!",
+          phoneticVi: "Phang xin pa, tẩu cao chia chéo, khẩn tinh lái tơ chí!",
+          viet: "Yên tâm đi, đi đường cầu vượt trên cao, chắc chắn kịp giờ!",
+          tip: "'kěndìng láidejí' dứt khoát, ngữ điệu trấn an hành khách."
+        }
+      ]
+    },
+    {
+      id: "sh6",
+      title: "Hỏi Thăm Gia Đình & Lời Mời Về Nhà Chơi",
+      category: "Gia đình",
+      duration: "0:50",
+      difficulty: "Cơ bản HSK 1",
+      youtubeId: "EpSs4cdSML0",
+      description: "Hỏi thăm các thành viên trong gia đình và mời bạn bè về nhà thưởng thức món ăn mẹ nấu.",
+      sentences: [
+        {
+          speaker: "Nhân vật A",
+          hanzi: "你家有几口人？你父母身体好吗？",
+          pinyin: "Nǐ jiā yǒu jǐ kǒu rén? Nǐ fùmǔ shēntǐ hǎo ma?",
+          phoneticVi: "Nỉ chia dẩu chỉ khẩu rấn? Nỉ phu mủ sân thỉ hảo ma?",
+          viet: "Nhà bạn có mấy người? Bố mẹ bạn sức khỏe tốt không?",
+          tip: "Hỏi thăm chân thành, ấm áp, hạ giọng ở 'hǎo ma?'."
+        },
+        {
+          speaker: "Nhân vật B",
+          hanzi: "我家有四口人，他们身体都挺好的。",
+          pinyin: "Wǒ jiā yǒu sì kǒu rén, tāmen shēntǐ dōu tǐng hǎo de.",
+          phoneticVi: "Ủa chia dẩu sư khẩu rấn, tha mơn sân thỉ tâu thỉnh hảo tơ.",
+          viet: "Nhà tôi có bốn người, họ đều rất khỏe mạnh.",
+          tip: "'dōu tǐng hǎo de' là khẩu ngữ khen sức khỏe tốt rất phổ biến."
+        },
+        {
+          speaker: "Nhân vật B",
+          hanzi: "周末欢迎来我家做客，尝尝我妈妈包的水饺！",
+          pinyin: "Zhōumò huānyíng lái wǒ jiā zuòkè, chángchang wǒ māma bāo de shuǐjiǎo!",
+          phoneticVi: "Châu mo hoan dính lái ủa chia chua khơ, cháng chang ủa ma ma pao tơ suẩy chẻo!",
+          viet: "Cuối tuần hoan nghênh bạn đến nhà tôi làm khách, thử sủi cảo mẹ tôi gói nhé!",
+          tip: "Ngữ điệu vui vẻ, hào hứng mời bạn bè."
+        },
+        {
+          speaker: "Nhân vật A",
+          hanzi: "太好了！我也很想尝尝阿姨的手艺！",
+          pinyin: "Tài hǎo le! Wǒ yě hěn xiǎng chángchang āyí de shǒuyì!",
+          phoneticVi: "Thai hảo lơ! Ủa dẻ hẩn xẻng cháng chang a ý tơ sẩu ý!",
+          viet: "Tuyệt quá! Tôi cũng rất muốn thử tài nấu nướng của dì!",
+          tip: "'Tài hǎo le!' reo lên thích thú, 'shǒuyì' là tay nghề nấu nướng."
+        }
+      ]
+    }
   ]
 };
