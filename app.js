@@ -17,7 +17,10 @@ let appState = {
   activeFlashcardIndex: 0,
   isCardFlipped: false,
   showGhostWatermark: true,
-  completedShadowingSentences: {}
+  completedShadowingSentences: {},
+  vocabScope: "all",
+  vocabCategory: "all",
+  vocabSearchQuery: ""
 };
 
 // ==================== KHỞI TẠO DỮ LIỆU & LOCAL STORAGE ====================
@@ -321,10 +324,12 @@ function renderCurrentLesson() {
   // Cập nhật Timecodes
   renderTimecodes(lesson);
 
-  // Nếu là Bài 1, render các thành phần chi tiết
+  // Render từ vựng (Hỗ trợ cả Trọn bộ 154 từ HSK 1 lẫn từ vựng từng bài học 1-15)
+  renderVocabTab(lesson);
+
+  // Nếu là Bài 1, render các thành phần chi tiết ngữ âm, bài khóa, tập viết, trắc nghiệm
   if (lesson.id === 1) {
     renderPhoneticsTab(lesson);
-    renderVocabTab(lesson);
     renderDialoguesTab(lesson);
     renderWritingTab(lesson);
     renderQuizTab(lesson);
@@ -460,75 +465,133 @@ function renderPhoneticsTab(lesson) {
 }
 
 // ==================== TAB 3: TỪ VỰNG & FLASHCARDS ====================
-function renderVocabTab(lesson) {
-  if (!lesson.vocab) return;
+function getActiveVocabScopeList() {
+  if (appState.vocabScope === "lesson") {
+    const curLesson = HSK1_DATA.lessons.find(l => l.id === appState.currentLessonId);
+    if (curLesson && curLesson.vocab && curLesson.vocab.length > 0) {
+      return curLesson.vocab;
+    }
+    return (HSK1_DATA.allVocab || []).filter(v => v.lessonId === appState.currentLessonId);
+  }
+  // Mặc định: Trọn bộ 154 từ HSK 1
+  return HSK1_DATA.allVocab || [];
+}
 
-  const total = lesson.vocab.length;
-  const masteredCount = lesson.vocab.filter(v => appState.masteredVocabs.includes(v.id)).length;
-  const learningCount = total - masteredCount;
+function getFilteredVocabList() {
+  if (appState.activeVocabFilter === "saved") {
+    return appState.customVocabs || [];
+  }
+
+  let list = getActiveVocabScopeList();
+
+  // 1. Lọc theo chủ đề (Category)
+  if (appState.vocabCategory && appState.vocabCategory !== "all") {
+    list = list.filter(v => v.category === appState.vocabCategory);
+  }
+
+  // 2. Lọc theo trạng thái học (Status)
+  if (appState.activeVocabFilter === "mastered") {
+    list = list.filter(v => appState.masteredVocabs.includes(v.id));
+  } else if (appState.activeVocabFilter === "learning") {
+    list = list.filter(v => !appState.masteredVocabs.includes(v.id));
+  }
+
+  // 3. Tìm kiếm theo từ khóa (Hanzi, Pinyin, Sino-Viet, Nghĩa, Ví dụ)
+  if (appState.vocabSearchQuery && appState.vocabSearchQuery.trim()) {
+    const q = appState.vocabSearchQuery.trim().toLowerCase();
+    list = list.filter(v => {
+      const hanzi = (v.hanzi || "").toLowerCase();
+      const pinyin = (v.pinyin || "").toLowerCase();
+      const sinoViet = (v.sinoViet || "").toLowerCase();
+      const meaning = (v.meaning || v.viet || "").toLowerCase();
+      const exStr = typeof v.example === "string" ? v.example : (v.example && v.example.cn ? `${v.example.cn} ${v.example.vi || ""}` : "");
+      return hanzi.includes(q) || pinyin.includes(q) || sinoViet.includes(q) || meaning.includes(q) || exStr.toLowerCase().includes(q);
+    });
+  }
+
+  return list;
+}
+
+function renderVocabTab(lesson) {
+  const scopeList = getActiveVocabScopeList();
   const customList = appState.customVocabs || [];
 
-  // Cập nhật số đếm ở các badge
+  // Tính số đếm cho các badge theo phạm vi (Scope) và chủ đề (nếu có)
+  let baseForCounts = scopeList;
+  if (appState.vocabCategory && appState.vocabCategory !== "all") {
+    baseForCounts = baseForCounts.filter(v => v.category === appState.vocabCategory);
+  }
+
+  const totalInScope = baseForCounts.length;
+  const masteredInScope = baseForCounts.filter(v => appState.masteredVocabs.includes(v.id)).length;
+  const learningInScope = totalInScope - masteredInScope;
+
   const countAllEl = document.getElementById("countAllVocab");
-  if (countAllEl) countAllEl.textContent = total;
+  if (countAllEl) countAllEl.textContent = totalInScope;
   const countMasteredEl = document.getElementById("countMasteredVocab");
-  if (countMasteredEl) countMasteredEl.textContent = masteredCount;
+  if (countMasteredEl) countMasteredEl.textContent = masteredInScope;
   const countLearningEl = document.getElementById("countLearningVocab");
-  if (countLearningEl) countLearningEl.textContent = learningCount;
+  if (countLearningEl) countLearningEl.textContent = learningInScope;
   const countSavedEl = document.getElementById("countSavedVocab");
   if (countSavedEl) countSavedEl.textContent = customList.length;
 
-  // Lọc từ vựng
-  let filtered = lesson.vocab;
-  if (appState.activeVocabFilter === "mastered") {
-    filtered = lesson.vocab.filter(v => appState.masteredVocabs.includes(v.id));
-  } else if (appState.activeVocabFilter === "learning") {
-    filtered = lesson.vocab.filter(v => !appState.masteredVocabs.includes(v.id));
-  } else if (appState.activeVocabFilter === "saved") {
-    filtered = customList;
+  const scopeLessonLabel = document.getElementById("scopeLessonLabel");
+  if (scopeLessonLabel && lesson) {
+    scopeLessonLabel.textContent = `Theo bài học (Bài ${lesson.id})`;
   }
+
+  const filtered = getFilteredVocabList();
+  const showingCountEl = document.getElementById("vocabShowingCount");
+  if (showingCountEl) showingCountEl.textContent = filtered.length;
 
   // 1. RENDER CHẾ ĐỘ DANH SÁCH (LIST MODE)
   const listContainer = document.getElementById("vocabListModeView");
   if (listContainer) {
     if (filtered.length === 0) {
       listContainer.innerHTML = `
-        <div class="col-span-full py-8 text-center text-slate-400 text-xs">
-          Không có từ vựng nào trong danh mục này.
+        <div class="col-span-full py-12 text-center text-slate-400 text-xs bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 p-8 space-y-2">
+          <i data-lucide="search-x" class="w-8 h-8 mx-auto text-slate-300 dark:text-slate-600 mb-2"></i>
+          <p class="font-semibold text-slate-600 dark:text-slate-300">Không tìm thấy từ vựng phù hợp</p>
+          <p class="text-[11px] text-slate-400">Thử xóa ô tìm kiếm, chọn "Tất cả chủ đề" hoặc bấm "Trọn bộ 154 Từ HSK 1".</p>
         </div>
       `;
     } else {
       listContainer.innerHTML = filtered.map(item => {
         const isMastered = appState.masteredVocabs.includes(item.id);
+        const exText = typeof item.example === "string" ? item.example : (item.example && item.example.cn ? `${item.example.cn} (${item.example.pinyin || ""} - ${item.example.vi || ""})` : item.hanzi);
         return `
-          <div class="bg-white dark:bg-slate-900 rounded-2xl border ${isMastered ? 'border-emerald-300 dark:border-emerald-800/80' : 'border-slate-200 dark:border-slate-800'} p-4 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+          <div class="bg-white dark:bg-slate-900 rounded-2xl border ${isMastered ? 'border-emerald-300 dark:border-emerald-800/80 shadow-emerald-500/5' : 'border-slate-200 dark:border-slate-800'} p-4 shadow-sm flex flex-col justify-between hover:shadow-md hover:border-chineseRed-200 dark:hover:border-chineseRed-900/40 transition">
             <div>
               <div class="flex items-start justify-between gap-2 mb-2">
-                <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400">${item.type}</span>
-                <button onclick="toggleVocabMastered('${item.id}')" class="p-1 rounded-full ${isMastered ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/60' : 'text-slate-300 hover:text-slate-500'} transition" title="${isMastered ? 'Đã thuộc' : 'Đánh dấu đã thuộc'}">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">${item.type || "Từ vựng"}</span>
+                  ${item.lessonId ? `<span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-chineseRed-50 text-chineseRed-600 dark:bg-chineseRed-950/50 dark:text-chineseRed-400">Bài ${item.lessonId}</span>` : ''}
+                  ${item.category ? `<span class="px-1.5 py-0.5 rounded text-[10px] text-slate-400 bg-slate-50 dark:bg-slate-800/60 hidden sm:inline">${item.category}</span>` : ''}
+                </div>
+                <button onclick="toggleVocabMastered('${item.id}')" class="p-1 rounded-full ${isMastered ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/60' : 'text-slate-300 hover:text-slate-500'} transition" title="${isMastered ? 'Đã thuộc (Bấm để ôn lại)' : 'Đánh dấu đã thuộc'}">
                   <i data-lucide="${isMastered ? 'check-circle-2' : 'circle'}" class="w-5 h-5"></i>
                 </button>
               </div>
 
-              <!-- Chữ Hán & Pinyin -->
-              <div class="flex items-baseline gap-3 mb-2">
+              <!-- Chữ Hán, Pinyin & Hán Việt -->
+              <div class="flex items-baseline gap-2.5 mb-2">
                 <span class="font-hanzi text-3xl font-bold text-slate-900 dark:text-white cursor-pointer hover:text-chineseRed-600 transition" onclick="playChineseAudio('${item.hanzi}', this)">${item.hanzi}</span>
                 <span class="text-sm font-semibold text-chineseRed-600 dark:text-chineseRed-400 font-mono">${item.pinyin}</span>
-                <span class="text-xs text-slate-400">(${item.sinoViet})</span>
+                <span class="text-xs text-slate-400">(${item.sinoViet || item.pinyin})</span>
               </div>
 
-              <!-- Nghĩa -->
-              <p class="text-xs font-bold text-slate-800 dark:text-slate-200 mb-2">${item.meaning}</p>
+              <!-- Nghĩa tiếng Việt -->
+              <p class="text-xs font-bold text-slate-800 dark:text-slate-200 mb-2 leading-relaxed">${item.meaning || item.viet}</p>
               
               <!-- Mẹo nhớ cấu tạo chữ -->
-              <div class="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 text-[11px] text-slate-600 dark:text-slate-300 mb-2">
-                <span class="font-semibold text-imperialGold-600 dark:text-imperialGold-400">Mẹo nhớ:</span> ${item.memoryTip}
+              <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 text-[11px] text-slate-600 dark:text-slate-300 mb-2 leading-relaxed">
+                <span class="font-semibold text-amber-600 dark:text-amber-400">💡 Mẹo nhớ:</span> ${item.memoryTip || (item.radicals ? `Bộ thủ: ${item.radicals}` : "Nghe phát âm chuẩn và thực hành lặp lại.")}
               </div>
             </div>
 
-            <!-- Ví dụ & Nút nghe phát âm -->
-            <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-              <span class="text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-[200px]">${item.example}</span>
+            <!-- Ví dụ mẫu & Nút nghe phát âm -->
+            <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+              <span class="text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-[220px]" title="${exText}">${exText}</span>
               <button onclick="playChineseAudio('${item.hanzi}', this)" class="p-1.5 rounded-lg bg-chineseRed-50 text-chineseRed-600 dark:bg-chineseRed-950/60 dark:text-chineseRed-400 hover:bg-chineseRed-100 transition shrink-0" title="Nghe phát âm">
                 <i data-lucide="volume-2" class="w-4 h-4"></i>
               </button>
@@ -539,47 +602,85 @@ function renderVocabTab(lesson) {
     }
   }
 
-  // 2. RENDER CHẾ ĐỘ FLASHCARD (FLASHCARD MODE)
+  // 2. CẬP NHẬT GIAO DIỆN FLASHCARD (FLASHCARD MODE)
   updateFlashcardUI();
+
+  if (window.lucide) {
+    lucide.createIcons();
+  }
 }
 
 function updateFlashcardUI() {
-  const lesson = HSK1_DATA.lessons.find(l => l.id === appState.currentLessonId);
-  if (!lesson || !lesson.vocab) return;
+  const filtered = getFilteredVocabList();
+  const total = filtered.length;
 
-  const customList = appState.customVocabs || [];
-  const vocabs = (appState.activeVocabFilter === "saved" && customList.length > 0) ? customList : lesson.vocab;
-  const total = vocabs.length;
+  const currentIdxEl = document.getElementById("currentCardIndex");
+  const totalCardEl = document.getElementById("totalCardCount");
+
+  if (total === 0) {
+    if (currentIdxEl) currentIdxEl.textContent = 0;
+    if (totalCardEl) totalCardEl.textContent = 0;
+    const hanziEl = document.getElementById("fcHanzi");
+    if (hanziEl) hanziEl.textContent = "空";
+    const pinyinEl = document.getElementById("fcPinyin");
+    if (pinyinEl) pinyinEl.textContent = "kōng";
+    const meaningEl = document.getElementById("fcMeaning");
+    if (meaningEl) meaningEl.textContent = "Không tìm thấy từ vựng nào phù hợp";
+    const memoryTipEl = document.getElementById("fcMemoryTip");
+    if (memoryTipEl) memoryTipEl.textContent = "Vui lòng chọn bộ lọc khác hoặc nhấn 'Tất cả chủ đề'.";
+    return;
+  }
+
   if (appState.activeFlashcardIndex >= total) {
     appState.activeFlashcardIndex = 0;
   }
+  if (appState.activeFlashcardIndex < 0) {
+    appState.activeFlashcardIndex = total - 1;
+  }
 
-  const current = vocabs[appState.activeFlashcardIndex];
+  const current = filtered[appState.activeFlashcardIndex];
   if (!current) return;
 
-  document.getElementById("currentCardIndex").textContent = appState.activeFlashcardIndex + 1;
-  document.getElementById("totalCardCount").textContent = total;
+  if (currentIdxEl) currentIdxEl.textContent = appState.activeFlashcardIndex + 1;
+  if (totalCardEl) totalCardEl.textContent = total;
 
   // Cập nhật nội dung thẻ
-  document.getElementById("fcPartType").textContent = current.type || "Từ đã lưu";
-  document.getElementById("fcHanzi").textContent = current.hanzi;
-  document.getElementById("fcPinyin").textContent = current.pinyin;
-  document.getElementById("fcSinoViet").textContent = current.sinoViet ? `Âm Hán Việt: ${current.sinoViet}` : `Phiên âm: ${current.pinyin}`;
-  document.getElementById("fcRadicals").textContent = current.radicals ? `Bộ: ${current.radicals}` : `Nguồn: Video`;
-  document.getElementById("fcMeaning").textContent = current.meaning || current.viet;
-  document.getElementById("fcMemoryTip").textContent = current.memoryTip || "Chạm vào từ để nghe phát âm giọng bản xứ chuẩn.";
-  document.getElementById("fcExample").textContent = current.example || current.hanzi;
+  const partTypeEl = document.getElementById("fcPartType");
+  if (partTypeEl) {
+    partTypeEl.textContent = current.category ? `${current.type || "Từ vựng"} · ${current.category}` : (current.type || "Từ đã lưu");
+  }
+  const hanziEl = document.getElementById("fcHanzi");
+  if (hanziEl) hanziEl.textContent = current.hanzi;
+  const pinyinEl = document.getElementById("fcPinyin");
+  if (pinyinEl) pinyinEl.textContent = current.pinyin;
+  const sinoVietEl = document.getElementById("fcSinoViet");
+  if (sinoVietEl) sinoVietEl.textContent = current.sinoViet ? `Âm Hán Việt: ${current.sinoViet}` : `Phiên âm: ${current.pinyin}`;
+  const radicalsEl = document.getElementById("fcRadicals");
+  if (radicalsEl) {
+    radicalsEl.textContent = current.radicals ? `Bộ: ${current.radicals}` : (current.lessonId ? `Bài ${current.lessonId}` : `Từ đã lưu`);
+  }
+  const meaningEl = document.getElementById("fcMeaning");
+  if (meaningEl) meaningEl.textContent = current.meaning || current.viet;
+  const memoryTipEl = document.getElementById("fcMemoryTip");
+  if (memoryTipEl) memoryTipEl.textContent = current.memoryTip || "Chạm vào từ để nghe phát âm giọng bản xứ chuẩn.";
+  const exampleEl = document.getElementById("fcExample");
+  if (exampleEl) {
+    const exText = typeof current.example === "string" ? current.example : (current.example && current.example.cn ? `${current.example.cn} (${current.example.pinyin || ""} - ${current.example.vi || ""})` : current.hanzi);
+    exampleEl.textContent = exText;
+  }
 
   // Cập nhật nút trạng thái thuộc
   const isMastered = appState.masteredVocabs.includes(current.id);
   const masteredBtnText = document.getElementById("fcMasteredBtnText");
   const masteredBtn = document.getElementById("fcToggleMasteredBtn");
-  if (isMastered) {
-    masteredBtnText.textContent = "Đã thuộc (Bấm để ôn lại)";
-    masteredBtn.className = "flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-medium transition";
-  } else {
-    masteredBtnText.textContent = "Đánh dấu đã thuộc";
-    masteredBtn.className = "flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium shadow-sm transition";
+  if (masteredBtnText && masteredBtn) {
+    if (isMastered) {
+      masteredBtnText.textContent = "Đã thuộc (Bấm để ôn lại)";
+      masteredBtn.className = "flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-medium transition";
+    } else {
+      masteredBtnText.textContent = "Đánh dấu đã thuộc";
+      masteredBtn.className = "flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium shadow-sm transition";
+    }
   }
 
   // Thiết lập sự kiện audio trên flashcard
@@ -865,8 +966,7 @@ function handleSelectAnswer(questionId, optionIndex) {
 
 // ==================== CẬP NHẬT TIẾN ĐỘ TỔNG QUAN (UI) ====================
 function updateProgressUI() {
-  const lesson1 = HSK1_DATA.lessons[0];
-  const totalVocab = lesson1.vocab ? lesson1.vocab.length : 15;
+  const totalVocab = (HSK1_DATA.allVocab && HSK1_DATA.allVocab.length > 0) ? HSK1_DATA.allVocab.length : 154;
   const masteredCount = appState.masteredVocabs.length;
   const percent = Math.min(100, Math.round((masteredCount / totalVocab) * 100));
 
@@ -988,7 +1088,31 @@ function setupEventListeners() {
     });
   }
 
-  // 2. Chuyển đổi Danh sách / Flashcard trong Từ Vựng
+  // 2. PHẠM VI TỪ VỰNG: TRỌN BỘ 154 TỪ HSK 1 VS THEO BÀI HỌC
+  const scopeAllBtn = document.getElementById("scopeAllVocabBtn");
+  const scopeLessonBtn = document.getElementById("scopeLessonVocabBtn");
+
+  if (scopeAllBtn && scopeLessonBtn) {
+    scopeAllBtn.addEventListener("click", () => {
+      appState.vocabScope = "all";
+      appState.activeFlashcardIndex = 0;
+      scopeAllBtn.className = "flex-1 sm:flex-initial px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm transition flex items-center justify-center gap-1.5";
+      scopeLessonBtn.className = "flex-1 sm:flex-initial px-3.5 py-1.5 text-xs font-medium rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition flex items-center justify-center gap-1.5";
+      const curLesson = HSK1_DATA.lessons.find(l => l.id === appState.currentLessonId);
+      if (curLesson) renderVocabTab(curLesson);
+    });
+
+    scopeLessonBtn.addEventListener("click", () => {
+      appState.vocabScope = "lesson";
+      appState.activeFlashcardIndex = 0;
+      scopeLessonBtn.className = "flex-1 sm:flex-initial px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm transition flex items-center justify-center gap-1.5";
+      scopeAllBtn.className = "flex-1 sm:flex-initial px-3.5 py-1.5 text-xs font-medium rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition flex items-center justify-center gap-1.5";
+      const curLesson = HSK1_DATA.lessons.find(l => l.id === appState.currentLessonId);
+      if (curLesson) renderVocabTab(curLesson);
+    });
+  }
+
+  // Chuyển đổi Danh sách / Flashcard 3D trong Từ Vựng
   const listModeBtn = document.getElementById("viewListModeBtn");
   const flashcardModeBtn = document.getElementById("viewFlashcardModeBtn");
   const listModeView = document.getElementById("vocabListModeView");
@@ -996,22 +1120,91 @@ function setupEventListeners() {
 
   if (listModeBtn && flashcardModeBtn) {
     listModeBtn.addEventListener("click", () => {
-      listModeBtn.className = "flex-1 sm:flex-initial px-3 py-1.5 text-xs font-medium rounded-lg bg-chineseRed-600 text-white flex items-center justify-center gap-1.5 transition";
-      flashcardModeBtn.className = "flex-1 sm:flex-initial px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 flex items-center justify-center gap-1.5 transition";
+      listModeBtn.className = "flex-1 sm:flex-initial px-3 py-1.5 text-xs font-semibold rounded-lg bg-chineseRed-600 text-white flex items-center justify-center gap-1.5 shadow-sm transition";
+      flashcardModeBtn.className = "flex-1 sm:flex-initial px-3 py-1.5 text-xs font-medium rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center justify-center gap-1.5 transition";
       listModeView.classList.remove("hidden");
       flashcardModeView.classList.add("hidden");
     });
 
     flashcardModeBtn.addEventListener("click", () => {
-      flashcardModeBtn.className = "flex-1 sm:flex-initial px-3 py-1.5 text-xs font-medium rounded-lg bg-chineseRed-600 text-white flex items-center justify-center gap-1.5 transition";
-      listModeBtn.className = "flex-1 sm:flex-initial px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 flex items-center justify-center gap-1.5 transition";
+      flashcardModeBtn.className = "flex-1 sm:flex-initial px-3 py-1.5 text-xs font-semibold rounded-lg bg-chineseRed-600 text-white flex items-center justify-center gap-1.5 shadow-sm transition";
+      listModeBtn.className = "flex-1 sm:flex-initial px-3 py-1.5 text-xs font-medium rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center justify-center gap-1.5 transition";
       listModeView.classList.add("hidden");
       flashcardModeView.classList.remove("hidden");
       updateFlashcardUI();
     });
   }
 
-  // 3. Lật Flashcard 3D & Vuốt chạm trên điện thoại (Touch Swipe Gestures)
+  // TÌM KIẾM TỪ VỰNG REAL-TIME
+  const vocabSearchInput = document.getElementById("vocabSearchInput");
+  const clearVocabSearchBtn = document.getElementById("clearVocabSearchBtn");
+
+  if (vocabSearchInput) {
+    vocabSearchInput.addEventListener("input", (e) => {
+      appState.vocabSearchQuery = e.target.value;
+      appState.activeFlashcardIndex = 0;
+      if (clearVocabSearchBtn) {
+        if (e.target.value.trim().length > 0) {
+          clearVocabSearchBtn.classList.remove("hidden");
+        } else {
+          clearVocabSearchBtn.classList.add("hidden");
+        }
+      }
+      const curLesson = HSK1_DATA.lessons.find(l => l.id === appState.currentLessonId);
+      if (curLesson) renderVocabTab(curLesson);
+    });
+  }
+
+  if (clearVocabSearchBtn && vocabSearchInput) {
+    clearVocabSearchBtn.addEventListener("click", () => {
+      vocabSearchInput.value = "";
+      appState.vocabSearchQuery = "";
+      appState.activeFlashcardIndex = 0;
+      clearVocabSearchBtn.classList.add("hidden");
+      const curLesson = HSK1_DATA.lessons.find(l => l.id === appState.currentLessonId);
+      if (curLesson) renderVocabTab(curLesson);
+      vocabSearchInput.focus();
+    });
+  }
+
+  // LỌC THEO CHỦ ĐỀ (CATEGORY PILLS)
+  document.querySelectorAll(".vocab-cat-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".vocab-cat-btn").forEach(b => {
+        b.className = "vocab-cat-btn shrink-0 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition";
+      });
+      btn.className = "vocab-cat-btn active shrink-0 px-3 py-1 rounded-full text-xs font-semibold bg-chineseRed-600 text-white transition";
+      appState.vocabCategory = btn.getAttribute("data-category");
+      appState.activeFlashcardIndex = 0;
+      const curLesson = HSK1_DATA.lessons.find(l => l.id === appState.currentLessonId);
+      if (curLesson) renderVocabTab(curLesson);
+    });
+  });
+
+  // LỌC THEO TRẠNG THÁI HỌC (Tất cả / Đã thuộc / Cần ôn lại / Đã lưu từ video)
+  document.querySelectorAll(".vocab-filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".vocab-filter-btn").forEach(b => {
+        const filterVal = b.getAttribute("data-filter");
+        if (filterVal === "mastered") {
+          b.className = "vocab-filter-btn px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition";
+        } else if (filterVal === "learning") {
+          b.className = "vocab-filter-btn px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/60 transition";
+        } else if (filterVal === "saved") {
+          b.className = "vocab-filter-btn px-3 py-1 rounded-full bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/60 shrink-0 font-medium transition";
+        } else {
+          b.className = "vocab-filter-btn px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition";
+        }
+      });
+      btn.className = "vocab-filter-btn active px-3 py-1 rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-semibold transition";
+      appState.activeVocabFilter = btn.getAttribute("data-filter");
+      appState.activeFlashcardIndex = 0;
+      const curLesson = HSK1_DATA.lessons.find(l => l.id === appState.currentLessonId);
+      if (curLesson) renderVocabTab(curLesson);
+    });
+  });
+
+  // 3. LẬT FLASHCARD 3D & VUỐT CHẠM TRÊN ĐIỆN THOẠI (TOUCH SWIPE GESTURES)
   const activeCard = document.getElementById("activeFlashcard");
 
   if (activeCard) {
@@ -1034,16 +1227,18 @@ function setupEventListeners() {
       // Nếu vuốt ngang rõ rệt (> 45px và ngang nhiều hơn dọc)
       if (Math.abs(deltaX) > 45 && Math.abs(deltaX) > Math.abs(deltaY) * 1.3) {
         isSwiping = true;
-        const curLesson = HSK1_DATA.lessons.find(l => l.id === appState.currentLessonId);
-        const total = curLesson && curLesson.vocab ? curLesson.vocab.length : 15;
-        if (deltaX < 0) {
-          // Vuốt sang trái ➔ Thẻ tiếp theo
-          appState.activeFlashcardIndex = (appState.activeFlashcardIndex + 1) % total;
-        } else {
-          // Vuốt sang phải ➔ Thẻ trước đó
-          appState.activeFlashcardIndex = (appState.activeFlashcardIndex - 1 + total) % total;
+        const list = getFilteredVocabList();
+        const total = list.length;
+        if (total > 0) {
+          if (deltaX < 0) {
+            // Vuốt sang trái ➔ Thẻ tiếp theo
+            appState.activeFlashcardIndex = (appState.activeFlashcardIndex + 1) % total;
+          } else {
+            // Vuốt sang phải ➔ Thẻ trước đó
+            appState.activeFlashcardIndex = (appState.activeFlashcardIndex - 1 + total) % total;
+          }
+          updateFlashcardUI();
         }
-        updateFlashcardUI();
       }
     }, { passive: true });
 
@@ -1065,20 +1260,24 @@ function setupEventListeners() {
   if (prevCardBtn) {
     prevCardBtn.addEventListener("click", (e) => {
       e.stopPropagation();
-      const curLesson = HSK1_DATA.lessons.find(l => l.id === appState.currentLessonId);
-      const total = curLesson && curLesson.vocab ? curLesson.vocab.length : 15;
-      appState.activeFlashcardIndex = (appState.activeFlashcardIndex - 1 + total) % total;
-      updateFlashcardUI();
+      const list = getFilteredVocabList();
+      const total = list.length;
+      if (total > 0) {
+        appState.activeFlashcardIndex = (appState.activeFlashcardIndex - 1 + total) % total;
+        updateFlashcardUI();
+      }
     });
   }
 
   if (nextCardBtn) {
     nextCardBtn.addEventListener("click", (e) => {
       e.stopPropagation();
-      const curLesson = HSK1_DATA.lessons.find(l => l.id === appState.currentLessonId);
-      const total = curLesson && curLesson.vocab ? curLesson.vocab.length : 15;
-      appState.activeFlashcardIndex = (appState.activeFlashcardIndex + 1) % total;
-      updateFlashcardUI();
+      const list = getFilteredVocabList();
+      const total = list.length;
+      if (total > 0) {
+        appState.activeFlashcardIndex = (appState.activeFlashcardIndex + 1) % total;
+        updateFlashcardUI();
+      }
     });
   }
 
@@ -1087,29 +1286,15 @@ function setupEventListeners() {
   if (fcMasteredBtn) {
     fcMasteredBtn.addEventListener("click", (e) => {
       e.stopPropagation();
-      const curLesson = HSK1_DATA.lessons.find(l => l.id === appState.currentLessonId);
-      if (curLesson && curLesson.vocab) {
-        const current = curLesson.vocab[appState.activeFlashcardIndex];
+      const list = getFilteredVocabList();
+      if (list.length > 0 && appState.activeFlashcardIndex < list.length) {
+        const current = list[appState.activeFlashcardIndex];
         if (current) {
           toggleVocabMastered(current.id);
-          updateFlashcardUI();
         }
       }
     });
   }
-
-  // 4. Lọc từ vựng (Tất cả / Đã thuộc / Cần ôn lại)
-  document.querySelectorAll(".vocab-filter-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".vocab-filter-btn").forEach(b => {
-        b.className = "vocab-filter-btn px-2.5 py-1 text-xs rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200";
-      });
-      btn.className = "vocab-filter-btn active px-2.5 py-1 text-xs rounded-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold";
-      appState.activeVocabFilter = btn.getAttribute("data-filter");
-      const curLesson = HSK1_DATA.lessons.find(l => l.id === appState.currentLessonId);
-      if (curLesson) renderVocabTab(curLesson);
-    });
-  });
 
   // 5. Ẩn / Hiện Pinyin và Dịch Tiếng Việt trong Hội thoại
   const togglePinyin = document.getElementById("togglePinyinCheckbox");

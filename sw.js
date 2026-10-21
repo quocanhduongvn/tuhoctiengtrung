@@ -1,5 +1,5 @@
 // sw.js - Service Worker hỗ trợ cài đặt PWA & tải trang ngoại tuyến
-const CACHE_NAME = 'hsk1-tu-hoc-v9';
+const CACHE_NAME = 'hsk1-tu-hoc-v10';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

@@ -102,7 +102,7 @@
           <i data-lucide="award" class="w-4 h-4 text-imperialGold-500"></i>
           <div class="text-xs">
             <span class="text-slate-500 dark:text-slate-400">Từ vựng: </span>
-            <span id="navVocabMasteredCount" class="font-bold text-chineseRed-600 dark:text-chineseRed-400">0/15</span>
+            <span id="navVocabMasteredCount" class="font-bold text-chineseRed-600 dark:text-chineseRed-400">0/154</span>
           </div>
           <div class="w-16 bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
             <div id="navProgressBar" class="bg-chineseRed-600 h-full w-0 transition-all duration-300"></div>
@@ -258,6 +258,7 @@
           <button class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 flex items-center gap-2 shrink-0 transition" data-tab="tab-vocab">
             <i data-lucide="layers" class="w-4 h-4"></i>
             <span>Từ vựng & Flashcards</span>
+            <span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-chineseRed-100 dark:bg-chineseRed-950/70 text-chineseRed-600 dark:text-chineseRed-400">154 Từ</span>
           </button>
           <button class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 flex items-center gap-2 shrink-0 transition" data-tab="tab-dialogues">
             <i data-lucide="messages-square" class="w-4 h-4"></i>
@@ -466,25 +467,88 @@
       <section id="tab-vocab" class="tab-content hidden space-y-6">
         
         <!-- Controls Bar -->
-        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div class="flex items-center gap-2 w-full sm:w-auto">
-            <button id="viewListModeBtn" class="flex-1 sm:flex-initial px-3 py-1.5 text-xs font-medium rounded-lg bg-chineseRed-600 text-white flex items-center justify-center gap-1.5 transition">
-              <i data-lucide="list" class="w-4 h-4"></i>
-              <span>Danh sách</span>
-            </button>
-            <button id="viewFlashcardModeBtn" class="flex-1 sm:flex-initial px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center gap-1.5 transition">
-              <i data-lucide="copy" class="w-4 h-4"></i>
-              <span>Lật thẻ Flashcard (3D)</span>
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm space-y-4">
+          <!-- Top Row: Scope Switcher + View Mode -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <!-- Scope Switcher: 154 HSK 1 vs Current Lesson -->
+            <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-800/80 rounded-xl w-full sm:w-auto">
+              <button id="scopeAllVocabBtn" class="flex-1 sm:flex-initial px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm transition flex items-center justify-center gap-1.5">
+                <i data-lucide="book-open-check" class="w-3.5 h-3.5 text-chineseRed-600"></i>
+                <span>Trọn bộ 154 Từ HSK 1</span>
+              </button>
+              <button id="scopeLessonVocabBtn" class="flex-1 sm:flex-initial px-3.5 py-1.5 text-xs font-medium rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition flex items-center justify-center gap-1.5">
+                <i data-lucide="bookmark" class="w-3.5 h-3.5"></i>
+                <span id="scopeLessonLabel">Theo bài học (Bài 1)</span>
+              </button>
+            </div>
+
+            <!-- View Mode Switcher: Danh sách vs Flashcard 3D -->
+            <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-800/80 rounded-xl w-full sm:w-auto">
+              <button id="viewListModeBtn" class="flex-1 sm:flex-initial px-3 py-1.5 text-xs font-semibold rounded-lg bg-chineseRed-600 text-white flex items-center justify-center gap-1.5 shadow-sm transition">
+                <i data-lucide="list" class="w-3.5 h-3.5"></i>
+                <span>Danh sách</span>
+              </button>
+              <button id="viewFlashcardModeBtn" class="flex-1 sm:flex-initial px-3 py-1.5 text-xs font-medium rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center justify-center gap-1.5 transition">
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                <span>Lật thẻ 3D</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Middle Row: Search Bar -->
+          <div class="relative w-full">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <i data-lucide="search" class="w-4 h-4"></i>
+            </div>
+            <input type="text" id="vocabSearchInput" placeholder="Tìm kiếm chữ Hán, Pinyin, nghĩa tiếng Việt (vd: bạn, ni, he, trường học, tiền...)..." 
+              class="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-chineseRed-500 transition">
+            <button id="clearVocabSearchBtn" class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition" title="Xóa tìm kiếm">
+              <i data-lucide="x" class="w-4 h-4"></i>
             </button>
           </div>
 
-          <!-- Filter buttons -->
-          <div class="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
-            <span class="text-xs text-slate-400 hidden md:inline">Lọc:</span>
-            <button class="vocab-filter-btn active px-2.5 py-1 text-xs rounded-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200" data-filter="all">Tất cả (<span id="countAllVocab">15</span>)</button>
-            <button class="vocab-filter-btn px-2.5 py-1 text-xs rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200" data-filter="mastered">Đã thuộc (<span id="countMasteredVocab">0</span>)</button>
-            <button class="vocab-filter-btn px-2.5 py-1 text-xs rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200" data-filter="learning">Cần ôn lại (<span id="countLearningVocab">15</span>)</button>
-            <button class="vocab-filter-btn px-2.5 py-1 text-xs rounded-full bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 hover:bg-purple-200 shrink-0 font-medium" data-filter="saved">⭐ Đã lưu từ Video (<span id="countSavedVocab">0</span>)</button>
+          <!-- Category Pills (Horizontal scrolling) -->
+          <div class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-xs">
+            <button class="vocab-cat-btn active shrink-0 px-3 py-1 rounded-full text-xs font-semibold bg-chineseRed-600 text-white transition" data-category="all">
+              Tất cả chủ đề
+            </button>
+            <button class="vocab-cat-btn shrink-0 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition" data-category="Chào hỏi & Đại từ">
+              👋 Chào hỏi & Đại từ
+            </button>
+            <button class="vocab-cat-btn shrink-0 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition" data-category="Con người & Gia đình">
+              👨‍👩‍👧 Gia đình & Người
+            </button>
+            <button class="vocab-cat-btn shrink-0 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition" data-category="Thời gian & Con số">
+              ⏰ Thời gian & Con số
+            </button>
+            <button class="vocab-cat-btn shrink-0 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition" data-category="Địa điểm & Đồ vật">
+              📍 Địa điểm & Đồ vật
+            </button>
+            <button class="vocab-cat-btn shrink-0 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition" data-category="Động từ hành động">
+              ⚡ Động từ hành động
+            </button>
+            <button class="vocab-cat-btn shrink-0 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition" data-category="Cảm xúc & Tính từ">
+              ✨ Tính từ & Cảm xúc
+            </button>
+            <button class="vocab-cat-btn shrink-0 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition" data-category="Đồ dùng & Cuộc sống">
+              ☕ Cuộc sống & Ăn uống
+            </button>
+            <button class="vocab-cat-btn shrink-0 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition" data-category="Ngữ pháp & Trợ từ">
+              🧩 Trợ từ & Ngữ pháp
+            </button>
+          </div>
+
+          <!-- Bottom Row: Status Filter Buttons + Result count -->
+          <div class="flex items-center justify-between gap-2 border-t border-slate-100 dark:border-slate-800 pt-3">
+            <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+              <button class="vocab-filter-btn active px-3 py-1 rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-semibold transition" data-filter="all">Tất cả (<span id="countAllVocab">154</span>)</button>
+              <button class="vocab-filter-btn px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition" data-filter="mastered">✅ Đã thuộc (<span id="countMasteredVocab">0</span>)</button>
+              <button class="vocab-filter-btn px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/60 transition" data-filter="learning">🔄 Cần ôn lại (<span id="countLearningVocab">154</span>)</button>
+              <button class="vocab-filter-btn px-3 py-1 rounded-full bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/60 shrink-0 font-medium transition" data-filter="saved">⭐ Đã lưu từ Video (<span id="countSavedVocab">0</span>)</button>
+            </div>
+            <div class="text-[11px] text-slate-400 font-medium shrink-0 hidden sm:block">
+              Hiển thị: <span id="vocabShowingCount" class="font-bold text-chineseRed-600">154</span> từ
+            </div>
           </div>
         </div>
 
@@ -1449,9 +1513,9 @@
     </div>
   </div>
 
-  <!-- SCRIPT FILES (Cache Busting v9) -->
-  <script src="data.js?v=9"></script>
-  <script src="app.js?v=9"></script>
+  <!-- SCRIPT FILES (Cache Busting v10) -->
+  <script src="data.js?v=10"></script>
+  <script src="app.js?v=10"></script>
 
 </body>
 </html>
