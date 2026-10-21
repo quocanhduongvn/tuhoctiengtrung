@@ -705,7 +705,7 @@ const HSK1_DATA = {
     {
         "id": "sh1",
         "title": "Lần Đầu Gặp Gỡ & Chào Hỏi Tự Nhiên",
-        "category": "Chào hỏi",
+        "category": "Chào hỏi & Xã giao",
         "duration": "15:20",
         "difficulty": "Cơ bản HSK 1",
         "youtubeId": "EpSs4cdSML0",
@@ -861,7 +861,7 @@ const HSK1_DATA = {
     {
         "id": "sh2",
         "title": "Mặc Cả & Trả Giá Siêu Thực Chiến",
-        "category": "Mua sắm",
+        "category": "Mua sắm & Taobao",
         "duration": "10:15",
         "difficulty": "Thực chiến đời sống",
         "youtubeId": "ExgUJ2X6y2M",
@@ -1002,7 +1002,7 @@ const HSK1_DATA = {
     {
         "id": "sh3",
         "title": "Gọi Món & Ăn Uống Tại Quán Bản Xứ",
-        "category": "Ăn uống",
+        "category": "Ẩm thực & Quán xá",
         "duration": "08:45",
         "difficulty": "Cơ bản HSK 1",
         "youtubeId": "Lz15QYWoVAM",
@@ -1148,7 +1148,7 @@ const HSK1_DATA = {
     {
         "id": "sh4",
         "title": "Hỏi Giờ Tăng Ca & An Toàn Trong Xưởng",
-        "category": "Nhà xưởng",
+        "category": "Nhà xưởng & Công sở",
         "duration": "12:30",
         "difficulty": "Nhà xưởng thực tế",
         "youtubeId": "gqNSF_imQjk",
@@ -1294,7 +1294,7 @@ const HSK1_DATA = {
     {
         "id": "sh5",
         "title": "Đi Taxi & Bác Tài Ơi Đi Nhanh Giúp Tôi",
-        "category": "Đi lại",
+        "category": "Du lịch & Khách sạn",
         "duration": "09:10",
         "difficulty": "Sơ cấp phản xạ",
         "youtubeId": "ve0wlvFIWUM",
@@ -1445,7 +1445,7 @@ const HSK1_DATA = {
     {
         "id": "sh6",
         "title": "Hỏi Thăm Gia Đình & Lời Mời Về Nhà Chơi",
-        "category": "Gia đình",
+        "category": "Gia đình & Đời sống",
         "duration": "14:05",
         "difficulty": "Cơ bản HSK 1",
         "youtubeId": "r4xJgTbGp80",
@@ -1583,6 +1583,1412 @@ const HSK1_DATA = {
                         "hanzi": "手艺",
                         "pinyin": "shǒuyì",
                         "viet": "Tay nghề nấu ăn"
+                    }
+                ]
+            }
+        ]
+    }
+,
+{
+        "id": "sh7",
+        "title": "Order Lẩu Haidilao & Thưởng Thức Ẩm Thực Tứ Xuyên",
+        "category": "Ẩm thực & Quán xá",
+        "duration": "11:40",
+        "difficulty": "Trung cấp HSK 2",
+        "youtubeId": "Lz15QYWoVAM",
+        "description": "Học cách gọi nước lẩu cay Tứ Xuyên, nước lẩu cà chua, gọi thêm thịt bò lát và tự pha bát nước chấm chuẩn vị.",
+        "sentences": [
+            {
+                "speaker": "Khách hàng",
+                "hanzi": "服务员，我们要一个番茄锅和一个麻辣锅！",
+                "pinyin": "Fúwùyuán, wǒmen yào yí gè fānqié guō hé yí gè málà guō!",
+                "phoneticVi": "Phú u doán, ủa mân dao ý cưa phan chế cua hớ ý cưa má la cua!",
+                "viet": "Phục vụ ơi, chúng tôi muốn một nồi lẩu cà chua và một nồi lẩu cay tê!",
+                "tip": "Nhấn mạnh 'fānqié' (cà chua) và 'málà' (cay tê). 'fúwùyuán' lên giọng thân thiện.",
+                "tokens": [
+                    {
+                        "hanzi": "服务员",
+                        "pinyin": "fúwùyuán",
+                        "viet": "Phục vụ"
+                    },
+                    {
+                        "hanzi": "我们要",
+                        "pinyin": "wǒmen yào",
+                        "viet": "Chúng tôi muốn"
+                    },
+                    {
+                        "hanzi": "一个番茄锅",
+                        "pinyin": "yí gè fānqié guō",
+                        "viet": "Một nồi lẩu cà chua"
+                    },
+                    {
+                        "hanzi": "和",
+                        "pinyin": "hé",
+                        "viet": "Và"
+                    },
+                    {
+                        "hanzi": "一个麻辣锅",
+                        "pinyin": "yí gè málà guō",
+                        "viet": "Một nồi lẩu cay tê"
+                    }
+                ]
+            },
+            {
+                "speaker": "Phục vụ quán",
+                "hanzi": "好的！请问麻辣锅要微辣、中辣还是特辣？",
+                "pinyin": "Hǎo de! Qǐngwèn málà guō yào wēilà, zhōnglà háishì tèlà?",
+                "phoneticVi": "Hảo tợ! Chỉnh uân má la cua dao uây la, chung la hái sư thưa la?",
+                "viet": "Vâng ạ! Xin hỏi nồi lẩu cay quý khách muốn cay nhẹ, cay vừa hay siêu cay ạ?",
+                "tip": "'wēilà' (cay nhẹ), 'zhōnglà' (cay vừa), 'tèlà' (rất cay) là 3 từ khóa vàng.",
+                "tokens": [
+                    {
+                        "hanzi": "好的",
+                        "pinyin": "hǎo de",
+                        "viet": "Được rồi / Vâng ạ"
+                    },
+                    {
+                        "hanzi": "请问",
+                        "pinyin": "qǐngwèn",
+                        "viet": "Xin hỏi"
+                    },
+                    {
+                        "hanzi": "微辣",
+                        "pinyin": "wēilà",
+                        "viet": "Cay nhẹ"
+                    },
+                    {
+                        "hanzi": "中辣",
+                        "pinyin": "zhōnglà",
+                        "viet": "Cay vừa"
+                    },
+                    {
+                        "hanzi": "还是",
+                        "pinyin": "háishì",
+                        "viet": "Hay là"
+                    },
+                    {
+                        "hanzi": "特辣",
+                        "pinyin": "tèlà",
+                        "viet": "Siêu cay"
+                    }
+                ]
+            },
+            {
+                "speaker": "Khách hàng",
+                "hanzi": "微辣就可以，再来两份肥牛和一份虾滑。",
+                "pinyin": "Wēilà jiù kěyǐ, zài lái liǎng fèn féiniú hé yí fèn xiāhuá.",
+                "phoneticVi": "Uây la chiêu khử dỉ, chai lái lẻng phân phấy niếu hớ ý phân xia hoá.",
+                "viet": "Cay nhẹ là được rồi, cho thêm hai đĩa thịt bò ba chỉ và một phần chả tôm nữa nhé.",
+                "tip": "'zài lái' là cấu trúc gọi thêm món cực kỳ phổ biến tại Trung Quốc.",
+                "tokens": [
+                    {
+                        "hanzi": "微辣",
+                        "pinyin": "wēilà",
+                        "viet": "Cay nhẹ"
+                    },
+                    {
+                        "hanzi": "就可以",
+                        "pinyin": "jiù kěyǐ",
+                        "viet": "Là được rồi"
+                    },
+                    {
+                        "hanzi": "再来",
+                        "pinyin": "zài lái",
+                        "viet": "Cho thêm / Lấy thêm"
+                    },
+                    {
+                        "hanzi": "两份肥牛",
+                        "pinyin": "liǎng fèn féiniú",
+                        "viet": "Hai đĩa thịt bò ba chỉ"
+                    },
+                    {
+                        "hanzi": "虾滑",
+                        "pinyin": "xiāhuá",
+                        "viet": "Chả tôm / Paste tôm"
+                    }
+                ]
+            },
+            {
+                "speaker": "Phục vụ quán",
+                "hanzi": "好的，调料台在那边，您可以去自己调配小料。",
+                "pinyin": "Hǎo de, tiáoliàotái zài nàbiān, nín kěyǐ qù zìjǐ tiáopèi xiǎoliào.",
+                "phoneticVi": "Hảo tợ, thiéo liêu thái chai na piên, nín khử dỉ chuy chự dỉ thiéo phây xẻo liêu.",
+                "viet": "Dạ vâng, quầy nước chấm ở đằng kia, quý khách có thể qua tự pha chế nước sốt ạ.",
+                "tip": "'tiáoliàotái' là quầy gia vị nước chấm tự phục vụ đặc trưng quán lẩu.",
+                "tokens": [
+                    {
+                        "hanzi": "好的",
+                        "pinyin": "hǎo de",
+                        "viet": "Vâng ạ"
+                    },
+                    {
+                        "hanzi": "调料台",
+                        "pinyin": "tiáoliàotái",
+                        "viet": "Quầy nước chấm"
+                    },
+                    {
+                        "hanzi": "在那边",
+                        "pinyin": "zài nàbiān",
+                        "viet": "Ở đằng kia"
+                    },
+                    {
+                        "hanzi": "自己",
+                        "pinyin": "zìjǐ",
+                        "viet": "Tự mình"
+                    },
+                    {
+                        "hanzi": "调配小料",
+                        "pinyin": "tiáopèi xiǎoliào",
+                        "viet": "Pha nước chấm"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "sh8",
+        "title": "Thử Đồ & Hỏi Đổi Trả Hàng Săn Sale Taobao",
+        "category": "Mua sắm & Taobao",
+        "duration": "10:50",
+        "difficulty": "Trung cấp HSK 2",
+        "youtubeId": "ExgUJ2X6y2M",
+        "description": "Học cách hỏi size quần áo, kiểm tra chất liệu vải, hỏi phí ship bưu điện và yêu cầu hoàn tiền đổi size.",
+        "sentences": [
+            {
+                "speaker": "Khách hàng",
+                "hanzi": "掌柜，这件衣服有大一号的吗？我想换一件。",
+                "pinyin": "Zhǎngguì, zhè jiàn yīfu yǒu dà yí hào de ma? Wǒ xiǎng huàn yí jiàn.",
+                "phoneticVi": "Chảng quây, chưa chiên y phu dẩu ta ý hao tơ ma? Ủa xẻng hoán ý chiên.",
+                "viet": "Chủ shop ơi, chiếc áo này có cỡ lớn hơn một số không? Tôi muốn đổi một chiếc.",
+                "tip": "'Zhǎngguì' (chưởng quầy) là cách xưng hô thân mật khi chat với chủ shop Taobao.",
+                "tokens": [
+                    {
+                        "hanzi": "掌柜",
+                        "pinyin": "zhǎngguì",
+                        "viet": "Chủ tiệm / Chủ shop"
+                    },
+                    {
+                        "hanzi": "这件衣服",
+                        "pinyin": "zhè jiàn yīfu",
+                        "viet": "Chiếc áo này"
+                    },
+                    {
+                        "hanzi": "大一号",
+                        "pinyin": "dà yí hào",
+                        "viet": "Lớn hơn một cỡ (size)"
+                    },
+                    {
+                        "hanzi": "想换",
+                        "pinyin": "xiǎng huàn",
+                        "viet": "Muốn đổi"
+                    }
+                ]
+            },
+            {
+                "speaker": "Chủ shop Taobao",
+                "hanzi": "亲，有的！支持七天无理由退换货，包邮哦！",
+                "pinyin": "Qīn, yǒu de! Zhīchí qī tiān wú lǐyóu tuì huàn huò, bāoyóu ó!",
+                "phoneticVi": "Chin, dẩu tợ! Chư chử chi thiên ú lỉ dố thuy hoán hua, bao dố o!",
+                "viet": "Khách yêu ơi, còn hàng ạ! Shop hỗ trợ 7 ngày đổi trả không cần lý do, miễn phí ship nha!",
+                "tip": "'Qīn' (khách yêu) và 'bāoyóu' (miễn phí vận chuyển) là từ ngữ kinh điển khi mua sắm online.",
+                "tokens": [
+                    {
+                        "hanzi": "亲",
+                        "pinyin": "qīn",
+                        "viet": "Khách yêu / Bạn thân mến"
+                    },
+                    {
+                        "hanzi": "有的",
+                        "pinyin": "yǒu de",
+                        "viet": "Có hàng ạ"
+                    },
+                    {
+                        "hanzi": "七天无理由",
+                        "pinyin": "qī tiān wú lǐyóu",
+                        "viet": "7 ngày không cần lý do"
+                    },
+                    {
+                        "hanzi": "退换货",
+                        "pinyin": "tuì huàn huò",
+                        "viet": "Đổi trả hàng"
+                    },
+                    {
+                        "hanzi": "包邮",
+                        "pinyin": "bāoyóu",
+                        "viet": "Miễn phí vận chuyển (Freeship)"
+                    }
+                ]
+            },
+            {
+                "speaker": "Khách hàng",
+                "hanzi": "那我把这件寄回去，运费险会自动赔付吗？",
+                "pinyin": "Nà wǒ bǎ zhè jiàn jì huíqù, yùnfèixiǎn huì zìdòng péifù ma?",
+                "phoneticVi": "Na ủa bả chưa chiên chi huấy chuy, duân phây xẻn huây chự tung phấy phu ma?",
+                "viet": "Vậy tôi gửi món này lại, bảo hiểm cước vận chuyển có tự động bồi thường không?",
+                "tip": "'yùnfèixiǎn' (bảo hiểm phí ship) là tính năng mua sắm cực hữu ích trên Taobao.",
+                "tokens": [
+                    {
+                        "hanzi": "那我",
+                        "pinyin": "nà wǒ",
+                        "viet": "Vậy thì tôi"
+                    },
+                    {
+                        "hanzi": "寄回去",
+                        "pinyin": "jì huíqù",
+                        "viet": "Gửi trả lại"
+                    },
+                    {
+                        "hanzi": "运费险",
+                        "pinyin": "yùnfèixiǎn",
+                        "viet": "Bảo hiểm phí vận chuyển"
+                    },
+                    {
+                        "hanzi": "自动赔付",
+                        "pinyin": "zìdòng péifù",
+                        "viet": "Tự động bồi thường"
+                    }
+                ]
+            },
+            {
+                "speaker": "Chủ shop Taobao",
+                "hanzi": "是的亲，您点击退货退款，快递上门取件就可以啦！",
+                "pinyin": "Shì de qīn, nín diǎnjī tuìhuò tuìkuǎn, kuàidì shàngmén qǔjiàn jiù kěyǐ la!",
+                "phoneticVi": "Sư tợ chin, nín tẻn chi thuy hua thuy khoản, khoai ti sang mấn chủ chiên chiêu khử dỉ la!",
+                "viet": "Đúng rồi bạn yêu ơi, bạn bấm 'Trả hàng hoàn tiền', shipper sẽ đến tận nhà lấy hàng là xong nha!",
+                "tip": "'kuàidì shàngmén qǔjiàn' là shipper đến tận cửa lấy hàng trả.",
+                "tokens": [
+                    {
+                        "hanzi": "是的",
+                        "pinyin": "shì de",
+                        "viet": "Đúng rồi ạ"
+                    },
+                    {
+                        "hanzi": "点击",
+                        "pinyin": "diǎnjī",
+                        "viet": "Bấm vào / Nhấp vào"
+                    },
+                    {
+                        "hanzi": "退货退款",
+                        "pinyin": "tuìhuò tuìkuǎn",
+                        "viet": "Trả hàng hoàn tiền"
+                    },
+                    {
+                        "hanzi": "快递上门",
+                        "pinyin": "kuàidì shàngmén",
+                        "viet": "Shipper tới tận nhà"
+                    },
+                    {
+                        "hanzi": "取件",
+                        "pinyin": "qǔjiàn",
+                        "viet": "Lấy bưu phẩm"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "sh9",
+        "title": "Check-in Khách Sạn & Đổi Phòng Ban Công View Đẹp",
+        "category": "Du lịch & Khách sạn",
+        "duration": "09:35",
+        "difficulty": "Trung cấp HSK 2",
+        "youtubeId": "gqNSF_imQjk",
+        "description": "Giao tiếp tại quầy lễ tân: xuất trình hộ chiếu, hỏi mật khẩu Wi-Fi, yêu cầu phòng tầng cao có cửa sổ nhìn ra phố.",
+        "sentences": [
+            {
+                "speaker": "Khách du lịch",
+                "hanzi": "您好，我在携程上预订了一间大床房。",
+                "pinyin": "Nín hǎo, wǒ zài Xiéchéng shang yùdìng le yì jiān dàchuáng fáng.",
+                "phoneticVi": "Nín hảo, ủa chai Sié chấng sang duy ting lơ ý chiên ta choáng pháng.",
+                "viet": "Xin chào, tôi đã đặt trước một phòng giường lớn trên app Ctrip.",
+                "tip": "'Xiéchéng' (Ctrip / Trip.com) là ứng dụng đặt vé và khách sạn số 1 Trung Quốc.",
+                "tokens": [
+                    {
+                        "hanzi": "您好",
+                        "pinyin": "nín hǎo",
+                        "viet": "Xin chào ngài"
+                    },
+                    {
+                        "hanzi": "在携程上",
+                        "pinyin": "zài Xiéchéng shang",
+                        "viet": "Trên app Ctrip"
+                    },
+                    {
+                        "hanzi": "预订了",
+                        "pinyin": "yùdìng le",
+                        "viet": "Đã đặt trước"
+                    },
+                    {
+                        "hanzi": "大床房",
+                        "pinyin": "dàchuáng fáng",
+                        "viet": "Phòng giường đôi lớn"
+                    }
+                ]
+            },
+            {
+                "speaker": "Lễ tân khách sạn",
+                "hanzi": "请出示一下您的护照，我帮您办理入住手续。",
+                "pinyin": "Qǐng chūshì yíxià nín de hùzhào, wǒ bāng nín bànlǐ rùzhù shǒuxù.",
+                "phoneticVi": "Chỉnh chu sư ý sia nín tơ hu chao, ủa bang nín pan lỉ ru chu sẩu xuy.",
+                "viet": "Xin vui lòng xuất trình hộ chiếu, tôi sẽ giúp quý khách làm thủ tục nhận phòng.",
+                "tip": "'chūshì' (xuất trình), 'hùzhào' (hộ chiếu), 'rùzhù' (nhận phòng khách sạn).",
+                "tokens": [
+                    {
+                        "hanzi": "请出示",
+                        "pinyin": "qǐng chūshì",
+                        "viet": "Xin xuất trình"
+                    },
+                    {
+                        "hanzi": "护照",
+                        "pinyin": "hùzhào",
+                        "viet": "Hộ chiếu"
+                    },
+                    {
+                        "hanzi": "办理",
+                        "pinyin": "bànlǐ",
+                        "viet": "Làm / Xử lý"
+                    },
+                    {
+                        "hanzi": "入住手续",
+                        "pinyin": "rùzhù shǒuxù",
+                        "viet": "Thủ tục nhận phòng"
+                    }
+                ]
+            },
+            {
+                "speaker": "Khách du lịch",
+                "hanzi": "可以给我安排一个高楼层、带阳台的房间吗？",
+                "pinyin": "Kěyǐ gěi wǒ ānpái yí gè gāo lóucéng, dài yángtái de fángjiān ma?",
+                "phoneticVi": "Khử dỉ cấy ủa an phái ý cưa cao lốu chấng, tai dáng thái tơ pháng chiên ma?",
+                "viet": "Có thể sắp xếp cho tôi một phòng tầng cao, có ban công được không ạ?",
+                "tip": "'gāo lóucéng' (tầng cao thoáng đãng), 'yángtái' (ban công ngắm cảnh).",
+                "tokens": [
+                    {
+                        "hanzi": "可以",
+                        "pinyin": "kěyǐ",
+                        "viet": "Có thể"
+                    },
+                    {
+                        "hanzi": "安排",
+                        "pinyin": "ānpái",
+                        "viet": "Sắp xếp"
+                    },
+                    {
+                        "hanzi": "高楼层",
+                        "pinyin": "gāo lóucéng",
+                        "viet": "Tầng cao"
+                    },
+                    {
+                        "hanzi": "带阳台",
+                        "pinyin": "dài yángtái",
+                        "viet": "Có ban công"
+                    },
+                    {
+                        "hanzi": "房间",
+                        "pinyin": "fángjiān",
+                        "viet": "Căn phòng"
+                    }
+                ]
+            },
+            {
+                "speaker": "Lễ tân khách sạn",
+                "hanzi": "没问题！这是您的房卡808，WiFi密码是房间号。",
+                "pinyin": "Méi wèntí! Zhè shì nín de fángkǎ bā líng bā, WiFi mìmǎ shì fángjiān hào.",
+                "phoneticVi": "Mấy uân thí! Chưa sư nín tơ pháng khả pa líng pa, WiFi mi mả sư pháng chiên hao.",
+                "viet": "Không vấn đề gì ạ! Đây là thẻ phòng 808 của quý khách, mật khẩu Wi-Fi là số phòng nhé ạ.",
+                "tip": "Đọc từng con số phòng 'bā líng bā'. 'fángkǎ' là thẻ từ mở phòng.",
+                "tokens": [
+                    {
+                        "hanzi": "没问题",
+                        "pinyin": "méi wèntí",
+                        "viet": "Không vấn đề gì"
+                    },
+                    {
+                        "hanzi": "房卡",
+                        "pinyin": "fángkǎ",
+                        "viet": "Thẻ phòng"
+                    },
+                    {
+                        "hanzi": "密码",
+                        "pinyin": "mìmǎ",
+                        "viet": "Mật khẩu"
+                    },
+                    {
+                        "hanzi": "房间号",
+                        "pinyin": "fángjiān hào",
+                        "viet": "Số phòng"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "sh10",
+        "title": "Xin Wechat & Rủ Bạn Đi Xem Phim Cuối Tuần",
+        "category": "Hẹn hò & Đời sống",
+        "duration": "08:20",
+        "difficulty": "Cơ bản HSK 1",
+        "youtubeId": "EpSs4cdSML0",
+        "description": "Cách bắt chuyện làm quen tinh tế, hỏi tài khoản Wechat (微信) và hẹn lịch đi uống cà phê hoặc xem rạp chiếu phim.",
+        "sentences": [
+            {
+                "speaker": "Bạn nam",
+                "hanzi": "今天和你聊天很开心，我们加个微信吧？",
+                "pinyin": "Jīntiān hé nǐ liáotiān hěn kāixīn, wǒmen jiā gè Wēixìn ba?",
+                "phoneticVi": "Chin thiên hớ nỉ liéo thiên hẩn khai xin, ủa mân chia cưa Uây xin pa?",
+                "viet": "Hôm nay nói chuyện với bạn rất vui, chúng mình kết bạn WeChat nhé?",
+                "tip": "'jiā gè Wēixìn' là câu cửa miệng số 1 khi muốn giữ liên lạc với người Trung Quốc.",
+                "tokens": [
+                    {
+                        "hanzi": "今天",
+                        "pinyin": "jīntiān",
+                        "viet": "Hôm nay"
+                    },
+                    {
+                        "hanzi": "聊天",
+                        "pinyin": "liáotiān",
+                        "viet": "Nói chuyện / Tán gẫu"
+                    },
+                    {
+                        "hanzi": "开心",
+                        "pinyin": "kāixīn",
+                        "viet": "Vui vẻ"
+                    },
+                    {
+                        "hanzi": "加微信",
+                        "pinyin": "jiā Wēixìn",
+                        "viet": "Kết bạn WeChat"
+                    }
+                ]
+            },
+            {
+                "speaker": "Bạn nữ",
+                "hanzi": "好啊，我扫你还是你扫我？",
+                "pinyin": "Hǎo a, wǒ sǎo nǐ háishì nǐ sǎo wǒ?",
+                "phoneticVi": "Hảo a, ủa sảo nỉ hái sư nỉ sảo ủa?",
+                "viet": "Được chứ, để tôi quét mã bạn hay bạn quét mã tôi nào?",
+                "tip": "'wǒ sǎo nǐ' nghĩa là tôi quét mã QR của bạn bằng điện thoại.",
+                "tokens": [
+                    {
+                        "hanzi": "好啊",
+                        "pinyin": "hǎo a",
+                        "viet": "Được chứ / Ok nha"
+                    },
+                    {
+                        "hanzi": "我扫你",
+                        "pinyin": "wǒ sǎo nǐ",
+                        "viet": "Tôi quét bạn"
+                    },
+                    {
+                        "hanzi": "还是",
+                        "pinyin": "háishì",
+                        "viet": "Hay là"
+                    },
+                    {
+                        "hanzi": "你扫我",
+                        "pinyin": "nǐ sǎo wǒ",
+                        "viet": "Bạn quét tôi"
+                    }
+                ]
+            },
+            {
+                "speaker": "Bạn nam",
+                "hanzi": "我扫你吧！周末你有空吗？请你去看电影！",
+                "pinyin": "Wǒ sǎo nǐ ba! Zhōumò nǐ yǒu kòng ma? Qǐng nǐ qù kàn diànyǐng!",
+                "phoneticVi": "Ủa sảo nỉ pa! Châu mua nỉ dẩu khung ma? Chỉnh nỉ chuy khan tiên dỉnh!",
+                "viet": "Để tôi quét bạn nhé! Cuối tuần bạn có rảnh không? Mời bạn đi xem phim!",
+                "tip": "'yǒu kòng' nghĩa là có thời gian rảnh rỗi. 'qǐng' mang nghĩa bao / đãi.",
+                "tokens": [
+                    {
+                        "hanzi": "周末",
+                        "pinyin": "zhōumò",
+                        "viet": "Cuối tuần"
+                    },
+                    {
+                        "hanzi": "有空吗",
+                        "pinyin": "yǒu kòng ma",
+                        "viet": "Có rảnh không"
+                    },
+                    {
+                        "hanzi": "请你",
+                        "pinyin": "qǐng nǐ",
+                        "viet": "Mời bạn / Bao bạn"
+                    },
+                    {
+                        "hanzi": "看电影",
+                        "pinyin": "kàn diànyǐng",
+                        "viet": "Xem phim"
+                    }
+                ]
+            },
+            {
+                "speaker": "Bạn nữ",
+                "hanzi": "周六下午可以，那我们微信上联系！",
+                "pinyin": "Zhōuliù xiàwǔ kěyǐ, nà wǒmen Wēixìn shang liánxì!",
+                "phoneticVi": "Châu liêu sia ủ khử dỉ, na ủa mân Uây xin sang liến si!",
+                "viet": "Chiều thứ Bảy được đấy, vậy chúng mình nhắn tin trên WeChat nhé!",
+                "tip": "'liánxì' nghĩa là liên lạc, giữ liên lạc thường xuyên.",
+                "tokens": [
+                    {
+                        "hanzi": "周六下午",
+                        "pinyin": "zhōuliù xiàwǔ",
+                        "viet": "Chiều thứ Bảy"
+                    },
+                    {
+                        "hanzi": "可以",
+                        "pinyin": "kěyǐ",
+                        "viet": "Được / Đồng ý"
+                    },
+                    {
+                        "hanzi": "微信上",
+                        "pinyin": "Wēixìn shang",
+                        "viet": "Trên WeChat"
+                    },
+                    {
+                        "hanzi": "联系",
+                        "pinyin": "liánxì",
+                        "viet": "Liên hệ / Nhắn tin"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "sh11",
+        "title": "Phỏng Vấn Xin Việc & Thảo Luận Mức Lương Thưởng",
+        "category": "Nhà xưởng & Công sở",
+        "duration": "14:15",
+        "difficulty": "Nâng cao HSK 3",
+        "youtubeId": "ve0wlvFIWUM",
+        "description": "Giới thiệu kinh nghiệm làm việc, thế mạnh bản thân và trao đổi về thời gian thử việc cùng đãi ngộ công ty.",
+        "sentences": [
+            {
+                "speaker": "Nhà tuyển dụng",
+                "hanzi": "请简单介绍一下你之前的工作经验。",
+                "pinyin": "Qǐng jiǎndān jièshào yíxià nǐ zhīqián de gōngzuò jīngyàn.",
+                "phoneticVi": "Chỉnh chẻn tan chia sao ý sia nỉ chư chiến tơ cung chua chinh yên.",
+                "viet": "Xin vui lòng giới thiệu vắn tắt về kinh nghiệm làm việc trước đây của bạn.",
+                "tip": "'jièshào' (giới thiệu), 'gōngzuò jīngyàn' (kinh nghiệm làm việc công sở).",
+                "tokens": [
+                    {
+                        "hanzi": "请简单",
+                        "pinyin": "qǐng jiǎndān",
+                        "viet": "Xin vắn tắt / Đơn giản"
+                    },
+                    {
+                        "hanzi": "介绍一下",
+                        "pinyin": "jièshào yíxià",
+                        "viet": "Giới thiệu một chút"
+                    },
+                    {
+                        "hanzi": "之前",
+                        "pinyin": "zhīqián",
+                        "viet": "Trước đây"
+                    },
+                    {
+                        "hanzi": "工作经验",
+                        "pinyin": "gōngzuò jīngyàn",
+                        "viet": "Kinh nghiệm làm việc"
+                    }
+                ]
+            },
+            {
+                "speaker": "Ứng viên",
+                "hanzi": "我有三年的外贸跟单经验，中文听说读写很流利。",
+                "pinyin": "Wǒ yǒu sān nián de wàimào gēndān jīngyàn, zhōngwén tīng shuō dú xiě hěn liúlì.",
+                "phoneticVi": "Ủa dẩu san niên tơ oai mao cân tan chinh yên, chung uân thing sua tú sẻ hẩn liếu ly.",
+                "viet": "Tôi có 3 năm kinh nghiệm làm theo dõi đơn hàng xuất nhập khẩu, nghe nói đọc viết tiếng Trung rất lưu loát.",
+                "tip": "'wàimào gēndān' (quản lý đơn hàng ngoại thương), 'liúlì' (lưu loát, trôi chảy).",
+                "tokens": [
+                    {
+                        "hanzi": "三年",
+                        "pinyin": "sān nián",
+                        "viet": "3 năm"
+                    },
+                    {
+                        "hanzi": "外贸跟单",
+                        "pinyin": "wàimào gēndān",
+                        "viet": "Theo dõi đơn ngoại thương"
+                    },
+                    {
+                        "hanzi": "中文",
+                        "pinyin": "zhōngwén",
+                        "viet": "Tiếng Trung"
+                    },
+                    {
+                        "hanzi": "听说读写",
+                        "pinyin": "tīng shuō dú xiě",
+                        "viet": "Nghe nói đọc viết"
+                    },
+                    {
+                        "hanzi": "很流利",
+                        "pinyin": "hěn liúlì",
+                        "viet": "Rất lưu loát"
+                    }
+                ]
+            },
+            {
+                "speaker": "Nhà tuyển dụng",
+                "hanzi": "你对薪资待遇有什么期望？",
+                "pinyin": "Nǐ duì xīnzī dàiyù yǒu shénme qīwàng?",
+                "phoneticVi": "Nỉ tuây xin chư tai dỳ dẩu sấn mơ chi oang?",
+                "viet": "Bạn có kỳ vọng gì về mức lương và chế độ đãi ngộ?",
+                "tip": "'xīnzī dàiyù' là thuật ngữ chỉ mức lương bổng và phúc lợi lao động.",
+                "tokens": [
+                    {
+                        "hanzi": "对",
+                        "pinyin": "duì",
+                        "viet": "Đối với"
+                    },
+                    {
+                        "hanzi": "薪资待遇",
+                        "pinyin": "xīnzī dàiyù",
+                        "viet": "Lương và đãi ngộ"
+                    },
+                    {
+                        "hanzi": "什么",
+                        "pinyin": "shénme",
+                        "viet": "Gì / Cái gì"
+                    },
+                    {
+                        "hanzi": "期望",
+                        "pinyin": "qīwàng",
+                        "viet": "Kỳ vọng / Mong muốn"
+                    }
+                ]
+            },
+            {
+                "speaker": "Ứng viên",
+                "hanzi": "我希望税后月薪能达到两千万越南盾，有五险一金。",
+                "pinyin": "Wǒ xīwàng shuìhòu yuèxīn néng dádào liǎng qiān wàn Yuènándùn, yǒu wǔxiǎnyìjīn.",
+                "phoneticVi": "Ủa si oang suây hốu duê xin nấng tá tao lẻng chiên oan Duê nan tuân, dẩu ủ sẻn ý chin.",
+                "viet": "Tôi hy vọng lương thực nhận sau thuế đạt 20 triệu VNĐ, và có đầy đủ bảo hiểm xã hội.",
+                "tip": "'shuìhòu yuèxīn' là lương net hàng tháng sau thuế.",
+                "tokens": [
+                    {
+                        "hanzi": "希望",
+                        "pinyin": "xīwàng",
+                        "viet": "Hy vọng"
+                    },
+                    {
+                        "hanzi": "税后月薪",
+                        "pinyin": "shuìhòu yuèxīn",
+                        "viet": "Lương sau thuế (lương net)"
+                    },
+                    {
+                        "hanzi": "两千万",
+                        "pinyin": "liǎng qiān wàn",
+                        "viet": "20 triệu"
+                    },
+                    {
+                        "hanzi": "五险一金",
+                        "pinyin": "wǔxiǎnyìjīn",
+                        "viet": "Bảo hiểm & Phúc lợi đầy đủ"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "sh12",
+        "title": "Báo Cáo Máy Móc Trục Trặc Với Quản Đốc Phân Xưởng",
+        "category": "Nhà xưởng & Công sở",
+        "duration": "13:00",
+        "difficulty": "Trung cấp HSK 2",
+        "youtubeId": "r4xJgTbGp80",
+        "description": "Xử lý sự cố máy ép dừng đột ngột, báo tổ trưởng kỹ thuật bảo trì và xin linh kiện thay thế.",
+        "sentences": [
+            {
+                "speaker": "Công nhân",
+                "hanzi": "主管，三号流水线的机器突然停了！",
+                "pinyin": "Zhǔguǎn, sān hào liúshuǐxiàn de jīqì tūrán tíng le!",
+                "phoneticVi": "Chủ quản, san hao liếu suẩy xiên tơ chi chi thū rán thính lơ!",
+                "viet": "Quản đốc ơi, máy móc ở dây chuyền số 3 đột nhiên bị dừng hoạt động rồi!",
+                "tip": "'liúshuǐxiàn' (dây chuyền sản xuất), 'tūrán tíng' (đột ngột dừng lại).",
+                "tokens": [
+                    {
+                        "hanzi": "主管",
+                        "pinyin": "zhǔguǎn",
+                        "viet": "Quản đốc / Tổ trưởng"
+                    },
+                    {
+                        "hanzi": "三号",
+                        "pinyin": "sān hào",
+                        "viet": "Số 3"
+                    },
+                    {
+                        "hanzi": "流水线",
+                        "pinyin": "liúshuǐxiàn",
+                        "viet": "Dây chuyền sản xuất"
+                    },
+                    {
+                        "hanzi": "机器",
+                        "pinyin": "jīqì",
+                        "viet": "Máy móc"
+                    },
+                    {
+                        "hanzi": "突然停了",
+                        "pinyin": "tūrán tíng le",
+                        "viet": "Đột nhiên dừng lại"
+                    }
+                ]
+            },
+            {
+                "speaker": "Quản đốc xưởng",
+                "hanzi": "先切断电源，注意安全！是什么原因引起的？",
+                "pinyin": "Xiān qiēduàn diànyuán, zhùyì ānquán! Shì shénme yuányīn yǐnqǐ de?",
+                "phoneticVi": "Siên chiê toan tiện doán, chu ý an choán! Sư sấn mơ doán in dỉn chỉ tợ?",
+                "viet": "Trước tiên ngắt nguồn điện ngay, chú ý an toàn! Là do nguyên nhân gì gây ra?",
+                "tip": "'qiēduàn diànyuán' (ngắt cầu dao điện), 'zhùyì ānquán' (an toàn là trên hết).",
+                "tokens": [
+                    {
+                        "hanzi": "先",
+                        "pinyin": "xiān",
+                        "viet": "Trước tiên"
+                    },
+                    {
+                        "hanzi": "切断电源",
+                        "pinyin": "qiēduàn diànyuán",
+                        "viet": "Ngắt nguồn điện"
+                    },
+                    {
+                        "hanzi": "注意安全",
+                        "pinyin": "zhùyì ānquán",
+                        "viet": "Chú ý an toàn"
+                    },
+                    {
+                        "hanzi": "什么原因",
+                        "pinyin": "shénme yuányīn",
+                        "viet": "Nguyên nhân gì"
+                    }
+                ]
+            },
+            {
+                "speaker": "Công nhân",
+                "hanzi": "好像是电机过热卡住了，需要机修师傅过来检修。",
+                "pinyin": "Hǎoxiàng shì diànjī guòrè kǎzhù le, xūyào jīxiū shīfu guòlai jiǎnxiū.",
+                "phoneticVi": "Hảo xêang sư tiện chi cua rơ khả chu lơ, xuy dao chi siêu sư phu cua lái chẻn siêu.",
+                "viet": "Hình như mô tơ bị quá nhiệt kẹt cứng rồi, cần thợ cơ khí qua kiểm tra sửa chữa ạ.",
+                "tip": "'jīxiū shīfu' là bác thợ sửa máy móc / cơ khí trong nhà xưởng.",
+                "tokens": [
+                    {
+                        "hanzi": "好像是",
+                        "pinyin": "hǎoxiàng shì",
+                        "viet": "Hình như là"
+                    },
+                    {
+                        "hanzi": "电机过热",
+                        "pinyin": "diànjī guòrè",
+                        "viet": "Mô tơ quá nhiệt"
+                    },
+                    {
+                        "hanzi": "卡住了",
+                        "pinyin": "kǎzhù le",
+                        "viet": "Bị kẹt rồi"
+                    },
+                    {
+                        "hanzi": "机修师傅",
+                        "pinyin": "jīxiū shīfu",
+                        "viet": "Thợ sửa máy"
+                    },
+                    {
+                        "hanzi": "检修",
+                        "pinyin": "jiǎnxiū",
+                        "viet": "Kiểm tra sửa chữa"
+                    }
+                ]
+            },
+            {
+                "speaker": "Quản đốc xưởng",
+                "hanzi": "好的，我马上通知工程部，大家先整理物料！",
+                "pinyin": "Hǎo de, wǒ mǎshàng tōngzhī gōngchéngbù, dàjiā xiān zhěnglǐ wùliào!",
+                "phoneticVi": "Hảo tợ, ủa mả sang thung chư cung chấng pu, ta chia siên chửng lỉ u liêu!",
+                "viet": "Được rồi, tôi thông báo bộ phận kỹ thuật ngay, mọi người tranh thủ sắp xếp gọn vật liệu trước!",
+                "tip": "'mǎshàng' (ngay lập tức), 'zhěnglǐ wùliào' (sắp xếp nguyên vật liệu ngăn nắp).",
+                "tokens": [
+                    {
+                        "hanzi": "马上",
+                        "pinyin": "mǎshàng",
+                        "viet": "Ngay lập tức"
+                    },
+                    {
+                        "hanzi": "通知",
+                        "pinyin": "tōngzhī",
+                        "viet": "Thông báo"
+                    },
+                    {
+                        "hanzi": "工程部",
+                        "pinyin": "gōngchéngbù",
+                        "viet": "Bộ phận kỹ thuật"
+                    },
+                    {
+                        "hanzi": "整理物料",
+                        "pinyin": "zhěnglǐ wùliào",
+                        "viet": "Sắp xếp nguyên vật liệu"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "sh13",
+        "title": "Đi Khám Sức Khỏe & Mua Thuốc Tại Hiệu Thuốc Bản Xứ",
+        "category": "Y tế & Tiện ích",
+        "duration": "07:50",
+        "difficulty": "Trung cấp HSK 2",
+        "youtubeId": "Lz15QYWoVAM",
+        "description": "Mô tả triệu chứng đau đầu, viêm họng, sốt nhẹ và hỏi cách uống thuốc ngày mấy lần sau bữa ăn.",
+        "sentences": [
+            {
+                "speaker": "Người bệnh",
+                "hanzi": "医生，我从昨天开始头疼、嗓子疼，还有点发烧。",
+                "pinyin": "Yīshēng, wǒ cóng zuótiān kāishǐ tóuténg, sǎngzi téng, hái yǒudiǎn fāshāo.",
+                "phoneticVi": "Y sâng, ủa chúng chúa thiên khai sỉ thốu thấng, sảng chự thấng, hái dẩu tẻn pha sao.",
+                "viet": "Bác sĩ ơi, từ hôm qua đến giờ tôi bị đau đầu, rát họng và còn hơi sốt nhẹ nữa.",
+                "tip": "'tóuténg' (đau đầu), 'sǎngzi téng' (đau họng), 'fāshāo' (phát sốt).",
+                "tokens": [
+                    {
+                        "hanzi": "医生",
+                        "pinyin": "yīshēng",
+                        "viet": "Bác sĩ"
+                    },
+                    {
+                        "hanzi": "头疼",
+                        "pinyin": "tóuténg",
+                        "viet": "Đau đầu"
+                    },
+                    {
+                        "hanzi": "嗓子疼",
+                        "pinyin": "sǎngzi téng",
+                        "viet": "Đau rát họng"
+                    },
+                    {
+                        "hanzi": "有点",
+                        "pinyin": "yǒudiǎn",
+                        "viet": "Hơi / Một chút"
+                    },
+                    {
+                        "hanzi": "发烧",
+                        "pinyin": "fāshāo",
+                        "viet": "Bị sốt"
+                    }
+                ]
+            },
+            {
+                "speaker": "Bác sĩ",
+                "hanzi": "我先量一下体温。三十八度二，是轻度风热感冒。",
+                "pinyin": "Wǒ xiān liáng yíxià tǐwēn. Sānshíbā dù èr, shì qīngdù fēngrè gǎnmào.",
+                "phoneticVi": "Ủa siên liáng ý sia thỉ uân. San sư pa tu ơ, sư ching tu phâng rơ cảm mao.",
+                "viet": "Để tôi đo nhiệt độ trước nhé. 38 độ 2, là bị cảm mạo phong nhiệt mức độ nhẹ.",
+                "tip": "'liáng tǐwēn' (đo nhiệt độ cơ thể), 'gǎnmào' (cảm cúm thông thường).",
+                "tokens": [
+                    {
+                        "hanzi": "量一下",
+                        "pinyin": "liáng yíxià",
+                        "viet": "Đo một chút"
+                    },
+                    {
+                        "hanzi": "体温",
+                        "pinyin": "tǐwēn",
+                        "viet": "Thân nhiệt"
+                    },
+                    {
+                        "hanzi": "三十八度二",
+                        "pinyin": "sānshíbā dù èr",
+                        "viet": "38.2 độ"
+                    },
+                    {
+                        "hanzi": "感冒",
+                        "pinyin": "gǎnmào",
+                        "viet": "Cảm cúm"
+                    }
+                ]
+            },
+            {
+                "speaker": "Người bệnh",
+                "hanzi": "请问这两种药怎么吃？饭前还是饭后？",
+                "pinyin": "Qǐngwèn zhè liǎng zhǒng yào zěnme chī? Fànqián háishì fànhòu?",
+                "phoneticVi": "Chỉnh uân chưa lẻng chủng dao chẩn mơ chư? Phan chiến hái sư phan hốu?",
+                "viet": "Xin hỏi hai loại thuốc này uống như thế nào ạ? Uống trước bữa ăn hay sau bữa ăn?",
+                "tip": "'zěnme chī' (uống thuốc như thế nào), 'fànhòu' (sau khi ăn).",
+                "tokens": [
+                    {
+                        "hanzi": "请问",
+                        "pinyin": "qǐngwèn",
+                        "viet": "Xin hỏi"
+                    },
+                    {
+                        "hanzi": "这两种药",
+                        "pinyin": "zhè liǎng zhǒng yào",
+                        "viet": "Hai loại thuốc này"
+                    },
+                    {
+                        "hanzi": "怎么吃",
+                        "pinyin": "zěnme chī",
+                        "viet": "Uống / Dùng thế nào"
+                    },
+                    {
+                        "hanzi": "饭前",
+                        "pinyin": "fànqián",
+                        "viet": "Trước bữa ăn"
+                    },
+                    {
+                        "hanzi": "饭后",
+                        "pinyin": "fànhòu",
+                        "viet": "Sau bữa ăn"
+                    }
+                ]
+            },
+            {
+                "speaker": "Bác sĩ",
+                "hanzi": "一日三次，一次两片，记得饭后半小时吃，多喝温水！",
+                "pinyin": "Yí rì sān cì, yí cì liǎng piàn, jìde fànhòu bàn xiǎoshí chī, duō hē wēnshuǐ!",
+                "phoneticVi": "Ý rự san chư, ý chư lẻng phiến, chi tợ phan hốu pan xẻo sư chư, tua hơ uân suẩy!",
+                "viet": "Ngày 3 lần, mỗi lần 2 viên, nhớ uống sau bữa ăn nửa tiếng và uống nhiều nước ấm nhé!",
+                "tip": "'yí rì sān cì' (ngày 3 lần), 'duō hē wēnshuǐ' (uống nhiều nước ấm) là lời khuyên phổ biến nhất.",
+                "tokens": [
+                    {
+                        "hanzi": "一日三次",
+                        "pinyin": "yí rì sān cì",
+                        "viet": "Một ngày 3 lần"
+                    },
+                    {
+                        "hanzi": "一次两片",
+                        "pinyin": "yí cì liǎng piàn",
+                        "viet": "Mỗi lần 2 viên"
+                    },
+                    {
+                        "hanzi": "饭后半小时",
+                        "pinyin": "fànhòu bàn xiǎoshí",
+                        "viet": "Sau ăn nửa tiếng"
+                    },
+                    {
+                        "hanzi": "多喝温水",
+                        "pinyin": "duō hē wēnshuǐ",
+                        "viet": "Uống nhiều nước ấm"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "sh14",
+        "title": "Khẩu Ngữ Douyin & Tiếng Lóng Giới Trẻ Cực Hot (YYDS, Quá Đỉnh)",
+        "category": "Khẩu ngữ & Douyin",
+        "duration": "06:40",
+        "difficulty": "Thực chiến Douyin",
+        "youtubeId": "ExgUJ2X6y2M",
+        "description": "Bắt trend tiếng lóng trên mạng xã hội Trung Quốc: YYDS (vĩnh viễn thần), 种草 (mê mẩn), 打卡 (check-in sống ảo).",
+        "sentences": [
+            {
+                "speaker": "Tiktoker A",
+                "hanzi": "这家奶茶店真的是YYDS，味道绝了！",
+                "pinyin": "Zhè jiā nǎichádiàn zhēn de shì YYDS, wèidao jué le!",
+                "phoneticVi": "Chưa chia nải chá tiện chân tợ sư YYDS, uây tao chuế lơ!",
+                "viet": "Quán trà sữa này đúng là đỉnh nóc kịch trần (YYDS), hương vị đỉnh chóp luôn!",
+                "tip": "'YYDS' (yǒng yuǎn de shén - mãi mãi là thần tượng/đỉnh chóp), 'jué le' (quá tuyệt vời).",
+                "tokens": [
+                    {
+                        "hanzi": "这家奶茶店",
+                        "pinyin": "zhè jiā nǎichádiàn",
+                        "viet": "Quán trà sữa này"
+                    },
+                    {
+                        "hanzi": "真的是",
+                        "pinyin": "zhēn de shì",
+                        "viet": "Đúng thật là"
+                    },
+                    {
+                        "hanzi": "YYDS",
+                        "pinyin": "yyds",
+                        "viet": "Đỉnh chóp / Vĩnh viễn là thần"
+                    },
+                    {
+                        "hanzi": "味道",
+                        "pinyin": "wèidao",
+                        "viet": "Hương vị"
+                    },
+                    {
+                        "hanzi": "绝了",
+                        "pinyin": "jué le",
+                        "viet": "Quá đỉnh / Hết nước chấm"
+                    }
+                ]
+            },
+            {
+                "speaker": "Tiktoker B",
+                "hanzi": "瞬间被你种草了！赶紧发个定位，我也要去打卡！",
+                "pinyin": "Shùnjiān bèi nǐ zhòngcǎo le! Gǎnjǐn fā gè dìngwèi, wǒ yě yào qù dǎkǎ!",
+                "phoneticVi": "Suân chiên pây nỉ chung thảo lơ! Cản chỉn pha cưa ting uây, ủa dẻ dao chuy tả khả!",
+                "viet": "Tự dưng bị bạn làm cho mê mẩn luôn rồi! Mau gửi định vị đi, tôi cũng muốn đi check-in sống ảo!",
+                "tip": "'zhòngcǎo' (gieo cỏ = làm người khác mê mẩn muốn mua), 'dǎkǎ' (check-in địa điểm hot).",
+                "tokens": [
+                    {
+                        "hanzi": "瞬间",
+                        "pinyin": "shùnjiān",
+                        "viet": "Ngay tức thì / Lập tức"
+                    },
+                    {
+                        "hanzi": "种草了",
+                        "pinyin": "zhòngcǎo le",
+                        "viet": "Mê mẩn muốn thử / Bị gieo mầm"
+                    },
+                    {
+                        "hanzi": "发定位",
+                        "pinyin": "fā dìngwèi",
+                        "viet": "Gửi vị trí / Định vị GPS"
+                    },
+                    {
+                        "hanzi": "去打卡",
+                        "pinyin": "qù dǎkǎ",
+                        "viet": "Đi check-in sống ảo"
+                    }
+                ]
+            },
+            {
+                "speaker": "Tiktoker A",
+                "hanzi": "今天周末人巨多，排队要半小时，做好心理准备哦！",
+                "pinyin": "Jīntiān zhōumò rén jù duō, páiduì yào bàn xiǎoshí, zuòhǎo xīnlǐ zhǔnbèi ó!",
+                "phoneticVi": "Chin thiên châu mua rấn chuy tua, phái tuây dao pan xẻo sư, chua hảo xin lỉ chuẩn pây o!",
+                "viet": "Hôm nay cuối tuần đông người dã man, xếp hàng phải mất nửa tiếng, chuẩn bị sẵn tâm lý nha!",
+                "tip": "'jù duō' (cực kỳ đông, tiếng lóng giới trẻ), 'páiduì' (xếp hàng).",
+                "tokens": [
+                    {
+                        "hanzi": "今天周末",
+                        "pinyin": "jīntiān zhōumò",
+                        "viet": "Hôm nay cuối tuần"
+                    },
+                    {
+                        "hanzi": "人巨多",
+                        "pinyin": "rén jù duō",
+                        "viet": "Người đông dã man"
+                    },
+                    {
+                        "hanzi": "排队",
+                        "pinyin": "páiduì",
+                        "viet": "Xếp hàng"
+                    },
+                    {
+                        "hanzi": "心理准备",
+                        "pinyin": "xīnlǐ zhǔnbèi",
+                        "viet": "Chuẩn bị tâm lý"
+                    }
+                ]
+            },
+            {
+                "speaker": "Tiktoker B",
+                "hanzi": "为了好吃的，排队也值了！冲鸭！",
+                "pinyin": "Wèile hǎochī de, páiduì yě zhí le! Chōng yā!",
+                "phoneticVi": "Uây lơ hảo chư tợ, phái tuây dẻ chử lơ! Chung ya!",
+                "viet": "Vì đồ ăn ngon thì xếp hàng cũng bõ công! Triển thôi nào / Cố lên!",
+                "tip": "'Chōng yā' là khẩu ngữ siêu dễ thương biến âm của 'chōng a' (xông lên / quất thôi).",
+                "tokens": [
+                    {
+                        "hanzi": "为了",
+                        "pinyin": "wèile",
+                        "viet": "Vì / Để"
+                    },
+                    {
+                        "hanzi": "好吃的",
+                        "pinyin": "hǎochī de",
+                        "viet": "Món ăn ngon"
+                    },
+                    {
+                        "hanzi": "值了",
+                        "pinyin": "zhí le",
+                        "viet": "Đáng giá / Bõ công"
+                    },
+                    {
+                        "hanzi": "冲鸭",
+                        "pinyin": "chōng yā",
+                        "viet": "Tiến lên nào / Quất luôn"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "sh15",
+        "title": "Luyện Hát Theo Điệp Khúc Bài Hát Kinh Điển 'Đồng Thoại' (童话)",
+        "category": "Bài hát tiếng Trung",
+        "duration": "05:30",
+        "difficulty": "Trung cấp HSK 2",
+        "youtubeId": "EpSs4cdSML0",
+        "description": "Luyện ngữ điệu uyển chuyển và cảm xúc qua từng câu hát tình cảm lãng mạn mà ai học tiếng Trung cũng yêu thích.",
+        "sentences": [
+            {
+                "speaker": "Lời bài hát",
+                "hanzi": "你哭着对我说，童话里都是骗人的。",
+                "pinyin": "Nǐ kū zhe duì wǒ shuō, tónghuà lǐ dōu shì piànrén de.",
+                "phoneticVi": "Nỉ khu chơ tuây ủa sua, thúng hoa lỉ tâu sư phiến rấn tợ.",
+                "viet": "Em khóc và nói với anh rằng, trong truyện cổ tích đều là lừa người dối gạt.",
+                "tip": "Hát ngân dài chữ 'shuō' và 'piànrén', luyến nhẹ thanh điệu tình cảm.",
+                "tokens": [
+                    {
+                        "hanzi": "你哭着",
+                        "pinyin": "nǐ kū zhe",
+                        "viet": "Em vừa khóc"
+                    },
+                    {
+                        "hanzi": "对我说",
+                        "pinyin": "duì wǒ shuō",
+                        "viet": "Vừa nói với anh"
+                    },
+                    {
+                        "hanzi": "童话里",
+                        "pinyin": "tónghuà lǐ",
+                        "viet": "Trong truyện cổ tích"
+                    },
+                    {
+                        "hanzi": "都是",
+                        "pinyin": "dōu shì",
+                        "viet": "Đều là"
+                    },
+                    {
+                        "hanzi": "骗人的",
+                        "pinyin": "piànrén de",
+                        "viet": "Lừa dối / Dối gạt người"
+                    }
+                ]
+            },
+            {
+                "speaker": "Lời bài hát",
+                "hanzi": "我不可能是你的王子。",
+                "pinyin": "Wǒ bù kěnéng shì nǐ de wángzǐ.",
+                "phoneticVi": "Ủa pu khả nấng sư nỉ tơ oáng chử.",
+                "viet": "Anh không thể nào là chàng hoàng tử của em được.",
+                "tip": "'wángzǐ' đọc tròn môi âm 'wáng', hạ giọng xuống nốt trầm lắng đọng.",
+                "tokens": [
+                    {
+                        "hanzi": "我",
+                        "pinyin": "wǒ",
+                        "viet": "Tôi / Anh"
+                    },
+                    {
+                        "hanzi": "不可能",
+                        "pinyin": "bù kěnéng",
+                        "viet": "Không thể nào"
+                    },
+                    {
+                        "hanzi": "是你的",
+                        "pinyin": "shì nǐ de",
+                        "viet": "Là của em"
+                    },
+                    {
+                        "hanzi": "王子",
+                        "pinyin": "wángzǐ",
+                        "viet": "Hoàng tử"
+                    }
+                ]
+            },
+            {
+                "speaker": "Lời bài hát",
+                "hanzi": "也许你不会懂，从你说爱我以后，我的天空星星都亮了。",
+                "pinyin": "Yěxǔ nǐ bú huì dǒng, cóng nǐ shuō ài wǒ yǐhòu, wǒ de tiānkōng xīngxing dōu liàng le.",
+                "phoneticVi": "Dẻ xủy nỉ pú huây tủng, chúng nỉ sua ai ủa dỉ hốu, ủa tơ thiên khung xing xing tâu liêng lơ.",
+                "viet": "Có lẽ em không thể hiểu, từ khi em nói yêu anh, cả bầu trời của anh ngàn vì sao đều bừng sáng.",
+                "tip": "'liàng le' ngân vang cao trào, diễn tả niềm hạnh phúc bừng nở.",
+                "tokens": [
+                    {
+                        "hanzi": "也许",
+                        "pinyin": "yěxǔ",
+                        "viet": "Có lẽ"
+                    },
+                    {
+                        "hanzi": "不会懂",
+                        "pinyin": "bú huì dǒng",
+                        "viet": "Sẽ không hiểu"
+                    },
+                    {
+                        "hanzi": "说爱我",
+                        "pinyin": "shuō ài wǒ",
+                        "viet": "Nói yêu tôi"
+                    },
+                    {
+                        "hanzi": "天空",
+                        "pinyin": "tiānkōng",
+                        "viet": "Bầu trời"
+                    },
+                    {
+                        "hanzi": "星星都亮了",
+                        "pinyin": "xīngxing dōu liàng le",
+                        "viet": "Vì sao đều sáng rực"
+                    }
+                ]
+            },
+            {
+                "speaker": "Lời bài hát",
+                "hanzi": "我愿变成童话里，你爱的那个天使，张开双手变成翅膀守护你。",
+                "pinyin": "Wǒ yuàn biàn chéng tónghuà lǐ, nǐ ài de nà gè tiānshǐ, zhāngkāi shuāngshǒu biàn chéng chìbǎng shǒuhù nǐ.",
+                "phoneticVi": "Ủa doan piên chấng thúng hoa lỉ, nỉ ai tơ na cưa thiên sử, chang khai soang sẩu piên chấng chư pảng sẩu hu nỉ.",
+                "viet": "Anh nguyện hóa thành thiên sứ trong truyện cổ tích mà em yêu thích, giang rộng đôi tay thành đôi cánh để bảo vệ em.",
+                "tip": "'tiānshǐ' (thiên thần), 'chìbǎng' (đôi cánh), 'shǒuhù' (canh giữ bảo vệ).",
+                "tokens": [
+                    {
+                        "hanzi": "我愿",
+                        "pinyin": "wǒ yuàn",
+                        "viet": "Anh nguyện / Tôi muốn"
+                    },
+                    {
+                        "hanzi": "变成",
+                        "pinyin": "biàn chéng",
+                        "viet": "Hóa thành / Trở thành"
+                    },
+                    {
+                        "hanzi": "天使",
+                        "pinyin": "tiānshǐ",
+                        "viet": "Thiên thần / Thiên sứ"
+                    },
+                    {
+                        "hanzi": "双手",
+                        "pinyin": "shuāngshǒu",
+                        "viet": "Đôi tay"
+                    },
+                    {
+                        "hanzi": "翅膀",
+                        "pinyin": "chìbǎng",
+                        "viet": "Đôi cánh"
+                    },
+                    {
+                        "hanzi": "守护你",
+                        "pinyin": "shǒuhù nǐ",
+                        "viet": "Bảo vệ chở che cho em"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "sh16",
+        "title": "Tìm Phòng Thuê Trọ & Thỏa Thuận Tiền Cọc, Điện Nước",
+        "category": "Hẹn hò & Đời sống",
+        "duration": "11:15",
+        "difficulty": "Trung cấp HSK 2",
+        "youtubeId": "gqNSF_imQjk",
+        "description": "Hỏi chủ nhà tiền cọc bao nhiêu tháng (押一付三), tiền điện nước tính theo đồng hồ và ngày bắt đầu dọn vào.",
+        "sentences": [
+            {
+                "speaker": "Khách thuê nhà",
+                "hanzi": "房东您好，我想看一看那个朝南的一居室。",
+                "pinyin": "Fángdōng nín hǎo, wǒ xiǎng kànyikàn nà gè cháonán de yījīushì.",
+                "phoneticVi": "Pháng tung nín hảo, ủa xẻng khan ý khan na cưa cháo nán tơ y chiu sư.",
+                "viet": "Chào bác chủ nhà, tôi muốn xem căn hộ một phòng ngủ hướng Nam đằng kia ạ.",
+                "tip": "'Fángdōng' (chủ nhà), 'cháonán' (hướng Nam đón gió mát ấm áp mùa đông).",
+                "tokens": [
+                    {
+                        "hanzi": "房东",
+                        "pinyin": "fángdōng",
+                        "viet": "Chủ nhà trọ"
+                    },
+                    {
+                        "hanzi": "想看一看",
+                        "pinyin": "xiǎng kànyikàn",
+                        "viet": "Muốn xem một chút"
+                    },
+                    {
+                        "hanzi": "朝南",
+                        "pinyin": "cháonán",
+                        "viet": "Hướng Nam"
+                    },
+                    {
+                        "hanzi": "一居室",
+                        "pinyin": "yījīushì",
+                        "viet": "Căn hộ 1 phòng ngủ"
+                    }
+                ]
+            },
+            {
+                "speaker": "Chủ nhà",
+                "hanzi": "里面家具家电齐全，拎包入住，一个月租金两千块。",
+                "pinyin": "Lǐmiàn jiājù jiādiàn qíquán, līn bāo rùzhù, yí gè yuè zūjīn liǎng qiān kuài.",
+                "phoneticVi": "Lỉ miên chia chuy chia tiện chi choán, lin bao ru chu, ý cưa duê chu chin lẻng chiên khoai.",
+                "viet": "Bên trong nội thất đồ điện đầy đủ, chỉ việc xách vali vào ở, tiền thuê mỗi tháng 2000 tệ.",
+                "tip": "'līn bāo rùzhù' (chỉ cần xách vali vào ở) là cụm từ quảng cáo nhà trọ phổ biến nhất.",
+                "tokens": [
+                    {
+                        "hanzi": "家具家电",
+                        "pinyin": "jiājù jiādiàn",
+                        "viet": "Nội thất đồ điện"
+                    },
+                    {
+                        "hanzi": "齐全",
+                        "pinyin": "qíquán",
+                        "viet": "Đầy đủ"
+                    },
+                    {
+                        "hanzi": "拎包入住",
+                        "pinyin": "līn bāo rùzhù",
+                        "viet": "Xách vali vào ở ngay"
+                    },
+                    {
+                        "hanzi": "租金",
+                        "pinyin": "zūjīn",
+                        "viet": "Tiền thuê nhà"
+                    }
+                ]
+            },
+            {
+                "speaker": "Khách thuê nhà",
+                "hanzi": "请问押金怎么交？水电费是民用还是商用？",
+                "pinyin": "Qǐngwèn yājīn zěnme jiāo? Shuǐdiànfèi shì mínyòng háishì shāngyòng?",
+                "phoneticVi": "Chỉnh uân da chin chẩn mơ chieo? Suẩy tiện phây sư mính dung hái sư sang dung?",
+                "viet": "Xin hỏi tiền cọc thanh toán thế nào? Tiền điện nước tính theo giá sinh hoạt dân dụng hay kinh doanh ạ?",
+                "tip": "'yājīn' (tiền đặt cọc), 'mínyòng' (giá điện nước dân sinh rẻ hơn thương mại).",
+                "tokens": [
+                    {
+                        "hanzi": "请问",
+                        "pinyin": "qǐngwèn",
+                        "viet": "Xin hỏi"
+                    },
+                    {
+                        "hanzi": "押金",
+                        "pinyin": "yājīn",
+                        "viet": "Tiền đặt cọc"
+                    },
+                    {
+                        "hanzi": "怎么交",
+                        "pinyin": "zěnme jiāo",
+                        "viet": "Nộp như thế nào"
+                    },
+                    {
+                        "hanzi": "水电费",
+                        "pinyin": "shuǐdiànfèi",
+                        "viet": "Tiền điện nước"
+                    },
+                    {
+                        "hanzi": "民用",
+                        "pinyin": "mínyòng",
+                        "viet": "Giá dân dụng"
+                    }
+                ]
+            },
+            {
+                "speaker": "Chủ nhà",
+                "hanzi": "押一付三，水电都是民用标准，网络费免费送！",
+                "pinyin": "Yā yī fù sān, shuǐdiàn dōu shì mínyòng biāozhǔn, wǎngluòfèi miǎnfèi sòng!",
+                "phoneticVi": "Da y phu san, suẩy tiện tâu sư mính dung pieo chuẩn, oảng luo phây mẻn phây sung!",
+                "viet": "Đặt cọc 1 tháng trả tiền 3 tháng (áp nhất phó tam), điện nước chuẩn giá dân, tiền mạng internet miễn phí tặng kèm!",
+                "tip": "'yā yī fù sān' là quy tắc thuê nhà chuẩn ở các thành phố Trung Quốc (cọc 1 đóng 3).",
+                "tokens": [
+                    {
+                        "hanzi": "押一付三",
+                        "pinyin": "yā yī fù sān",
+                        "viet": "Cọc 1 tháng đóng 3 tháng"
+                    },
+                    {
+                        "hanzi": "民用标准",
+                        "pinyin": "mínyòng biāozhǔn",
+                        "viet": "Tiêu chuẩn giá dân dụng"
+                    },
+                    {
+                        "hanzi": "网络费",
+                        "pinyin": "wǎngluòfèi",
+                        "viet": "Tiền mạng Wi-Fi"
+                    },
+                    {
+                        "hanzi": "免费送",
+                        "pinyin": "miǎnfèi sòng",
+                        "viet": "Tặng miễn phí"
                     }
                 ]
             }

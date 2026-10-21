@@ -1658,6 +1658,10 @@ let shadowingHidePinyin = false;
 let shadowingHideMeaning = false;
 let currentShadowingMode = "shadowing"; // "shadowing" | "dictation"
 
+let currentShadowingCat = "all";
+let currentShadowingDiff = "all";
+let currentShadowingSearch = "";
+
 let mediaRecorder = null;
 let audioChunks = [];
 let isRecording = false;
@@ -1688,31 +1692,89 @@ function renderShadowingVideoCards() {
   const container = document.getElementById("shadowingVideoCardsContainer");
   if (!container || !HSK1_DATA.shadowingVideos) return;
 
-  container.innerHTML = HSK1_DATA.shadowingVideos.map((vid, idx) => {
-    const isActive = idx === currentShadowingIndex;
+  const q = (currentShadowingSearch || "").toLowerCase().trim();
+
+  const filteredVideos = HSK1_DATA.shadowingVideos.filter(vid => {
+    // 1. Lọc theo Danh mục
+    const matchCat = currentShadowingCat === "all" || vid.category === currentShadowingCat;
+
+    // 2. Lọc theo Cấp độ
+    let matchDiff = true;
+    if (currentShadowingDiff !== "all") {
+      if (currentShadowingDiff === "Nâng cao") {
+        matchDiff = vid.difficulty.includes("Nâng cao") || vid.difficulty.includes("Douyin") || vid.difficulty.includes("HSK 3");
+      } else {
+        matchDiff = vid.difficulty.includes(currentShadowingDiff);
+      }
+    }
+
+    // 3. Tìm kiếm theo từ khóa
+    let matchSearch = true;
+    if (q) {
+      matchSearch = (vid.title || "").toLowerCase().includes(q) ||
+                    (vid.category || "").toLowerCase().includes(q) ||
+                    (vid.description || "").toLowerCase().includes(q) ||
+                    (vid.sentences || []).some(s => 
+                      (s.hanzi || "").toLowerCase().includes(q) ||
+                      (s.viet || "").toLowerCase().includes(q) ||
+                      (s.pinyin || "").toLowerCase().includes(q)
+                    );
+    }
+    return matchCat && matchDiff && matchSearch;
+  });
+
+  if (filteredVideos.length === 0) {
+    container.innerHTML = `
+      <div class="py-8 px-4 text-center text-xs text-slate-400 w-full flex flex-col items-center justify-center gap-2">
+        <i data-lucide="search-x" class="w-8 h-8 text-slate-300"></i>
+        <span>Không tìm thấy video nào phù hợp với bộ lọc hiện tại. Hãy thử chọn chủ đề khác nhé!</span>
+      </div>
+    `;
+    refreshIcons();
+    return;
+  }
+
+  container.innerHTML = filteredVideos.map(vid => {
+    // Lấy chỉ số gốc trong HSK1_DATA.shadowingVideos
+    const realIdx = HSK1_DATA.shadowingVideos.findIndex(v => v.id === vid.id);
+    const isActive = realIdx === currentShadowingIndex;
+    const completedList = (appState.completedShadowingSentences && appState.completedShadowingSentences[vid.id]) || [];
+    const isAllDone = completedList.length >= vid.sentences.length && vid.sentences.length > 0;
+
     return `
-      <div onclick="selectShadowingVideo(${idx})" class="shadowing-video-card p-3 rounded-2xl border transition shrink-0 cursor-pointer w-60 sm:w-64 flex flex-col justify-between ${
+      <div onclick="selectShadowingVideo(${realIdx})" class="shadowing-video-card p-3.5 rounded-3xl border transition shrink-0 cursor-pointer w-64 sm:w-72 flex flex-col justify-between ${
         isActive 
           ? "bg-purple-50 dark:bg-purple-950/40 border-purple-500 shadow-md ring-2 ring-purple-500/30"
-          : "bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 hover:border-purple-300"
+          : "bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 hover:border-purple-300 shadow-sm"
       }">
         <div>
-          <div class="flex items-center justify-between mb-1.5">
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${
-              isActive ? "bg-purple-600 text-white" : "bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300"
+          <div class="flex items-center justify-between mb-2">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+              isActive ? "bg-purple-600 text-white" : "bg-purple-100 text-purple-700 dark:bg-purple-950/80 dark:text-purple-300"
             }">${vid.category}</span>
             <span class="text-[11px] text-slate-400 font-mono">${vid.duration}</span>
           </div>
           <h5 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white line-clamp-1 mb-1">${vid.title}</h5>
-          <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2">${vid.description}</p>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">${vid.description}</p>
         </div>
-        <div class="mt-2 pt-2 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between text-[10px]">
-          <span class="text-purple-600 dark:text-purple-400 font-semibold">${vid.sentences.length} câu thoại</span>
-          <span class="text-emerald-600 dark:text-emerald-400 font-medium">${vid.difficulty}</span>
+        <div class="mt-3 pt-2.5 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between text-[10px]">
+          <span class="text-purple-600 dark:text-purple-400 font-semibold flex items-center gap-1">
+            <i data-lucide="check-circle" class="w-3.5 h-3.5 ${isAllDone ? 'text-emerald-500 fill-emerald-500/20' : 'text-slate-300'}"></i>
+            ${completedList.length}/${vid.sentences.length} câu
+          </span>
+          <span class="px-2 py-0.5 rounded-lg font-semibold ${
+            vid.difficulty.includes('Cơ bản') 
+              ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' 
+              : vid.difficulty.includes('Trung cấp') 
+                ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300'
+                : 'bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300'
+          }">${vid.difficulty}</span>
         </div>
       </div>
     `;
   }).join("");
+
+  refreshIcons();
 }
 
 function selectShadowingVideo(index) {
@@ -2500,6 +2562,39 @@ function setupShadowingControls() {
       sentencesWrapper?.classList.add("hidden");
       dictationContainer?.classList.remove("hidden");
       initDictationMode();
+    };
+  }
+
+  // Category filters
+  document.querySelectorAll(".shadowing-cat-filter-btn").forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll(".shadowing-cat-filter-btn").forEach(b => {
+        b.className = "shadowing-cat-filter-btn px-3 py-1.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0 font-medium";
+      });
+      btn.className = "shadowing-cat-filter-btn active px-3 py-1.5 text-xs rounded-xl bg-purple-600 text-white font-bold shrink-0 shadow-sm";
+      currentShadowingCat = btn.getAttribute("data-cat") || "all";
+      renderShadowingVideoCards();
+    };
+  });
+
+  // Difficulty filters
+  document.querySelectorAll(".shadowing-diff-filter-btn").forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll(".shadowing-diff-filter-btn").forEach(b => {
+        b.className = "shadowing-diff-filter-btn px-2.5 py-1 text-[11px] rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 shrink-0 font-medium";
+      });
+      btn.className = "shadowing-diff-filter-btn active px-2.5 py-1 text-[11px] rounded-xl bg-slate-800 text-white dark:bg-white dark:text-slate-900 font-bold shrink-0 shadow-sm";
+      currentShadowingDiff = btn.getAttribute("data-diff") || "all";
+      renderShadowingVideoCards();
+    };
+  });
+
+  // Search input
+  const searchInput = document.getElementById("shadowingSearchInput");
+  if (searchInput) {
+    searchInput.oninput = (e) => {
+      currentShadowingSearch = e.target.value;
+      renderShadowingVideoCards();
     };
   }
 
