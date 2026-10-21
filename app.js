@@ -128,6 +128,10 @@ function playChineseAudio(rawText, buttonElement = null, customRate = null) {
         audio.playbackRate = customRate;
       }
 
+      audio.onerror = () => {
+        playViaWebSpeech(textToSpeak, customRate, buttonElement);
+      };
+
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         playPromise.then(() => {
@@ -184,7 +188,9 @@ function playViaWebSpeech(text, customRate = null, buttonElement = null) {
 
 function fallbackOnlineAudio(text) {
   try {
-    const audioUrl = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(text)}&le=zh`;
+    if (!text) return;
+    const cleanText = text.replace(/[\s，。！？,!?.…:：]+/g, '');
+    const audioUrl = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(cleanText || text)}&le=zh`;
     const audio = new Audio(audioUrl);
     audio.play().catch(() => {});
   } catch (e) {}

@@ -706,9 +706,9 @@ const HSK1_DATA = {
       id: "sh1",
       title: "Lần Đầu Gặp Gỡ & Chào Hỏi Tự Nhiên",
       category: "Chào hỏi",
-      duration: "0:45",
+      duration: "15:20",
       difficulty: "Cơ bản HSK 1",
-      youtubeId: "yqYwJk7F7uI",
+      youtubeId: "EpSs4cdSML0",
       description: "Học cách chào hỏi, giới thiệu tên tuổi và quốc tịch với ngữ điệu tự nhiên, vui vẻ.",
       sentences: [
         {
@@ -749,9 +749,9 @@ const HSK1_DATA = {
       id: "sh2",
       title: "Mặc Cả & Trả Giá Siêu Thực Chiến",
       category: "Mua sắm",
-      duration: "0:50",
+      duration: "10:15",
       difficulty: "Thực chiến đời sống",
-      youtubeId: "q76hM7vW4K8",
+      youtubeId: "ExgUJ2X6y2M",
       description: "Tình huống hỏi giá, chê đắt và thương lượng giảm giá cực kỳ hữu dụng tại chợ Trung Quốc.",
       sentences: [
         {
@@ -792,9 +792,9 @@ const HSK1_DATA = {
       id: "sh3",
       title: "Gọi Món & Ăn Uống Tại Quán Bản Xứ",
       category: "Ăn uống",
-      duration: "0:40",
+      duration: "08:45",
       difficulty: "Cơ bản HSK 1",
-      youtubeId: "u_O7C22p39o",
+      youtubeId: "Lz15QYWoVAM",
       description: "Thao tác gọi phục vụ, gọi món mỳ bò không cay và thanh toán quét mã QR.",
       sentences: [
         {
@@ -835,9 +835,9 @@ const HSK1_DATA = {
       id: "sh4",
       title: "Hỏi Giờ Tăng Ca & An Toàn Trong Xưởng",
       category: "Nhà xưởng",
-      duration: "0:55",
+      duration: "12:30",
       difficulty: "Nhà xưởng thực tế",
-      youtubeId: "W2x3Y1z_98A",
+      youtubeId: "gqNSF_imQjk",
       description: "Đối thoại giữa công nhân và tổ trưởng về lịch tăng ca, máy móc và quy tắc an toàn.",
       sentences: [
         {
@@ -878,9 +878,9 @@ const HSK1_DATA = {
       id: "sh5",
       title: "Đi Taxi & Bác Tài Ơi Đi Nhanh Giúp Tôi",
       category: "Đi lại",
-      duration: "0:45",
+      duration: "09:10",
       difficulty: "Sơ cấp phản xạ",
-      youtubeId: "M4v7Qx6d88Y",
+      youtubeId: "ve0wlvFIWUM",
       description: "Bắt taxi đi ga tàu cao tốc, yêu cầu tài xế chạy nhanh vì đang vội kịp chuyến tàu.",
       sentences: [
         {
@@ -921,9 +921,9 @@ const HSK1_DATA = {
       id: "sh6",
       title: "Hỏi Thăm Gia Đình & Lời Mời Về Nhà Chơi",
       category: "Gia đình",
-      duration: "0:50",
+      duration: "14:05",
       difficulty: "Cơ bản HSK 1",
-      youtubeId: "EpSs4cdSML0",
+      youtubeId: "r4xJgTbGp80",
       description: "Hỏi thăm các thành viên trong gia đình và mời bạn bè về nhà thưởng thức món ăn mẹ nấu.",
       sentences: [
         {
