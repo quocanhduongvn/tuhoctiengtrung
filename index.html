@@ -109,10 +109,10 @@
           </div>
         </div>
 
-        <!-- Hướng dẫn Netlify (Desktop) -->
+        <!-- Hướng dẫn Netlify & GitHub Pages (Desktop) -->
         <button id="openNetlifyGuideBtn" class="hidden md:flex items-center space-x-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-300 dark:hover:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-800 transition shrink-0">
-          <i data-lucide="cloud-upload" class="w-4 h-4"></i>
-          <span>Đưa lên Netlify</span>
+          <i data-lucide="globe" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+          <span>Xem Online / Deploy</span>
         </button>
 
         <!-- Sao lưu & Khôi phục (Desktop) -->
@@ -165,8 +165,8 @@
           <span>Sao lưu dữ liệu</span>
         </button>
         <button id="drawerNetlifyBtn" class="flex items-center gap-1.5 p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-xs font-semibold hover:bg-emerald-100 transition">
-          <i data-lucide="cloud-upload" class="w-3.5 h-3.5 text-emerald-600"></i>
-          <span>Đưa lên Netlify</span>
+          <i data-lucide="globe" class="w-3.5 h-3.5 text-emerald-600"></i>
+          <span>Xem Online / Deploy</span>
         </button>
       </div>
 
@@ -984,15 +984,15 @@
     </div>
   </nav>
 
-  <!-- MODAL: HƯỚNG DẪN ĐƯA LÊN NETLIFY (app.netlify.com) -->
+  <!-- MODAL: HƯỚNG DẪN XEM ONLINE (GITHUB PAGES & NETLIFY) -->
   <div id="netlifyGuideModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden">
     <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 max-w-xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold">
-            <i data-lucide="cloud-lightning" class="w-5 h-5"></i>
+            <i data-lucide="globe" class="w-5 h-5"></i>
           </div>
-          <h3 class="font-bold text-slate-900 dark:text-white text-base">Đưa ứng dụng lên Netlify miễn phí (30 giây)</h3>
+          <h3 class="font-bold text-slate-900 dark:text-white text-base">Xem Web Online Miễn Phí (GitHub Pages & Netlify)</h3>
         </div>
         <button id="closeNetlifyModalBtn" class="p-1 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
           <i data-lucide="x" class="w-5 h-5"></i>
@@ -1000,44 +1000,47 @@
       </div>
 
       <div class="space-y-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
-        <p>Ứng dụng này được thiết kế theo dạng <strong>Zero-Build Static Web App</strong>, nghĩa là bạn không cần cài đặt Node.js hay chạy lệnh build phức tạp. Bạn có thể deploy lên Netlify theo 1 trong 2 cách sau:</p>
+        <p>Ứng dụng này là dạng <strong>Zero-Build Static Web App</strong>, nghĩa là bạn có thể xem trực tiếp online bằng chính <strong>GitHub Pages</strong> hoặc đưa lên <strong>Netlify</strong> chỉ trong 30 giây:</p>
 
-        <!-- Cách 1: Netlify Drop (Siêu nhanh không cần tài khoản GitHub) -->
+        <!-- Cách 1: GitHub Pages trực tiếp (Khuyên dùng nhất - Không lo nút che màn hình) -->
+        <div class="p-4 rounded-xl bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800 space-y-2">
+          <p class="font-bold text-purple-900 dark:text-purple-300 flex items-center gap-1.5 text-xs sm:text-sm">
+            <i data-lucide="github" class="w-4 h-4 text-purple-600 dark:text-purple-400"></i>
+            Cách 1: Xem trực tiếp bằng GitHub Pages (Khuyên dùng - 30 giây)
+          </p>
+          <ol class="list-decimal list-inside space-y-1.5 text-xs text-purple-900 dark:text-purple-200">
+            <li>Mở trang Cài đặt Pages của repo bạn: <a href="https://github.com/quocanhduongvn/tuhoctiengtrung/settings/pages" target="_blank" class="underline font-bold text-purple-700 dark:text-purple-400">github.com/quocanhduongvn/tuhoctiengtrung/settings/pages</a></li>
+            <li>Tại mục <strong>Build and deployment</strong> ➔ Ô <strong>Branch</strong>: Chọn nhánh <strong>main</strong> và thư mục <strong>/ (root)</strong>.</li>
+            <li>Bấm nút <strong>Save</strong>.</li>
+            <li>Chờ 1 phút và tải lại trang, GitHub sẽ cấp link xem web trực tiếp: <a href="https://quocanhduongvn.github.io/tuhoctiengtrung/" target="_blank" class="underline font-bold text-purple-700 dark:text-purple-400">quocanhduongvn.github.io/tuhoctiengtrung/</a></li>
+          </ol>
+          <div class="text-[11px] text-purple-700 dark:text-purple-300 font-medium bg-purple-100/60 dark:bg-purple-900/40 p-2 rounded-lg">
+            ✨ Ưu điểm: Hoàn toàn không có huy hiệu che góc màn hình, tải siêu nhanh, lưu app PWA mượt mà!
+          </div>
+        </div>
+
+        <!-- Cách 2: Netlify Drop -->
         <div class="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 space-y-2">
           <p class="font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
             <i data-lucide="zap" class="w-4 h-4"></i>
-            Cách 1: Kéo thả trực tiếp qua Netlify Drop (Khuyên dùng)
+            Cách 2: Kéo thả trực tiếp qua Netlify Drop
           </p>
           <ol class="list-decimal list-inside space-y-1.5 text-xs text-emerald-900 dark:text-emerald-200">
-            <li>Truy cập trang web: <a href="https://app.netlify.com/drop" target="_blank" class="underline font-semibold text-emerald-600 dark:text-emerald-400">app.netlify.com/drop</a> (Đăng nhập miễn phí).</li>
-            <li>Mở thư mục dự án trên máy tính: <code>E:\TOI-TU-HOC</code>.</li>
-            <li>Kéo toàn bộ thư mục này và thả vào ô vuông trên trang Netlify Drop.</li>
-            <li>Netlify sẽ cấp ngay một tên miền miễn phí dạng: <code>tu-hoc-tieng-trung.netlify.app</code> để bạn lưu vào Bookmark điện thoại hoặc máy tính ôn tập mọi lúc mọi nơi!</li>
+            <li>Truy cập trang web: <a href="https://app.netlify.com/drop" target="_blank" class="underline font-semibold text-emerald-600 dark:text-emerald-400">app.netlify.com/drop</a>.</li>
+            <li>Mở thư mục <code>E:\TOI-TU-HOC</code> và kéo thả vào ô vuông trên trang Netlify Drop.</li>
+            <li>Netlify sẽ cấp ngay một tên miền miễn phí dạng: <code>tu-hoc-tieng-trung.netlify.app</code>.</li>
           </ol>
         </div>
 
-        <!-- Cách 2: Kết nối GitHub -->
+        <!-- Cách 3: Kết nối GitHub với Netlify -->
         <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-2">
           <p class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
             <i data-lucide="git-branch" class="w-4 h-4 text-chineseRed-500"></i>
-            Cách 2: Đẩy lên GitHub rồi kết nối Netlify (Tự động cập nhật)
+            Cách 3: Kết nối GitHub với Netlify (Tự động cập nhật)
           </p>
           <p class="text-xs text-slate-500 dark:text-slate-400">
-            Tạo repository trên GitHub, push mã nguồn từ <code>E:\TOI-TU-HOC</code> lên. Sau đó trên Netlify chọn <strong>"Add new site" ➔ "Import an existing project" ➔ Chọn GitHub</strong>. Mỗi lần bạn học xong bài mới và commit, Netlify sẽ tự động cập nhật!
+            Trên Netlify chọn <strong>"Add new site" ➔ "Import an existing project" ➔ Chọn GitHub</strong>. Mỗi lần commit mã nguồn mới lên GitHub, Netlify sẽ tự động cập nhật!
           </p>
-        </div>
-
-        <!-- Mẹo tắt nút 'Powered by Netlify' che màn hình -->
-        <div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-800 space-y-2">
-          <p class="font-bold text-amber-900 dark:text-amber-200 flex items-center gap-1.5 text-xs">
-            <i data-lucide="shield-alert" class="w-4 h-4 text-amber-600"></i>
-            Cách tắt vĩnh viễn nút "Powered by Netlify" che góc màn hình (10 giây):
-          </p>
-          <ol class="list-decimal list-inside space-y-1 text-xs text-amber-900/90 dark:text-amber-300">
-            <li>Đăng nhập <a href="https://app.netlify.com" target="_blank" class="underline font-bold text-amber-700 dark:text-amber-400">app.netlify.com</a> và bấm vào tên trang web của bạn.</li>
-            <li>Vào mục <strong>Site configuration</strong> ➔ <strong>General</strong> ➔ Kéo xuống tìm <strong>"Powered by Netlify badge"</strong>.</li>
-            <li>Gạt nút sang <strong>OFF</strong> và bấm <strong>Save</strong>. Nút này sẽ biến mất vĩnh viễn trên mọi điện thoại!</li>
-          </ol>
         </div>
       </div>
 
