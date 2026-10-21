@@ -3,6 +3,8 @@
 Ứng dụng web sổ tay ôn tập trực tuyến được xây dựng để hỗ trợ bạn tự học và ôn tập theo chuỗi bài giảng **Giáo Trình Chuẩn HSK 1 của Thầy Thành Luân**:
 👉 **Link Playlist YouTube gốc**: [Giáo trình chuẩn HSK 1 - Thành Luân](https://www.youtube.com/playlist?list=PLkDxGl-gi2racE5ND8L9HP_xsAl9qLxSG)
 
+*Hỗ trợ đa nền tảng: GitHub Pages, Vercel, PWA Offline.*
+
 ---
 
 ## 🌟 Các Tính Năng Nổi Bật
