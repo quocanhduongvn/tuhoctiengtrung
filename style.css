@@ -264,6 +264,120 @@ button:active {
 }
 
 /* ==========================================================================
+   CORODOMO-STYLE INTERACTIVE SUBTITLE & DICTATION & AI SCORING
+   ========================================================================== */
+.word-token-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  background-color: rgba(147, 51, 234, 0.08);
+  border: 1px solid rgba(147, 51, 234, 0.25);
+  color: #6b21a8;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+.word-token-chip:hover {
+  background-color: rgba(147, 51, 234, 0.2);
+  border-color: #9333ea;
+  color: #581c87;
+  transform: translateY(-1px) scale(1.04);
+  box-shadow: 0 2px 8px rgba(147, 51, 234, 0.2);
+}
+.word-token-chip:active {
+  transform: scale(0.96);
+}
+.dark .word-token-chip {
+  background-color: rgba(168, 85, 247, 0.15);
+  border-color: rgba(168, 85, 247, 0.4);
+  color: #e9d5ff;
+}
+.dark .word-token-chip:hover {
+  background-color: rgba(168, 85, 247, 0.3);
+  border-color: #c084fc;
+  color: #ffffff;
+}
+
+/* Dictation Mode Chips */
+.dictation-slot-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #9333ea, #7c3aed);
+  color: white;
+  font-weight: 700;
+  font-size: 0.875rem;
+  box-shadow: 0 2px 6px rgba(124, 58, 237, 0.35);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+.dictation-slot-chip:hover {
+  background: linear-gradient(135deg, #7e22ce, #6d28d9);
+  transform: translateY(-1px);
+}
+
+.dictation-bank-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 13px;
+  border-radius: 9999px;
+  background-color: white;
+  border: 1.5px solid #cbd5e1;
+  color: #1e293b;
+  font-weight: 700;
+  font-size: 0.875rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+.dictation-bank-chip:hover {
+  border-color: #9333ea;
+  color: #9333ea;
+  background-color: #faf5ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(147, 51, 234, 0.15);
+}
+.dictation-bank-chip:active {
+  transform: scale(0.95);
+}
+.dark .dictation-bank-chip {
+  background-color: #1e293b;
+  border-color: #334155;
+  color: #f1f5f9;
+}
+.dark .dictation-bank-chip:hover {
+  border-color: #c084fc;
+  color: #c084fc;
+  background-color: #2e1065;
+}
+
+@keyframes dictationShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+.shake-animation {
+  animation: dictationShake 0.4s ease-in-out;
+}
+
+@keyframes popSuccess {
+  0% { transform: scale(0.9); opacity: 0; }
+  50% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.pop-success {
+  animation: popSuccess 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* ==========================================================================
    TRIỆT TIÊU HOÀN TOÀN HUY HIỆU / NÚT NỔI 'POWERED BY NETLIFY' CHE GIAO DIỆN
    ========================================================================== */
 [data-netlify-drawer],

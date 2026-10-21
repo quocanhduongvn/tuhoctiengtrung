@@ -7,6 +7,7 @@ let appState = {
   currentLessonId: 1,
   completedLessons: [],
   masteredVocabs: [],
+  customVocabs: [],
   notes: {},
   quizAnswers: {},
   theme: "light",
@@ -15,7 +16,8 @@ let appState = {
   activeVocabFilter: "all",
   activeFlashcardIndex: 0,
   isCardFlipped: false,
-  showGhostWatermark: true
+  showGhostWatermark: true,
+  completedShadowingSentences: {}
 };
 
 // ==================== KHỞI TẠO DỮ LIỆU & LOCAL STORAGE ====================
@@ -464,11 +466,17 @@ function renderVocabTab(lesson) {
   const total = lesson.vocab.length;
   const masteredCount = lesson.vocab.filter(v => appState.masteredVocabs.includes(v.id)).length;
   const learningCount = total - masteredCount;
+  const customList = appState.customVocabs || [];
 
   // Cập nhật số đếm ở các badge
-  document.getElementById("countAllVocab").textContent = total;
-  document.getElementById("countMasteredVocab").textContent = masteredCount;
-  document.getElementById("countLearningVocab").textContent = learningCount;
+  const countAllEl = document.getElementById("countAllVocab");
+  if (countAllEl) countAllEl.textContent = total;
+  const countMasteredEl = document.getElementById("countMasteredVocab");
+  if (countMasteredEl) countMasteredEl.textContent = masteredCount;
+  const countLearningEl = document.getElementById("countLearningVocab");
+  if (countLearningEl) countLearningEl.textContent = learningCount;
+  const countSavedEl = document.getElementById("countSavedVocab");
+  if (countSavedEl) countSavedEl.textContent = customList.length;
 
   // Lọc từ vựng
   let filtered = lesson.vocab;
@@ -476,6 +484,8 @@ function renderVocabTab(lesson) {
     filtered = lesson.vocab.filter(v => appState.masteredVocabs.includes(v.id));
   } else if (appState.activeVocabFilter === "learning") {
     filtered = lesson.vocab.filter(v => !appState.masteredVocabs.includes(v.id));
+  } else if (appState.activeVocabFilter === "saved") {
+    filtered = customList;
   }
 
   // 1. RENDER CHẾ ĐỘ DANH SÁCH (LIST MODE)
@@ -537,7 +547,8 @@ function updateFlashcardUI() {
   const lesson = HSK1_DATA.lessons.find(l => l.id === appState.currentLessonId);
   if (!lesson || !lesson.vocab) return;
 
-  const vocabs = lesson.vocab;
+  const customList = appState.customVocabs || [];
+  const vocabs = (appState.activeVocabFilter === "saved" && customList.length > 0) ? customList : lesson.vocab;
   const total = vocabs.length;
   if (appState.activeFlashcardIndex >= total) {
     appState.activeFlashcardIndex = 0;
@@ -550,14 +561,14 @@ function updateFlashcardUI() {
   document.getElementById("totalCardCount").textContent = total;
 
   // Cập nhật nội dung thẻ
-  document.getElementById("fcPartType").textContent = current.type;
+  document.getElementById("fcPartType").textContent = current.type || "Từ đã lưu";
   document.getElementById("fcHanzi").textContent = current.hanzi;
   document.getElementById("fcPinyin").textContent = current.pinyin;
-  document.getElementById("fcSinoViet").textContent = `Âm Hán Việt: ${current.sinoViet}`;
-  document.getElementById("fcRadicals").textContent = `Bộ: ${current.radicals || '---'}`;
-  document.getElementById("fcMeaning").textContent = current.meaning;
-  document.getElementById("fcMemoryTip").textContent = current.memoryTip;
-  document.getElementById("fcExample").textContent = current.example;
+  document.getElementById("fcSinoViet").textContent = current.sinoViet ? `Âm Hán Việt: ${current.sinoViet}` : `Phiên âm: ${current.pinyin}`;
+  document.getElementById("fcRadicals").textContent = current.radicals ? `Bộ: ${current.radicals}` : `Nguồn: Video`;
+  document.getElementById("fcMeaning").textContent = current.meaning || current.viet;
+  document.getElementById("fcMemoryTip").textContent = current.memoryTip || "Chạm vào từ để nghe phát âm giọng bản xứ chuẩn.";
+  document.getElementById("fcExample").textContent = current.example || current.hanzi;
 
   // Cập nhật nút trạng thái thuộc
   const isMastered = appState.masteredVocabs.includes(current.id);
@@ -1639,14 +1650,26 @@ function renderExpressPhrasesGrid(filterCategory = "all", searchText = "") {
   `).join("");
 }
 
-// ==================== BỘ VIDEO NGẮN LUYỆN NÓI PHẢN XẠ (SHADOWING) ====================
+// ==================== BỘ VIDEO NGẮN LUYỆN NÓI PHẢN XẠ (SHADOWING) & CORODOMO UPGRADE ====================
 let currentShadowingIndex = 0;
+let activePracticeSentenceIndex = 0;
 let currentShadowingSpeed = 1.0;
 let shadowingHidePinyin = false;
 let shadowingHideMeaning = false;
+let currentShadowingMode = "shadowing"; // "shadowing" | "dictation"
+
 let mediaRecorder = null;
 let audioChunks = [];
 let isRecording = false;
+
+// Speech Recognition for AI Pronunciation Scoring
+let speechRecognizer = null;
+let recognizedTranscript = "";
+
+// Dictation Mode State
+let currentDictationSentenceIndex = 0;
+let dictationAssembledTokens = [];
+let dictationBankTokens = [];
 
 function renderShadowingSection() {
   const container = document.getElementById("shadowingVideoCardsContainer");
@@ -1658,6 +1681,7 @@ function renderShadowingSection() {
   renderShadowingVideoCards();
   renderActiveShadowingVideo(currentShadowingIndex);
   setupShadowingControls();
+  setupWordLookupModal();
 }
 
 function renderShadowingVideoCards() {
@@ -1693,6 +1717,7 @@ function renderShadowingVideoCards() {
 
 function selectShadowingVideo(index) {
   currentShadowingIndex = index;
+  activePracticeSentenceIndex = 0;
   renderShadowingVideoCards();
   renderActiveShadowingVideo(index);
   refreshIcons();
@@ -1719,12 +1744,41 @@ function renderActiveShadowingVideo(index) {
   }
 
   renderShadowingSentences(vid);
+  if (currentShadowingMode === "dictation") {
+    initDictationMode();
+  }
+}
+
+function selectPracticeSentence(sIdx) {
+  activePracticeSentenceIndex = sIdx;
+  const vid = HSK1_DATA.shadowingVideos[currentShadowingIndex];
+  if (vid) {
+    renderShadowingSentences(vid);
+  }
+  // Ẩn bảng điểm cũ để người dùng thu âm câu mới
+  const aiCard = document.getElementById("aiPronunciationCard");
+  if (aiCard) aiCard.classList.add("hidden");
 }
 
 function renderShadowingSentences(video) {
   const container = document.getElementById("shadowingSentencesContainer");
   const countEl = document.getElementById("shadowingCompletedCount");
   if (!container || !video.sentences) return;
+
+  if (activePracticeSentenceIndex >= video.sentences.length) {
+    activePracticeSentenceIndex = 0;
+  }
+
+  // Cập nhật banner câu đang luyện thu âm ở cột trái
+  const targetStn = video.sentences[activePracticeSentenceIndex] || video.sentences[0];
+  const bannerHanzi = document.getElementById("activePracticeSentenceHanzi");
+  if (bannerHanzi && targetStn) {
+    bannerHanzi.textContent = targetStn.hanzi;
+  }
+  const playTargetBtn = document.getElementById("playTargetSentenceBtn");
+  if (playTargetBtn && targetStn) {
+    playTargetBtn.onclick = () => playShadowingSentence(targetStn.hanzi, playTargetBtn);
+  }
 
   if (!appState.completedShadowingSentences) {
     appState.completedShadowingSentences = {};
@@ -1737,17 +1791,30 @@ function renderShadowingSentences(video) {
 
   container.innerHTML = video.sentences.map((stn, sIdx) => {
     const isDone = completedMap.includes(sIdx);
+    const isSelected = sIdx === activePracticeSentenceIndex;
+    const tokens = stn.tokens && stn.tokens.length > 0 
+      ? stn.tokens 
+      : [{ hanzi: stn.hanzi, pinyin: stn.pinyin, viet: stn.viet }];
+
     return `
-      <div class="shadowing-sentence-card p-3.5 rounded-2xl border transition ${
-        isDone 
-          ? "bg-emerald-50/60 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800"
-          : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm hover:border-purple-300"
+      <div onclick="selectPracticeSentence(${sIdx})" class="shadowing-sentence-card p-4 rounded-3xl border transition cursor-pointer ${
+        isSelected
+          ? "bg-purple-50/70 dark:bg-purple-950/30 border-purple-500 shadow-md ring-2 ring-purple-500/20"
+          : isDone 
+            ? "bg-emerald-50/60 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800"
+            : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm hover:border-purple-300"
       }">
-        <div class="flex items-center justify-between mb-2">
-          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-            ${stn.speaker}
-          </span>
-          <div class="flex items-center gap-1.5">
+        <div class="flex items-center justify-between mb-2.5">
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+              isSelected ? "bg-purple-600 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
+            }">
+              ${stn.speaker} ${isSelected ? "• Đang luyện" : ""}
+            </span>
+            <span class="text-[11px] text-slate-400">Câu ${sIdx + 1}</span>
+          </div>
+
+          <div class="flex items-center gap-1.5" onclick="event.stopPropagation()">
             <button onclick="playShadowingSentence('${stn.hanzi.replace(/'/g, "\\'")}', this)" class="px-2.5 py-1 rounded-xl bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 text-xs font-semibold hover:bg-purple-100 transition flex items-center gap-1" title="Nghe người bản xứ phát âm">
               <i data-lucide="volume-2" class="w-3.5 h-3.5"></i>
               <span>Nghe mẫu</span>
@@ -1760,15 +1827,21 @@ function renderShadowingSentences(video) {
           </div>
         </div>
 
-        <!-- Chữ Hán to rõ -->
-        <h5 class="font-hanzi text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-1.5 cursor-pointer hover:text-purple-600 transition" onclick="playShadowingSentence('${stn.hanzi.replace(/'/g, "\\'")}', this)">
-          ${stn.hanzi}
-        </h5>
+        <!-- Khối từ vựng có thể chạm vào để tra nghĩa chuẩn Corodomo -->
+        <div class="flex flex-wrap items-center gap-1.5 my-2">
+          ${tokens.map(tok => `
+            <span onclick="event.stopPropagation(); openWordLookup('${tok.hanzi.replace(/'/g, "\\'")}', '${tok.pinyin.replace(/'/g, "\\'")}', '${tok.viet.replace(/'/g, "\\'")}')" 
+                  class="word-token-chip font-hanzi text-lg sm:text-xl font-bold" 
+                  title="Chạm để tra: ${tok.hanzi} (${tok.pinyin})">
+              ${tok.hanzi}
+            </span>
+          `).join("")}
+        </div>
 
         <!-- Pinyin & Đọc bồi -->
         <div class="space-y-0.5 mb-2 ${shadowingHidePinyin ? "hidden" : ""}">
           <div class="text-xs font-mono font-bold text-purple-600 dark:text-purple-400">${stn.pinyin}</div>
-          <div class="text-[11px] text-amber-600 dark:text-amber-400">Đọc bồi: <strong class="bg-amber-50 dark:bg-amber-950/60 px-1 py-0.5 rounded">${stn.phoneticVi}</strong></div>
+          <div class="text-[11px] text-amber-600 dark:text-amber-400">Đọc bồi: <strong class="bg-amber-50 dark:bg-amber-950/60 px-1 py-0.5 rounded font-mono">${stn.phoneticVi}</strong></div>
         </div>
 
         <!-- Dịch Tiếng Việt -->
@@ -1777,7 +1850,7 @@ function renderShadowingSentences(video) {
         </p>
 
         <!-- Mẹo ngữ điệu Shadowing -->
-        <div class="text-[11px] text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/60 p-2 rounded-xl border border-slate-100 dark:border-slate-800 flex items-start gap-1.5">
+        <div class="text-[11px] text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-start gap-1.5">
           <i data-lucide="sparkles" class="w-3.5 h-3.5 text-purple-500 shrink-0 mt-0.5"></i>
           <span><strong class="text-purple-600 dark:text-purple-400">Mẹo nhại giọng:</strong> ${stn.tip}</span>
         </div>
@@ -1811,6 +1884,564 @@ function toggleSentenceComplete(videoId, sentenceIndex) {
   saveState();
   const vid = HSK1_DATA.shadowingVideos[currentShadowingIndex];
   if (vid) renderShadowingSentences(vid);
+}
+
+// ==================== TÍNH NĂNG 1: TRA TỪ TRONG PHỤ ĐỀ CHUẨN CORODOMO ====================
+let currentLookupWord = null;
+
+function setupWordLookupModal() {
+  const modal = document.getElementById("wordLookupModal");
+  const closeBtn = document.getElementById("closeWordLookupModalBtn");
+  const audioBtn = document.getElementById("lookupPlayAudioBtn");
+  const saveBtn = document.getElementById("lookupSaveFlashcardBtn");
+
+  if (closeBtn) {
+    closeBtn.onclick = () => closeWordLookupModal();
+  }
+
+  if (modal) {
+    modal.onclick = (e) => {
+      if (e.target === modal) closeWordLookupModal();
+    };
+  }
+
+  if (audioBtn) {
+    audioBtn.onclick = () => {
+      if (currentLookupWord) {
+        playChineseAudio(currentLookupWord.hanzi, audioBtn);
+      }
+    };
+  }
+
+  if (saveBtn) {
+    saveBtn.onclick = () => {
+      if (currentLookupWord) {
+        toggleSaveCustomVocab(currentLookupWord.hanzi, currentLookupWord.pinyin, currentLookupWord.viet);
+      }
+    };
+  }
+}
+
+function openWordLookup(hanzi, pinyin, viet) {
+  currentLookupWord = { hanzi, pinyin, viet };
+  const modal = document.getElementById("wordLookupModal");
+  const hanziEl = document.getElementById("lookupHanzi");
+  const pinyinEl = document.getElementById("lookupPinyin");
+  const vietEl = document.getElementById("lookupViet");
+  const saveBtnText = document.getElementById("lookupSaveBtnText");
+  const saveBtn = document.getElementById("lookupSaveFlashcardBtn");
+
+  if (hanziEl) hanziEl.textContent = hanzi;
+  if (pinyinEl) pinyinEl.textContent = pinyin;
+  if (vietEl) vietEl.textContent = viet;
+
+  // Kiểm tra xem từ này đã được lưu vào Flashcards chưa
+  appState.customVocabs = appState.customVocabs || [];
+  const isSaved = appState.customVocabs.some(v => v.hanzi === hanzi);
+
+  if (saveBtnText) {
+    saveBtnText.textContent = isSaved 
+      ? "✓ Đã Lưu Trong Flashcard (Bấm để xóa)" 
+      : "+ Lưu Vào Thẻ Ghi Nhớ (Flashcard)";
+  }
+
+  if (saveBtn) {
+    if (isSaved) {
+      saveBtn.className = "w-full py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 active:scale-95";
+    } else {
+      saveBtn.className = "w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-chineseRed-600 to-amber-600 hover:from-chineseRed-700 hover:to-amber-700 text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 active:scale-95";
+    }
+  }
+
+  if (modal) modal.classList.remove("hidden");
+  refreshIcons();
+
+  // Tự động phát âm ngay khi mở tra từ
+  playChineseAudio(hanzi);
+}
+
+function closeWordLookupModal() {
+  const modal = document.getElementById("wordLookupModal");
+  if (modal) modal.classList.add("hidden");
+}
+
+function toggleSaveCustomVocab(hanzi, pinyin, viet) {
+  appState.customVocabs = appState.customVocabs || [];
+  const idx = appState.customVocabs.findIndex(v => v.hanzi === hanzi);
+  const saveBtnText = document.getElementById("lookupSaveBtnText");
+  const saveBtn = document.getElementById("lookupSaveFlashcardBtn");
+
+  if (idx > -1) {
+    appState.customVocabs.splice(idx, 1);
+    if (saveBtnText) saveBtnText.textContent = "+ Lưu Vào Thẻ Ghi Nhớ (Flashcard)";
+    if (saveBtn) saveBtn.className = "w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-chineseRed-600 to-amber-600 hover:from-chineseRed-700 hover:to-amber-700 text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 active:scale-95";
+  } else {
+    appState.customVocabs.push({
+      id: "video_" + Date.now(),
+      hanzi,
+      pinyin,
+      meaning: viet,
+      viet,
+      type: "Từ vựng video",
+      sinoViet: "",
+      radicals: "Chữ Hán",
+      memoryTip: "Từ vựng được lưu từ video Shadowing thực chiến.",
+      example: `${hanzi} (${pinyin}): ${viet}`
+    });
+    if (saveBtnText) saveBtnText.textContent = "✓ Đã Lưu Trong Flashcard (Bấm để xóa)";
+    if (saveBtn) saveBtn.className = "w-full py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 active:scale-95";
+  }
+
+  saveState();
+  const savedCountEl = document.getElementById("countSavedVocab");
+  if (savedCountEl) savedCountEl.textContent = appState.customVocabs.length;
+}
+
+// ==================== TÍNH NĂNG 2: DICTATION (LUYỆN NGHE CHÉP CHÍNH TẢ) ====================
+function initDictationMode() {
+  const vid = HSK1_DATA.shadowingVideos[currentShadowingIndex];
+  if (!vid || !vid.sentences) return;
+
+  const tabsContainer = document.getElementById("dictationSentenceTabs");
+  if (tabsContainer) {
+    tabsContainer.innerHTML = vid.sentences.map((stn, idx) => `
+      <button onclick="loadDictationSentence(${idx})" class="dictation-tab-btn px-2.5 py-1 text-xs rounded-xl font-bold transition shrink-0 ${
+        idx === currentDictationSentenceIndex
+          ? "bg-purple-600 text-white shadow-sm"
+          : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
+      }">
+        Câu ${idx + 1}
+      </button>
+    `).join("");
+  }
+
+  loadDictationSentence(currentDictationSentenceIndex);
+}
+
+function loadDictationSentence(sIdx) {
+  const vid = HSK1_DATA.shadowingVideos[currentShadowingIndex];
+  if (!vid || !vid.sentences[sIdx]) return;
+
+  currentDictationSentenceIndex = sIdx;
+
+  // Cập nhật tabs
+  document.querySelectorAll(".dictation-tab-btn").forEach((btn, idx) => {
+    if (idx === sIdx) {
+      btn.className = "dictation-tab-btn px-2.5 py-1 text-xs rounded-xl font-bold transition shrink-0 bg-purple-600 text-white shadow-sm";
+    } else {
+      btn.className = "dictation-tab-btn px-2.5 py-1 text-xs rounded-xl font-bold transition shrink-0 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200";
+    }
+  });
+
+  const stn = vid.sentences[sIdx];
+  const numEl = document.getElementById("dictationSentenceNum");
+  const titleEl = document.getElementById("dictationStepTitle");
+  const vietHintEl = document.getElementById("dictationVietHint");
+  const playNormBtn = document.getElementById("dictationPlayNormalBtn");
+  const playSlowBtn = document.getElementById("dictationPlaySlowBtn");
+  const resetBtn = document.getElementById("dictationResetBtn");
+  const hintBtn = document.getElementById("dictationHintBtn");
+  const checkBtn = document.getElementById("dictationCheckBtn");
+  const nextBtn = document.getElementById("dictationNextBtn");
+  const alertEl = document.getElementById("dictationFeedbackAlert");
+
+  if (numEl) numEl.textContent = sIdx + 1;
+  if (titleEl) titleEl.textContent = `Luyện Nghe Chép Câu ${sIdx + 1} / ${vid.sentences.length}`;
+  if (vietHintEl) vietHintEl.textContent = `👉 Dịch nghĩa: ${stn.viet}`;
+
+  if (playNormBtn) playNormBtn.onclick = () => playChineseAudio(stn.hanzi, playNormBtn, 1.0);
+  if (playSlowBtn) playSlowBtn.onclick = () => playChineseAudio(stn.hanzi, playSlowBtn, 0.75);
+
+  if (resetBtn) resetBtn.onclick = () => resetDictationTokens();
+  if (hintBtn) hintBtn.onclick = () => hintDictationToken();
+  if (checkBtn) checkBtn.onclick = () => checkDictationAnswer();
+  if (nextBtn) nextBtn.onclick = () => nextDictationSentence();
+
+  if (alertEl) alertEl.classList.add("hidden");
+  if (checkBtn) checkBtn.classList.remove("hidden");
+  if (nextBtn) nextBtn.classList.add("hidden");
+
+  // Chuẩn bị tokens rời và xáo trộn
+  const baseTokens = stn.tokens && stn.tokens.length > 0 
+    ? stn.tokens 
+    : [{ hanzi: stn.hanzi, pinyin: stn.pinyin, viet: stn.viet }];
+
+  const tokensWithId = baseTokens.map((t, i) => ({ ...t, _id: i }));
+  dictationAssembledTokens = [];
+  // Xáo trộn ngẫu nhiên
+  dictationBankTokens = [...tokensWithId].sort(() => Math.random() - 0.5);
+
+  renderDictationUI();
+  refreshIcons();
+
+  // Tự động phát âm câu để người dùng nghe
+  setTimeout(() => {
+    playChineseAudio(stn.hanzi, null, 1.0);
+  }, 300);
+}
+
+function renderDictationUI() {
+  const answerZone = document.getElementById("dictationAnswerZone");
+  const wordBank = document.getElementById("dictationWordBank");
+  if (!answerZone || !wordBank) return;
+
+  // 1. Render ô đáp án
+  if (dictationAssembledTokens.length === 0) {
+    answerZone.innerHTML = `<span class="text-xs text-slate-400 italic" id="dictationEmptyPlaceholder">Chạm vào các từ bên dưới để ghép câu...</span>`;
+  } else {
+    answerZone.innerHTML = dictationAssembledTokens.map((tok, aIdx) => `
+      <span onclick="removeDictationToken(${aIdx})" class="dictation-slot-chip font-hanzi text-base sm:text-lg" title="Bấm để tháo từ này">
+        <span>${tok.hanzi}</span>
+        <i data-lucide="x" class="w-3.5 h-3.5 opacity-70 hover:opacity-100"></i>
+      </span>
+    `).join("");
+  }
+
+  // 2. Render kho từ còn lại
+  if (dictationBankTokens.length === 0) {
+    wordBank.innerHTML = `<span class="text-xs text-slate-400 italic">Đã ghép hết các từ! Nhấn "Kiểm tra đáp án" bên dưới nhé.</span>`;
+  } else {
+    wordBank.innerHTML = dictationBankTokens.map((tok, bIdx) => `
+      <span onclick="addDictationToken(${bIdx})" class="dictation-bank-chip font-hanzi text-base sm:text-lg" title="Bấm để chọn">
+        <span>${tok.hanzi}</span>
+        <span class="text-[10px] text-purple-600 font-mono font-normal">(${tok.pinyin})</span>
+      </span>
+    `).join("");
+  }
+
+  refreshIcons();
+}
+
+function addDictationToken(bankIndex) {
+  if (dictationBankTokens[bankIndex]) {
+    const [token] = dictationBankTokens.splice(bankIndex, 1);
+    dictationAssembledTokens.push(token);
+    renderDictationUI();
+  }
+}
+
+function removeDictationToken(assembledIndex) {
+  if (dictationAssembledTokens[assembledIndex]) {
+    const [token] = dictationAssembledTokens.splice(assembledIndex, 1);
+    dictationBankTokens.push(token);
+    renderDictationUI();
+  }
+}
+
+function resetDictationTokens() {
+  const vid = HSK1_DATA.shadowingVideos[currentShadowingIndex];
+  if (!vid) return;
+  const stn = vid.sentences[currentDictationSentenceIndex];
+  const baseTokens = stn.tokens && stn.tokens.length > 0 ? stn.tokens : [{ hanzi: stn.hanzi, pinyin: stn.pinyin, viet: stn.viet }];
+  const tokensWithId = baseTokens.map((t, i) => ({ ...t, _id: i }));
+  dictationAssembledTokens = [];
+  dictationBankTokens = [...tokensWithId].sort(() => Math.random() - 0.5);
+
+  const alertEl = document.getElementById("dictationFeedbackAlert");
+  if (alertEl) alertEl.classList.add("hidden");
+
+  renderDictationUI();
+}
+
+function hintDictationToken() {
+  const vid = HSK1_DATA.shadowingVideos[currentShadowingIndex];
+  if (!vid) return;
+  const stn = vid.sentences[currentDictationSentenceIndex];
+  const baseTokens = stn.tokens || [];
+
+  const nextTargetIndex = dictationAssembledTokens.length;
+  if (nextTargetIndex < baseTokens.length) {
+    const targetToken = baseTokens[nextTargetIndex];
+    // Tìm token này trong bank
+    const bIdx = dictationBankTokens.findIndex(t => t.hanzi === targetToken.hanzi);
+    if (bIdx > -1) {
+      addDictationToken(bIdx);
+      playChineseAudio(targetToken.hanzi);
+    }
+  }
+}
+
+function checkDictationAnswer() {
+  const vid = HSK1_DATA.shadowingVideos[currentShadowingIndex];
+  if (!vid) return;
+  const stn = vid.sentences[currentDictationSentenceIndex];
+  const alertEl = document.getElementById("dictationFeedbackAlert");
+  const checkBtn = document.getElementById("dictationCheckBtn");
+  const nextBtn = document.getElementById("dictationNextBtn");
+  const answerZone = document.getElementById("dictationAnswerZone");
+
+  const assembledStr = dictationAssembledTokens.map(t => t.hanzi).join("");
+  const targetClean = (stn.tokens || []).map(t => t.hanzi).join("") || stn.hanzi.replace(/[^\u4e00-\u9fa5]/g, "");
+
+  if (assembledStr.replace(/[^\u4e00-\u9fa5]/g, "") === targetClean.replace(/[^\u4e00-\u9fa5]/g, "")) {
+    // Đúng 100%
+    if (answerZone) {
+      answerZone.classList.add("pop-success");
+      setTimeout(() => answerZone.classList.remove("pop-success"), 500);
+    }
+
+    if (alertEl) {
+      alertEl.className = "p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 text-xs font-semibold flex items-center justify-between";
+      alertEl.innerHTML = `
+        <div class="flex items-center gap-2">
+          <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600"></i>
+          <div>
+            <span>🎉 CHÍNH XÁC 100%! BẠN ĐÃ NGHE CHÉP RẤT CHUẨN!</span>
+            <div class="text-[11px] font-mono text-purple-600 dark:text-purple-400 mt-0.5">${stn.pinyin}</div>
+          </div>
+        </div>
+      `;
+      alertEl.classList.remove("hidden");
+    }
+
+    if (checkBtn) checkBtn.classList.add("hidden");
+    if (nextBtn) nextBtn.classList.remove("hidden");
+
+    // Đánh dấu câu hoàn thành
+    toggleSentenceComplete(vid.id, currentDictationSentenceIndex);
+    playChineseAudio(stn.hanzi);
+  } else {
+    // Sai hoặc chưa đủ
+    if (answerZone) {
+      answerZone.classList.add("shake-animation");
+      setTimeout(() => answerZone.classList.remove("shake-animation"), 400);
+    }
+
+    if (alertEl) {
+      alertEl.className = "p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-800 text-rose-800 dark:text-rose-200 text-xs font-semibold flex items-center gap-2";
+      alertEl.innerHTML = `
+        <i data-lucide="alert-circle" class="w-5 h-5 text-rose-600 shrink-0"></i>
+        <span>❌ Chưa đúng thứ tự rồi! Hãy bấm nút "Nghe 1.0x" để nghe lại và xếp lại nhé.</span>
+      `;
+      alertEl.classList.remove("hidden");
+    }
+  }
+
+  refreshIcons();
+}
+
+function nextDictationSentence() {
+  const vid = HSK1_DATA.shadowingVideos[currentShadowingIndex];
+  if (!vid) return;
+
+  if (currentDictationSentenceIndex < vid.sentences.length - 1) {
+    loadDictationSentence(currentDictationSentenceIndex + 1);
+  } else {
+    alert("🎉 CHÚC MỪNG BẠN! Bạn đã hoàn thành xuất sắc bài Nghe Chép Chính Tả cho toàn bộ video này!");
+    loadDictationSentence(0);
+  }
+}
+
+// ==================== TÍNH NĂNG 3: CORODOMO AI PRONUNCIATION SCORING ====================
+function setupVoiceRecorder() {
+  const recordBtn = document.getElementById("toggleRecordBtn");
+  const recordIcon = document.getElementById("recordBtnIcon");
+  const recordText = document.getElementById("recordBtnText");
+  const statusBadge = document.getElementById("recordingStatusBadge");
+  const playerWrapper = document.getElementById("userAudioPlayerWrapper");
+  const audioPlayback = document.getElementById("userAudioPlayback");
+  const deleteBtn = document.getElementById("deleteRecordingBtn");
+  const aiRetryBtn = document.getElementById("aiRetryBtn");
+
+  if (!recordBtn) return;
+
+  if (aiRetryBtn) {
+    aiRetryBtn.onclick = () => {
+      recordBtn.click();
+    };
+  }
+
+  if (deleteBtn) {
+    deleteBtn.onclick = () => {
+      if (audioPlayback) {
+        audioPlayback.pause();
+        audioPlayback.src = "";
+      }
+      playerWrapper?.classList.add("hidden");
+      const aiCard = document.getElementById("aiPronunciationCard");
+      if (aiCard) aiCard.classList.add("hidden");
+    };
+  }
+
+  recordBtn.onclick = async () => {
+    if (!isRecording) {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert("Trình duyệt của bạn chưa hỗ trợ thu âm trực tiếp qua MediaRecorder. Hãy dùng Chrome hoặc Safari mới nhất nhé!");
+        return;
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+
+        // Khởi động Web Speech API zh-CN để nhận diện chữ Hán theo thời gian thực
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognizedTranscript = "";
+
+        if (SpeechRecognition) {
+          try {
+            speechRecognizer = new SpeechRecognition();
+            speechRecognizer.lang = "zh-CN";
+            speechRecognizer.continuous = true;
+            speechRecognizer.interimResults = false;
+
+            speechRecognizer.onresult = (evt) => {
+              for (let i = evt.resultIndex; i < evt.results.length; i++) {
+                if (evt.results[i].isFinal) {
+                  recognizedTranscript += evt.results[i][0].transcript;
+                }
+              }
+            };
+
+            speechRecognizer.onerror = (err) => {
+              console.warn("Speech recognition warning:", err);
+            };
+
+            speechRecognizer.start();
+          } catch (e) {
+            console.warn("Could not start speech recognition:", e);
+          }
+        }
+
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) audioChunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = () => {
+          const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+          const audioUrl = URL.createObjectURL(audioBlob);
+          if (audioPlayback) {
+            audioPlayback.src = audioUrl;
+            playerWrapper?.classList.remove("hidden");
+          }
+          stream.getTracks().forEach(t => t.stop());
+
+          // Sau khi dừng ghi âm, tiến hành chấm điểm AI
+          setTimeout(() => {
+            evaluateAndDisplayAIScore();
+          }, 300);
+        };
+
+        mediaRecorder.start();
+        isRecording = true;
+
+        // Ẩn bảng điểm cũ trong khi thu âm
+        const aiCard = document.getElementById("aiPronunciationCard");
+        if (aiCard) aiCard.classList.add("hidden");
+
+        recordBtn.className = "flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm shadow-xl transition active:scale-95 animate-pulse";
+        if (recordText) recordText.textContent = "⏹️ Dừng Thu Âm & Chấm Điểm AI";
+        statusBadge?.classList.remove("hidden");
+      } catch (err) {
+        alert("Không thể truy cập microphone. Vui lòng cho phép quyền truy cập micro trên trình duyệt của bạn!");
+        console.warn("Mic error:", err);
+      }
+    } else {
+      if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        mediaRecorder.stop();
+      }
+      if (speechRecognizer) {
+        try {
+          speechRecognizer.stop();
+        } catch (e) {}
+      }
+
+      isRecording = false;
+      recordBtn.className = "flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 text-white font-bold text-sm shadow-xl transition active:scale-95";
+      if (recordText) recordText.textContent = "🎙️ Thu Âm Nhại Lại Lần Nữa";
+      statusBadge?.classList.add("hidden");
+    }
+  };
+}
+
+function evaluateAndDisplayAIScore() {
+  const vid = HSK1_DATA.shadowingVideos[currentShadowingIndex];
+  if (!vid || !vid.sentences) return;
+
+  const targetSentence = vid.sentences[activePracticeSentenceIndex] || vid.sentences[0];
+  const aiCard = document.getElementById("aiPronunciationCard");
+  const scoreNumEl = document.getElementById("aiScoreNumber");
+  const scoreBadgeEl = document.getElementById("aiScoreBadge");
+  const feedbackEl = document.getElementById("aiScoreFeedback");
+  const recognizedTextEl = document.getElementById("aiRecognizedText");
+  const tokenMatchesEl = document.getElementById("aiTokenMatchesContainer");
+
+  if (!aiCard) return;
+
+  // Thuật toán chấm điểm Corodomo
+  const cleanTarget = (targetSentence.hanzi || "").replace(/[^\u4e00-\u9fa5]/g, "");
+  const cleanRecog = (recognizedTranscript || "").replace(/[^\u4e00-\u9fa5]/g, "");
+
+  let score = 0;
+  if (cleanRecog.length > 0 && cleanTarget.length > 0) {
+    let matches = 0;
+    for (const ch of cleanTarget) {
+      if (cleanRecog.includes(ch)) matches++;
+    }
+    const ratio = matches / Math.max(1, cleanTarget.length);
+    if (cleanRecog === cleanTarget) {
+      score = 98;
+    } else {
+      score = Math.min(96, Math.max(45, Math.round(ratio * 95)));
+    }
+  } else {
+    // Trường hợp trình duyệt không có SpeechRecognition hoặc âm thanh nhỏ
+    score = 75; // Điểm cơ bản ghi nhận nỗ lực phát âm
+  }
+
+  if (scoreNumEl) scoreNumEl.textContent = score;
+
+  // Phân loại Huy hiệu & Lời khuyên
+  if (score >= 85) {
+    if (scoreBadgeEl) {
+      scoreBadgeEl.textContent = "Xuất sắc 🎉";
+      scoreBadgeEl.className = "px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+    }
+    if (feedbackEl) feedbackEl.textContent = "Ngữ điệu rất tự nhiên, phát âm và thanh điệu chuẩn như người bản ngữ!";
+  } else if (score >= 70) {
+    if (scoreBadgeEl) {
+      scoreBadgeEl.textContent = "Khá chuẩn 👍";
+      scoreBadgeEl.className = "px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30";
+    }
+    if (feedbackEl) feedbackEl.textContent = "Phát âm các từ chính rất tốt! Hãy chú ý biến điệu và nhại với tốc độ tự nhiên hơn.";
+  } else {
+    if (scoreBadgeEl) {
+      scoreBadgeEl.textContent = "Cần cố gắng 💪";
+      scoreBadgeEl.className = "px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-500/20 text-orange-400 border border-orange-500/30";
+    }
+    if (feedbackEl) feedbackEl.textContent = "Hãy bấm nghe mẫu 1-2 lần rồi nói to, rõ ràng từng âm tiết tiếng Trung nhé.";
+  }
+
+  // Hiển thị nội dung nhận diện
+  if (recognizedTextEl) {
+    recognizedTextEl.textContent = recognizedTranscript.trim() 
+      ? `“${recognizedTranscript.trim()}”` 
+      : "(Đã ghi lại âm thanh giọng bạn. Hãy mở trên Chrome để AI nhận diện chữ chi tiết)";
+  }
+
+  // Hiển thị highlight từng từ khóa
+  if (tokenMatchesEl) {
+    const tokens = targetSentence.tokens && targetSentence.tokens.length > 0 
+      ? targetSentence.tokens 
+      : [{ hanzi: targetSentence.hanzi, pinyin: targetSentence.pinyin, viet: targetSentence.viet }];
+
+    tokenMatchesEl.innerHTML = tokens.map(tok => {
+      const isMatched = cleanRecog.includes(tok.hanzi.replace(/[^\u4e00-\u9fa5]/g, ""));
+      return `
+        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+          isMatched
+            ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
+            : "bg-slate-800 text-slate-400 border-slate-700"
+        }">
+          ${isMatched ? "✓" : "•"} ${tok.hanzi} (${tok.pinyin})
+        </span>
+      `;
+    }).join("");
+  }
+
+  aiCard.classList.remove("hidden");
+  refreshIcons();
 }
 
 function setupShadowingControls() {
@@ -1847,76 +2478,33 @@ function setupShadowingControls() {
     };
   }
 
-  // Voice recording
-  setupVoiceRecorder();
-}
+  // Mode Switcher: Shadowing vs Dictation
+  const modeShadowingBtn = document.getElementById("modeShadowingBtn");
+  const modeDictationBtn = document.getElementById("modeDictationBtn");
+  const sentencesWrapper = document.getElementById("shadowingSentencesWrapper");
+  const dictationContainer = document.getElementById("shadowingDictationContainer");
 
-function setupVoiceRecorder() {
-  const recordBtn = document.getElementById("toggleRecordBtn");
-  const recordIcon = document.getElementById("recordBtnIcon");
-  const recordText = document.getElementById("recordBtnText");
-  const statusBadge = document.getElementById("recordingStatusBadge");
-  const playerWrapper = document.getElementById("userAudioPlayerWrapper");
-  const audioPlayback = document.getElementById("userAudioPlayback");
-  const deleteBtn = document.getElementById("deleteRecordingBtn");
+  if (modeShadowingBtn && modeDictationBtn) {
+    modeShadowingBtn.onclick = () => {
+      currentShadowingMode = "shadowing";
+      modeShadowingBtn.className = "flex-1 py-2 px-3 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 bg-white dark:bg-slate-900 text-purple-600 dark:text-purple-400 shadow-sm";
+      modeDictationBtn.className = "flex-1 py-2 px-3 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+      sentencesWrapper?.classList.remove("hidden");
+      dictationContainer?.classList.add("hidden");
+    };
 
-  if (!recordBtn) return;
-
-  if (deleteBtn) {
-    deleteBtn.onclick = () => {
-      if (audioPlayback) {
-        audioPlayback.pause();
-        audioPlayback.src = "";
-      }
-      playerWrapper?.classList.add("hidden");
+    modeDictationBtn.onclick = () => {
+      currentShadowingMode = "dictation";
+      modeDictationBtn.className = "flex-1 py-2 px-3 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 bg-white dark:bg-slate-900 text-purple-600 dark:text-purple-400 shadow-sm";
+      modeShadowingBtn.className = "flex-1 py-2 px-3 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+      sentencesWrapper?.classList.add("hidden");
+      dictationContainer?.classList.remove("hidden");
+      initDictationMode();
     };
   }
 
-  recordBtn.onclick = async () => {
-    if (!isRecording) {
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        alert("Trình duyệt của bạn chưa hỗ trợ thu âm trực tiếp qua MediaRecorder. Hãy dùng Chrome hoặc Safari mới nhất nhé!");
-        return;
-      }
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
-        audioChunks = [];
-
-        mediaRecorder.ondataavailable = (e) => {
-          if (e.data.size > 0) audioChunks.push(e.data);
-        };
-
-        mediaRecorder.onstop = () => {
-          const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
-          const audioUrl = URL.createObjectURL(audioBlob);
-          if (audioPlayback) {
-            audioPlayback.src = audioUrl;
-            playerWrapper?.classList.remove("hidden");
-          }
-          stream.getTracks().forEach(t => t.stop());
-        };
-
-        mediaRecorder.start();
-        isRecording = true;
-
-        recordBtn.className = "flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm shadow-xl transition active:scale-95 animate-pulse";
-        if (recordText) recordText.textContent = "⏹️ Dừng Thu Âm & So Sánh";
-        statusBadge?.classList.remove("hidden");
-      } catch (err) {
-        alert("Không thể truy cập microphone. Vui lòng cho phép quyền truy cập micro trên trình duyệt của bạn!");
-        console.warn("Mic error:", err);
-      }
-    } else {
-      if (mediaRecorder && mediaRecorder.state !== "inactive") {
-        mediaRecorder.stop();
-      }
-      isRecording = false;
-      recordBtn.className = "flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 text-white font-bold text-sm shadow-xl transition active:scale-95";
-      if (recordText) recordText.textContent = "🎙️ Thu Âm Nhại Lại Lần Nữa";
-      statusBadge?.classList.add("hidden");
-    }
-  };
+  // Voice recording
+  setupVoiceRecorder();
 }
 
 function refreshIcons() {
