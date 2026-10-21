@@ -772,8 +772,8 @@
 
   </div>
 
-  <!-- THANH ĐIỀU HƯỚNG DƯỚI ĐÁY DÀNH CHO ĐIỆN THOẠI (DẠNG DOCK NỔI - TRÁNH NÚT NETLIFY) -->
-  <nav class="lg:hidden fixed bottom-3 left-2.5 right-2.5 sm:left-auto sm:right-auto sm:w-[440px] sm:left-1/2 sm:-translate-x-1/2 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl px-2 py-1.5">
+  <!-- THANH ĐIỀU HƯỚNG DƯỚI ĐÁY DÀNH CHO ĐIỆN THOẠI (DẠNG DOCK NỔI - NÂNG CAO NÉ HOÀN TOÀN NÚT NETLIFY Ở GÓC PHẢI) -->
+  <nav id="mobileFloatingDock" class="lg:hidden fixed bottom-[58px] left-3 right-3 sm:left-auto sm:right-auto sm:w-[440px] sm:left-1/2 sm:-translate-x-1/2 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl px-2 py-1.5 transition-all duration-300">
     <div class="grid grid-cols-5 gap-1 items-center max-w-md mx-auto">
       
       <!-- Tab Video -->
@@ -852,6 +852,19 @@
           <p class="text-xs text-slate-500 dark:text-slate-400">
             Tạo repository trên GitHub, push mã nguồn từ <code>E:\TOI-TU-HOC</code> lên. Sau đó trên Netlify chọn <strong>"Add new site" ➔ "Import an existing project" ➔ Chọn GitHub</strong>. Mỗi lần bạn học xong bài mới và commit, Netlify sẽ tự động cập nhật!
           </p>
+        </div>
+
+        <!-- Mẹo tắt nút 'Powered by Netlify' che màn hình -->
+        <div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-800 space-y-2">
+          <p class="font-bold text-amber-900 dark:text-amber-200 flex items-center gap-1.5 text-xs">
+            <i data-lucide="shield-alert" class="w-4 h-4 text-amber-600"></i>
+            Cách tắt vĩnh viễn nút "Powered by Netlify" che góc màn hình (10 giây):
+          </p>
+          <ol class="list-decimal list-inside space-y-1 text-xs text-amber-900/90 dark:text-amber-300">
+            <li>Đăng nhập <a href="https://app.netlify.com" target="_blank" class="underline font-bold text-amber-700 dark:text-amber-400">app.netlify.com</a> và bấm vào tên trang web của bạn.</li>
+            <li>Vào mục <strong>Site configuration</strong> ➔ <strong>General</strong> ➔ Kéo xuống tìm <strong>"Powered by Netlify badge"</strong>.</li>
+            <li>Gạt nút sang <strong>OFF</strong> và bấm <strong>Save</strong>. Nút này sẽ biến mất vĩnh viễn trên mọi điện thoại!</li>
+          </ol>
         </div>
       </div>
 

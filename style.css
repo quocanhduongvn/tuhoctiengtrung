@@ -35,7 +35,7 @@ body {
 /* Khoảng trống dưới chân trang để không bị che bởi Bottom Nav trên điện thoại */
 @media (max-width: 1024px) {
   body {
-    padding-bottom: calc(6.5rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(8.5rem + env(safe-area-inset-bottom, 0px));
   }
 }
 
