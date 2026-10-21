@@ -1,8 +1,9 @@
 // sw.js - Service Worker hỗ trợ cài đặt PWA & tải trang ngoại tuyến
-const CACHE_NAME = 'hsk1-tu-hoc-v2';
+const CACHE_NAME = 'hsk1-tu-hoc-v3';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
+  './offline.html',
   './style.css',
   './data.js',
   './app.js',
@@ -30,9 +31,9 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Only cache GET requests within same origin
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
+
   if (url.origin === location.origin) {
     event.respondWith(
       caches.match(event.request).then((cachedResponse) => {
@@ -43,7 +44,12 @@ self.addEventListener('fetch', (event) => {
               cache.put(event.request, networkResponse.clone());
               return networkResponse;
             });
-          }).catch(() => cachedResponse)
+          }).catch(() => {
+            if (event.request.mode === 'navigate') {
+              return caches.match('./offline.html');
+            }
+            return cachedResponse;
+          })
         );
       })
     );
